@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">AwesomeProject</string>
+    
+    <string name="facebook_app_id">952875019065864</string>
+    <string name="fb_login_protocol_scheme">fb952875019065864</string>
+    <string name="facebook_client_token">a176b3918ac10b0b6109e3f03be7d7be</string>
+
+
+</resources>
