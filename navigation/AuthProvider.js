@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
               await auth().signInWithEmailAndPassword(email, password);
             } catch (e) {
               console.log(e);
-              Alert.alert('', e, [
+              Alert.alert('', e.toString(), [
                 {text: 'Ok'}
               ]);
             }

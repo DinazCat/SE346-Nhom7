@@ -1,82 +1,60 @@
 import React, {useEffect, useState, useContext} from 'react';
-import {View, ScrollView, Text, StyleSheet, FlatList, TouchableOpacity, Image} from 'react-native';
+import {View, ScrollView, Text, StyleSheet, FlatList,Button,TouchableOpacity,TouchableHighlight,Image, alert, TouchableNativeFeedback} from 'react-native';
 import FormButton from '../components/FormButton';
 import { AuthContext } from '../navigation/AuthProvider';
 import PostCard from '../components/PostCard';
+import Icon from 'react-native-vector-icons/FontAwesome5';
+import firestore from '@react-native-firebase/firestore';
+//import { TouchableOpacity } from 'react-native-gesture-handler';
 
-const Posts = [
-  {
-    id: '1',
-    userName: 'Jenny Doe',
-    userImg: require('../assets/food.png'),
-    postTime: '4 mins ago',
-    postText:
-      'Hey there, this is my test for a post of my social app in React Native.',
-    postImg: require('../assets/food.png'),
-    liked: true,
-    likes: '14',
-    comments: '5',
-  },
-  {
-    id: '2',
-    userName: 'John Doe',
-    userImg: require('../assets/food.png'),
-    postTime: '2 hours ago',
-    postText:
-      'Hey there, this is my test for a post of my social app in React Native.',
-    postImg: 'none',
-    liked: false,
-    likes: '8',
-    comments: '0',
-  },
-  {
-    id: '3',
-    userName: 'Ken William',
-    userImg: require('../assets/food.png'),
-    postTime: '1 hours ago',
-    postText:
-      'Hey there, this is my test for a post of my social app in React Native.',
-    postImg: require('../assets/food.png'),
-    liked: true,
-    likes: '1',
-    comments: '0',
-  },
-  {
-    id: '4',
-    userName: 'Selina Paul',
-    userImg: require('../assets/food.png'),
-    postTime: '1 day ago',
-    postText:
-      'Hey there, this is my test for a post of my social app in React Native.',
-    postImg: require('../assets/food.png'),
-    liked: true,
-    likes: '22',
-    comments: '4',
-  },
-  {
-    id: '5',
-    userName: 'Christy Alex',
-    userImg: require('../assets/food.png'),
-    postTime: '2 days ago',
-    postText:
-      'Hey there, this is my test for a post of my social app in React Native.',
-    postImg: 'none',
-    liked: false,
-    likes: '0',
-    comments: '0',
-  },
-];
 
 export default function FeedsScreen({navigation}) {
   const {user, logout} = useContext(AuthContext);
+  const [posts, setPosts]= useState(null);
+  const [loading, setLoading] = useState(true);
+  useEffect(()=>{
+    const fetchPosts = async()=>{
+      try{
+        const list = [];
+        await firestore()
+        .collection('posts')
+        .get()
+        .then((querySnapshot)=>{
+          querySnapshot.forEach(doc =>{
+            const {userId,post, postImg, postTime, comments,likes,name,userImg} = doc.data();
+            var Time = new Date(postTime._seconds * 1000).toDateString() + ' at ' + new Date(postTime._seconds * 1000).toLocaleTimeString()
+            list.push({
+              id: doc.id,
+              userName: name,
+              userImg: userImg,
+              postTime: Time,
+              postText: post,
+              postImg: postImg,
+              liked: true,
+              likes: likes,
+              comments: comments,
+            });
+          })
+
+        })
+        setPosts(list);
+        if(loading){ setLoading(false) };
+      } catch(e){
+        console.log(e);
+      }
+    }
+    fetchPosts();
+
+  },[])
   return (
     <View style={styles.container}>
       <FormButton title='Logout' onPress={() => logout()}></FormButton>
-      <TouchableOpacity>
+      <TouchableOpacity onpress={()=> logout()}>
         <Image style={styles.UserImage} source={{uri: user.photoURL}}/>
       </TouchableOpacity>
+      <View style={{flex:1}}>
       <FlatList
-            data={Posts}
+            data={posts}
             renderItem={({item}) => (
               <PostCard
                 item={item}
@@ -91,6 +69,20 @@ export default function FeedsScreen({navigation}) {
             // ListFooterComponent={ListHeader}
             showsVerticalScrollIndicator={false}             
           />
+
+          {/* <TouchableOpacity
+          style={styles.ButtonPost} 
+          onpress={()=> navigation.navigate('addPostScreen')}>
+          <Icon name={"plus-circle"} style={{color:'green', fontSize: 40}} />
+          </TouchableOpacity> */}
+          <FormButton  title='Add post' onPress={()=>navigation
+          .navigate('addPostScreen')}></FormButton>
+          {/* <Button title='Add Post' style={styles.ButtonPost} onPress={()=>navigation
+          .navigate('addPostScreen')}/> */}
+
+         
+      </View>
+     
     </View>
   );
 }
@@ -100,6 +92,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     padding: 10,
+    flexDirection:'column'
   },
   UserImage:{
     width: 50,
@@ -107,4 +100,11 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     marginVertical: 10,
   },
+  ButtonPost:{
+    position:'absolute',
+    marginVertical:535,
+    alignSelf:'flex-end',
+    width:50,
+    height:40
+  }
 })
