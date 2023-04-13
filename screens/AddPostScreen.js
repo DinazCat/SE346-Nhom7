@@ -33,18 +33,17 @@ export default AddPostScreen= function({navigation}) {
     };
     const submitPost = async()=>{
       const imageUrl = await uploadImage();
-     // console.log('imageuser',user.photoURL);
-      //const UserImage = await uploadImage(user.photoURL);
-      //console.log('imageuser',UserImage);
       firestore()
       .collection('posts')
-      .add({
-        userId:'userid',
+      .doc(id)
+      .set({
+        postId: id,
+        userId: user.uid,
         post:text,
         postImg:imageUrl,
         postTime:firestore.Timestamp.fromDate(new Date()),
-        likes:0,
-        comments:0,
+        likes: [],
+        comments: [],
         name: user.displayName,
         userImg: user.photoURL,
 
@@ -96,7 +95,7 @@ export default AddPostScreen= function({navigation}) {
     }
       
     return (
-      <View>
+      <View style={styles.container}>
         <View
           style={{
             // marginTop: 50,
@@ -105,8 +104,8 @@ export default AddPostScreen= function({navigation}) {
             alignItems: 'center',
             backgroundColor: '#FFFF99',
           }}>
-          <TouchableOpacity onpress={()=> navigation.navigate('feedsScreen')}>
-            <Icon name={'arrow-left'} style={{color: 'black', fontSize: 30}} />
+          <TouchableOpacity onPress={()=> navigation.navigate('feedsScreen')}>
+            <Icon name={'arrow-left'} style={{color: 'black', fontSize: 30, padding: 5}} />
           </TouchableOpacity>
 
           <Text style={{fontSize: 20, flex: 1, marginLeft: 5}}>
@@ -124,7 +123,6 @@ export default AddPostScreen= function({navigation}) {
               onPress={submitPost}
             />
           )}
-
           <View style={{marginRight: 5}} />
         </View>
         <View
@@ -133,24 +131,24 @@ export default AddPostScreen= function({navigation}) {
             flexDirection: 'row',
           }}>
           <Image
-            source={require('../assets/anhdaidien.jpg')}
+            source={{uri: user.photoURL}}
             style={{
               width: 50,
               height: 50,
               borderRadius: 30,
-              marginLeft: 5,
+              marginLeft: 10,
               backgroundColor: 'black',
               alignSelf: 'center',
             }}
           />
           <Text
             style={{
-              marginLeft: 5,
-              fontSize: 16,
+              marginLeft: 10,
+              fontSize: 18,
               fontWeight: '700',
               alignSelf: 'center',
             }}>
-            Linh Bao
+            {user.displayName}
           </Text>
         </View>
         <View style={{height: 545, flexDirection: 'column'}}>
@@ -236,4 +234,11 @@ export default AddPostScreen= function({navigation}) {
       </View>
     );
   }
+
+  const styles = StyleSheet.create({
+    container:{
+      flex: 1,
+      backgroundColor: '#fff',
+    },
+  })
   

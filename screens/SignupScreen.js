@@ -1,5 +1,5 @@
 import React, {useContext, useState} from 'react';
-import {View, Text, TouchableOpacity, Platform, StyleSheet, Alert} from 'react-native';
+import {View, Text, TouchableOpacity, Platform, StyleSheet} from 'react-native';
 import FormInput from '../components/FormInput';
 import FormButton from '../components/FormButton';
 import SocialButton from '../components/SocialButton';
@@ -49,9 +49,7 @@ const SignupScreen = ({navigation}) => {
             register(email, password)
           }
           else{
-            Alert.alert('', 'Password confirmation does not match!'[
-              {text: 'Ok'}
-            ]);
+            alert('Password confirmation does not match!')
           }
         }}
       />
@@ -78,7 +76,7 @@ const SignupScreen = ({navigation}) => {
             btnType="facebook"
             color="#4867aa"
             backgroundColor="#e6eaf4"
-            onPress={() => {}}
+            onPress={() => {fbSignup()}}
           />
     
           <SocialButton
@@ -86,7 +84,7 @@ const SignupScreen = ({navigation}) => {
             btnType="google"
             color="#de4d41"
             backgroundColor="#f5e7ea"
-            onPress={() => {}}
+            onPress={() => {googleSignup()}}
           />
         </View>
       ) : null}

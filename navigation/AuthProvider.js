@@ -2,7 +2,7 @@ import React, { createContext, useState } from 'react';
 import auth from '@react-native-firebase/auth';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { LoginManager, AccessToken } from 'react-native-fbsdk-next';
-import { Alert } from 'react-native';
+import firestore from '@react-native-firebase/firestore';
 
 export const AuthContext = createContext({});
 
@@ -18,10 +18,16 @@ export const AuthProvider = ({ children }) => {
               await auth().signInWithEmailAndPassword(email, password);
             } catch (e) {
               console.log(e);
-              Alert.alert('', e.toString(), [
-                {text: 'Ok'}
-              ]);
+              alert(e);
             }
+          },
+          forgotPassword: async(email) => {
+            await auth().sendPasswordResetEmail(email)
+            .then(() => {
+              alert('Password reset email sent, please check your email!');
+            }).catch((e) => {
+              alert(e);
+            })
           },
           googleLogin: async () => {
             try{
@@ -33,7 +39,7 @@ export const AuthProvider = ({ children }) => {
               await auth().signInWithCredential(googleCredential)
             } catch(error) {
               console.log({error});
-              Alert.alert('', e, [{text: 'Ok'}]);
+              alert(e);
             }
           },
           fbLogin: async () => {
@@ -56,13 +62,28 @@ export const AuthProvider = ({ children }) => {
               await auth().signInWithCredential(facebookCredential)
             } catch(error) {
               console.log({error});
+              alert(e);
             }
           },
           register: async (email, password) => {
             try {
-              await auth().createUserWithEmailAndPassword(email, password);
+              await auth().createUserWithEmailAndPassword(email, password)
+              .then(() => {
+                firestore().collection('users').doc(auth().currentUser.uid)
+                .set({
+                    id: auth().currentUser.uid,
+                    name: auth().currentUser.displayName,
+                    email: auth().currentUser.email,
+                    createdAt: firestore.Timestamp.fromDate(new Date()),
+                    userImg: auth().currentUser.photoURL,
+                })
+                .catch(error => {
+                    console.log('Something went wrong with added user to firestore: ', error);
+                })
+              })
             } catch (e) {
               console.log(e);
+              alert(e);
             }
           },
           googleSignup: async () => {
@@ -73,33 +94,26 @@ export const AuthProvider = ({ children }) => {
               const googleCredential = auth.GoogleAuthProvider.credential(idToken);
               // Sign-in the user with the credential
               await auth().signInWithCredential(googleCredential)
-              // Use it only when user Sign's up, 
-              // so create different social signup function
-              // .then(() => {
-              //   //Once the user creation has happened successfully, we can add the currentUser into firestore
-              //   //with the appropriate details.
-              //   // console.log('current User', auth().currentUser);
-              //   firestore().collection('users').doc(auth().currentUser.uid)
-              //   .set({
-              //       fname: '',
-              //       lname: '',
-              //       email: auth().currentUser.email,
-              //       createdAt: firestore.Timestamp.fromDate(new Date()),
-              //       userImg: null,
-              //   })
-              //   //ensure we catch any errors at this stage to advise us if something does go wrong
-              //   .catch(error => {
-              //       console.log('Something went wrong with added user to firestore: ', error);
-              //   })
-              // })
-              //we need to catch the whole sign up process if it fails too.
+              .then(() => {
+                firestore().collection('users').doc(auth().currentUser.uid)
+                .set({
+                    id: auth().currentUser.uid,
+                    name: auth().currentUser.displayName,
+                    email: auth().currentUser.email,
+                    createdAt: firestore.Timestamp.fromDate(new Date()),
+                    userImg: auth().currentUser.photoURL,
+                })
+                .catch(error => {
+                    console.log('Something went wrong with added user to firestore: ', error);
+                })
+              })
               .catch(error => {
                 console.log('Something went wrong with sign up: ', error);
-                Alert.alert('', e, [{text: 'Ok'}]);
+                alert(e);
               });
             } catch(error) {
               console.log({error});
-              Alert.alert('', e, [{text: 'Ok'}]);
+              alert(e);
             }
           },
           fbSignup:async () => {
@@ -123,26 +137,19 @@ export const AuthProvider = ({ children }) => {
 
               // Sign-in the user with the credential
               await auth().signInWithCredential(facebookCredential)
-              // Use it only when user Sign's up, 
-              // so create different social signup function
-              // .then(() => {
-              //   //Once the user creation has happened successfully, we can add the currentUser into firestore
-              //   //with the appropriate details.
-              //   console.log('current User', auth().currentUser);
-              //   firestore().collection('users').doc(auth().currentUser.uid)
-              //   .set({
-              //       fname: '',
-              //       lname: '',
-              //       email: auth().currentUser.email,
-              //       createdAt: firestore.Timestamp.fromDate(new Date()),
-              //       userImg: null,
-              //   })
-              //   //ensure we catch any errors at this stage to advise us if something does go wrong
-              //   .catch(error => {
-              //       console.log('Something went wrong with added user to firestore: ', error);
-              //   })
-              // })
-              //we need to catch the whole sign up process if it fails too.
+              .then(() => {
+                firestore().collection('users').doc(auth().currentUser.uid)
+                .set({
+                    id: auth().currentUser.uid,
+                    name: auth().currentUser.displayName,
+                    email: auth().currentUser.email,
+                    createdAt: firestore.Timestamp.fromDate(new Date()),
+                    userImg: auth().currentUser.photoURL,
+                })
+                .catch(error => {
+                    console.log('Something went wrong with added user to firestore: ', error);
+                })
+              })
               .catch(error => {
                   console.log('Something went wrong with sign up: ', error);
               });

@@ -1,11 +1,10 @@
 import React, {useEffect, useState, useContext} from 'react';
-import {View, ScrollView, Text, StyleSheet, FlatList,Button,TouchableOpacity,TouchableHighlight,Image, alert, TouchableNativeFeedback} from 'react-native';
+import {View, ScrollView, Text, StyleSheet, FlatList,Button,TouchableOpacity,Image, alert} from 'react-native';
 import FormButton from '../components/FormButton';
 import { AuthContext } from '../navigation/AuthProvider';
 import PostCard from '../components/PostCard';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import firestore from '@react-native-firebase/firestore';
-//import { TouchableOpacity } from 'react-native-gesture-handler';
 
 
 export default function FeedsScreen({navigation}) {
@@ -18,13 +17,15 @@ export default function FeedsScreen({navigation}) {
         const list = [];
         await firestore()
         .collection('posts')
+        .orderBy('postTime', 'desc')
         .get()
         .then((querySnapshot)=>{
           querySnapshot.forEach(doc =>{
-            const {userId,post, postImg, postTime, comments,likes,name,userImg} = doc.data();
+            const {userId,post, postImg, postTime, comments,likes,name,userImg,} = doc.data();
             var Time = new Date(postTime._seconds * 1000).toDateString() + ' at ' + new Date(postTime._seconds * 1000).toLocaleTimeString()
-            list.push({
-              id: doc.id,
+            list.push({          
+              postId: doc.id,
+              userId: userId,
               userName: name,
               userImg: userImg,
               postTime: Time,
@@ -33,6 +34,7 @@ export default function FeedsScreen({navigation}) {
               liked: true,
               likes: likes,
               comments: comments,
+              liked: false,
             });
           })
 
@@ -44,24 +46,30 @@ export default function FeedsScreen({navigation}) {
       }
     }
     fetchPosts();
-
   },[])
   return (
     <View style={styles.container}>
       <FormButton title='Logout' onPress={() => logout()}></FormButton>
-      <TouchableOpacity onpress={()=> logout()}>
-        <Image style={styles.UserImage} source={{uri: user.photoURL}}/>
-      </TouchableOpacity>
+
+      <View style={{flexDirection: 'row', alignItems: 'center'}}>
+        <TouchableOpacity onPress={() => { console.log(user);
+          navigation.navigate('profileScreen', {userId: user.uid})}}>
+          <Image style={styles.UserImage} source={{uri: user.photoURL}}/>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('addPostScreen')}>
+          <View style={styles.addPostTextContainer}>
+            <Text style={styles.addPostText}>What did you eat today? Share with everyone</Text>
+          </View>          
+        </TouchableOpacity>
+      </View>
+      
       <View style={{flex:1}}>
-      <FlatList
+        <FlatList
             data={posts}
             renderItem={({item}) => (
               <PostCard
                 item={item}
-                //onDelete={handleDelete}
-                //onPress={() =>
-                //  navigation.navigate('HomeProfile', {userId: item.userId})
-                //}
+                onUserPress={() => navigation.navigate('profileScreen', {userId: item.userId})}
               />
             )}
             keyExtractor={(item) => item.id}
@@ -74,15 +82,8 @@ export default function FeedsScreen({navigation}) {
           style={styles.ButtonPost} 
           onpress={()=> navigation.navigate('addPostScreen')}>
           <Icon name={"plus-circle"} style={{color:'green', fontSize: 40}} />
-          </TouchableOpacity> */}
-          <FormButton  title='Add post' onPress={()=>navigation
-          .navigate('addPostScreen')}></FormButton>
-          {/* <Button title='Add Post' style={styles.ButtonPost} onPress={()=>navigation
-          .navigate('addPostScreen')}/> */}
-
-         
-      </View>
-     
+          </TouchableOpacity> */}    
+      </View> 
     </View>
   );
 }
@@ -99,9 +100,18 @@ const styles = StyleSheet.create({
     height: 50,
     borderRadius: 25,
     marginVertical: 10,
+    zIndex: 1,
+  },
+  addPostTextContainer:{
+    borderWidth: 1,
+    borderRadius: 15,
+    marginLeft: 10,
+    padding: 6,
+  },
+  addPostText:{
+    textSize: 17,
   },
   ButtonPost:{
-    position:'absolute',
     marginVertical:535,
     alignSelf:'flex-end',
     width:50,

@@ -3,6 +3,7 @@ import {View} from 'react-native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import SignupScreen from '../screens/SignupScreen';
 import LoginScreen from '../screens/LoginScreen';
+import ForgotPassword from '../screens/ForgotPassword';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
@@ -45,6 +46,30 @@ export default function AuthStack() {
               ), 
             })}
           />
+      <Stack.Screen
+        name="ForgotPassword"
+        component={ForgotPassword}
+        options={({navigation}) => ({
+          title: 'Reset',
+          headerTitleAlign: 'center',
+          headerStyle: {
+            backgroundColor: '#faf9ad',
+            shadowColor: '#f9fafd',
+            elevation: 0,
+          },
+          headerLeft: () => (
+            <View style={{color: '#faf9ad'}}>
+              <FontAwesome.Button 
+                name="long-arrow-left"
+                size={25}
+                backgroundColor="#faf9ad"
+                color="#333"
+                onPress={() => navigation.navigate('loginScreen')}
+              />
+            </View>
+          ), 
+        })}
+      />
     </Stack.Navigator>
   );
 }
