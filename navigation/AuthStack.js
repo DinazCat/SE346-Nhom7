@@ -40,7 +40,7 @@ export default function AuthStack() {
                     size={25}
                     backgroundColor="#faf9ad"
                     color="#333"
-                    onPress={() => navigation.navigate('loginScreen')}
+                    onPress={() => navigation.navigate('feedsScreen')}
                   />
                 </View>
               ), 

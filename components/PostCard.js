@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
-const PostCard = ({item, onUserPress}) => {
+const PostCard = ({item, onUserPress, onCommentPress,}) => {
 
     const [liked, setLiked] = useState();
     
@@ -87,7 +87,7 @@ const PostCard = ({item, onUserPress}) => {
                 </View>
             </TouchableOpacity>
             
-            <TouchableOpacity>
+            <TouchableOpacity onPress={onCommentPress}>
                 <View style={styles.Interaction}>
                     <Ionicons name="md-chatbubble-outline" size={25}/>
                     <Text style={styles.InteractionText}>

@@ -24,7 +24,7 @@ const ProfileScreen = ({navigation, route}) => {
           const {userId,post, postImg, postTime, comments,likes,name,userImg,} = doc.data();
           var Time = new Date(postTime._seconds * 1000).toDateString() + ' at ' + new Date(postTime._seconds * 1000).toLocaleTimeString()
           list.push({          
-            postId: doc.id,
+            id: doc.id,
             userId: userId,
             userName: name,
             userImg: userImg,
@@ -74,7 +74,7 @@ const ProfileScreen = ({navigation, route}) => {
           source={{uri: userData ? userData.userImg : 'https://cdn-icons-png.flaticon.com/512/1946/1946429.png'}}
         />
         <Text style={styles.userName}>{userData ? userData.name : 'No name'}</Text>
-        <Text style={styles.aboutUser}>
+        <Text multiline style={styles.aboutUser}>
         {userData ? userData.about || 'No details added.' : ''}
         </Text>
         <View style={styles.userBtnWrapper}>
@@ -92,7 +92,7 @@ const ProfileScreen = ({navigation, route}) => {
               <TouchableOpacity
                 style={styles.userBtn}
                 onPress={() => {
-                  //navigation.navigate('EditProfile');
+                  navigation.navigate('editProfileScreen');
                 }}>
                 <Text style={styles.userBtnTxt}>Edit</Text>
               </TouchableOpacity>
@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   aboutUser: {
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: '600',
     color: '#666',
     textAlign: 'center',

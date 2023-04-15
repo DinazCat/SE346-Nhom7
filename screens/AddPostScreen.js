@@ -31,37 +31,35 @@ export default AddPostScreen= function({navigation}) {
         setimage(image.path);
       });
     };
-    const submitPost = async()=>{
-      const imageUrl = await uploadImage();
-      firestore()
-      .collection('posts')
-      .doc(id)
-      .set({
-        postId: id,
-        userId: user.uid,
-        post:text,
-        postImg:imageUrl,
-        postTime:firestore.Timestamp.fromDate(new Date()),
-        likes: [],
-        comments: [],
-        name: user.displayName,
-        userImg: user.photoURL,
-
-      })
-      .then(()=>{
+    const submitPost = async() => {
+      try {
+        const imageUrl = await uploadImage();
+        const docRef = await firestore().collection('posts').add({
+          postId: null,
+          userId: user.uid,
+          post: text,
+          postImg: imageUrl,
+          postTime: firestore.Timestamp.fromDate(new Date()),
+          likes: [],
+          comments: [],
+          name: user.displayName,
+          userImg: user.photoURL,
+        });
+        await firestore().collection('posts').doc(docRef.id).update({
+          postId: docRef.id
+        });
         console.log('post added');
         Alert.alert(
           'Post uploaded',
           'Your post has been upload to the Firebase Cloud Storage successfully!'
-       );
-      // navigation.navigate('feedsScreen');
-      navigation.push('feedsScreen');
-      setText("");
-      })
-      .catch((error)=>{
+        );
+        navigation.push('feedsScreen');
+        setText('');
+      } catch (error) {
         console.log('something went wrong!', error);
-      })
+      }
     }
+    
     const uploadImage = async ()=>{
       if(image == null) return null;
         const uploadUri = image;
@@ -155,7 +153,7 @@ export default AddPostScreen= function({navigation}) {
           <TextInput
             placeholder="Bạn đang nghĩ gì?"
             multiline={true}
-            style={{fontSize: 22, marginLeft: 3}}
+            style={{fontSize: 16, marginLeft: 3}}
             placeholderTextColor={'rgba(0,0,0,0.8)'}
             onChangeText={TextChange}
           />

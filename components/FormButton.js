@@ -23,6 +23,6 @@ const styles = StyleSheet.create({
         fontSize:18,
         fontWeight: 'bold',
         fontFamily: 'Lato-Regular',
-        color: '#000'
+        color: '#222'
     }
 });

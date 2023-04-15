@@ -58,7 +58,7 @@ export default function FeedsScreen({navigation}) {
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate('addPostScreen')}>
           <View style={styles.addPostTextContainer}>
-            <Text style={styles.addPostText}>What did you eat today? Share with everyone</Text>
+            <Text>What did you eat today? Share with everyone</Text>
           </View>          
         </TouchableOpacity>
       </View>
@@ -70,9 +70,13 @@ export default function FeedsScreen({navigation}) {
               <PostCard
                 item={item}
                 onUserPress={() => navigation.navigate('profileScreen', {userId: item.userId})}
+                onCommentPress={() => navigation.navigate('commentScreen', {
+                  postId: item.postId,
+                  comments: item.comments,
+                })}
               />
             )}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => item.postId}
             // ListHeaderComponent={ListHeader}
             // ListFooterComponent={ListHeader}
             showsVerticalScrollIndicator={false}             
@@ -105,11 +109,9 @@ const styles = StyleSheet.create({
   addPostTextContainer:{
     borderWidth: 1,
     borderRadius: 15,
+    borderColor: '#666',
     marginLeft: 10,
     padding: 6,
-  },
-  addPostText:{
-    textSize: 17,
   },
   ButtonPost:{
     marginVertical:535,
