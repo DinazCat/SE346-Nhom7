@@ -70,7 +70,8 @@ const CommentScreen = ({navigation}) => {
         data={commentsList}
         renderItem={({item}) => (
             <PostComment
-                item={item}/>
+                item={item}
+                onUserPress={() => navigation.navigate('profileScreen', {userId: item.userId})}/>
         )}
         />
       <View

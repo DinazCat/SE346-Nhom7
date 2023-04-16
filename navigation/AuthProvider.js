@@ -76,6 +76,8 @@ export const AuthProvider = ({ children }) => {
                     email: auth().currentUser.email,
                     createdAt: firestore.Timestamp.fromDate(new Date()),
                     userImg: auth().currentUser.photoURL,
+                    followers: [],
+                    following: [],
                 })
                 .catch(error => {
                     console.log('Something went wrong with added user to firestore: ', error);
@@ -102,6 +104,8 @@ export const AuthProvider = ({ children }) => {
                     email: auth().currentUser.email,
                     createdAt: firestore.Timestamp.fromDate(new Date()),
                     userImg: auth().currentUser.photoURL,
+                    followers: [],
+                    following: [],
                 })
                 .catch(error => {
                     console.log('Something went wrong with added user to firestore: ', error);
@@ -145,6 +149,8 @@ export const AuthProvider = ({ children }) => {
                     email: auth().currentUser.email,
                     createdAt: firestore.Timestamp.fromDate(new Date()),
                     userImg: auth().currentUser.photoURL,
+                    followers: [],
+                    following: [],
                 })
                 .catch(error => {
                     console.log('Something went wrong with added user to firestore: ', error);

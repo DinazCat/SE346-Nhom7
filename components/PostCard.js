@@ -65,7 +65,7 @@ const PostCard = ({item, onUserPress, onCommentPress,}) => {
                 <TouchableOpacity onPress={onUserPress}>
                     <Text style={styles.UsernameText}>{item.userName}</Text>
                 </TouchableOpacity>                
-                <Text style={styles.PostTime}>{item.postTime.toString()}</Text>
+                <Text style={styles.PostTime}>{item.postTime}</Text>
             </View>
         </View>
 
@@ -116,9 +116,9 @@ const styles = StyleSheet.create({
         padding: 5,
     },
     UserImage:{
-        width: 50,
-        height: 50,
-        borderRadius: 25,
+        width: 40,
+        height: 40,
+        borderRadius: 20,
     },
     UserInfoTextContainer:{
         flexDirection: 'column',

@@ -3,13 +3,17 @@ import React, { useContext, useEffect,useState } from 'react'
 import { AuthContext } from '../navigation/AuthProvider'
 import firestore from '@react-native-firebase/firestore';
 import PostCard from '../components/PostCard';
+import AvatarComponent from '../components/AvatarComponent';
 
 const ProfileScreen = ({navigation, route}) => {
   const {user, logout} = useContext(AuthContext);
   const {userId} = route.params;
   const [posts, setPosts] = useState([]);
+  const [followers, setFollowers] = useState([]);
+  const [following, setFollowing] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [userData, setUserData] = useState(null);
+  const [profileData, setProfileData] = useState(null);
+  const [selectedTab, setSelectedTab] = useState(0);
 
   const fetchPosts = async()=>{
     try{
@@ -44,24 +48,111 @@ const ProfileScreen = ({navigation, route}) => {
     }
   }
 
-  const getUser = async() => {
+  const getProfile = async() => {
     await firestore()
     .collection('users')
     .doc(userId)
     .get()
     .then((documentSnapshot) => {
       if( documentSnapshot.exists ) {
-        setUserData(documentSnapshot.data());
+        setProfileData(documentSnapshot.data());
+        setFollowers(documentSnapshot.data().followers);
+        setFollowing(documentSnapshot.data().following);
       }
     })
   }
 
+  const getFollowStatus = followers => {
+    if(followers == null) return false;
+    let status = false;
+    if (Array.isArray(followers)) {
+      for (let i = 0; i < followers.length; i++) {
+          if (followers[i] === user.uid) {
+              status = true;
+              break;
+          }
+      }
+  }
+    return(status);
+  };
+
   useEffect(() => {
-    getUser();
+    getProfile();
     fetchPosts();
     navigation.addListener("focus", () => setLoading(!loading));
-  }, [navigation, loading]);
+  }, [navigation, loading, route.params?.userId]);
 
+  const onFollow = async (item) => {
+
+    //update followers in userprofile
+
+    let tempFollowers = item.followers ? item.followers : [];
+    if (tempFollowers.length > 0) {
+        let flag = false;
+        for (let i = 0; i < item.followers.length; i++) {                          
+            if (item.followers[i] === user.uid) {
+                tempFollowers.splice(i, 1); 
+                flag = true;
+                break;
+            }
+        } 
+        if (!flag) {tempFollowers.push(user.uid)}                    
+    } 
+    else {
+      tempFollowers.push(user.uid);
+    }
+
+    firestore()
+    .collection('users')
+    .doc(userId)
+    .update({
+      followers: tempFollowers,
+    })
+    .then(() => {
+      console.log('user updated followers!');
+    })
+    .catch(error => {
+      console.log(error);
+    });
+
+    //update following of current user   
+
+    let following = [];
+    try {
+      const snapshot = await firestore().collection('users').doc(user.uid).get();
+      following = snapshot.data().following ? snapshot.data().following : [];
+      if(following.length > 0){
+        let flag = false;
+        for (let i = 0; i < following.length; i++) {                          
+          if (following[i] === userId) {
+              following.splice(i, 1); 
+              flag = true;
+              break;
+          }
+        } 
+        if (!flag) {following.push(userId)}    
+      }
+      else {
+        following.push(userId);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
+    firestore()
+    .collection('users')
+    .doc(user.uid)
+    .update({
+      following: following,
+    })
+    .then(() => {
+      console.log('curUser updated following!');
+      getProfile();
+    })
+    .catch(error => {
+      console.log(error);
+    });
+  }
 
   return (
     <View style={{flex: 1, backgroundColor: '#fff'}}>
@@ -71,11 +162,11 @@ const ProfileScreen = ({navigation, route}) => {
         showsVerticalScrollIndicator={false}>
         <Image
           style={styles.userImg}
-          source={{uri: userData ? userData.userImg : 'https://cdn-icons-png.flaticon.com/512/1946/1946429.png'}}
+          source={{uri: profileData ? profileData.userImg : 'https://cdn-icons-png.flaticon.com/512/1946/1946429.png'}}
         />
-        <Text style={styles.userName}>{userData ? userData.name : 'No name'}</Text>
+        <Text style={styles.userName}>{profileData ? profileData.name : ''}</Text>
         <Text multiline style={styles.aboutUser}>
-        {userData ? userData.about || 'No details added.' : ''}
+        {profileData ? profileData.about || 'No details added.' : ''}
         </Text>
         <View style={styles.userBtnWrapper}>
           {(userId != user.uid) ? (
@@ -83,8 +174,8 @@ const ProfileScreen = ({navigation, route}) => {
               <TouchableOpacity style={styles.userBtn} onPress={() => {}}>
                 <Text style={styles.userBtnTxt}>Message</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.userBtn} onPress={() => {}}>
-                <Text style={styles.userBtnTxt}>Follow</Text>
+              <TouchableOpacity style={styles.userBtn} onPress={() => onFollow(profileData)}>
+                <Text style={styles.userBtnTxt}>{getFollowStatus(profileData ? profileData.followers : null) ? 'Unfollow' : 'Follow'}</Text>
               </TouchableOpacity>
             </>
           ) : (
@@ -104,23 +195,49 @@ const ProfileScreen = ({navigation, route}) => {
         </View>
 
         <View style={styles.userInfoWrapper}>
-          <View style={styles.userInfoItem}>
-            <Text style={styles.userInfoTitle}>{posts.length}</Text>
-            <Text style={styles.userInfoSubTitle}>Posts</Text>
-          </View>
-          <View style={styles.userInfoItem}>
-            <Text style={styles.userInfoTitle}>0</Text>
-            <Text style={styles.userInfoSubTitle}>Followers</Text>
-          </View>
-          <View style={styles.userInfoItem}>
-            <Text style={styles.userInfoTitle}>0</Text>
-            <Text style={styles.userInfoSubTitle}>Following</Text>
-          </View>
+          <TouchableOpacity onPress={() => {setSelectedTab(0)}}>
+            <View style={[styles.userInfoItem, {backgroundColor: selectedTab == 0 ? '#D3FBB8' : '#fff'}]}>
+              <Text style={styles.userInfoTitle}>{posts.length}</Text>
+              <Text style={styles.userInfoSubTitle}>Posts</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => {setSelectedTab(1)}}>
+            <View style={[styles.userInfoItem, {backgroundColor: selectedTab == 1 ? '#FAF7A8' : '#fff'}]}>
+              <Text style={styles.userInfoTitle}>{profileData ? profileData.followers.length : 0}</Text>
+              <Text style={styles.userInfoSubTitle}>Followers</Text>
+            </View>
+          </TouchableOpacity>  
+          <TouchableOpacity onPress={() => {setSelectedTab(2)}}>
+            <View style={[styles.userInfoItem, {backgroundColor: selectedTab == 2 ? '#f545' : '#fff'}]}>
+              <Text style={styles.userInfoTitle}>{profileData ? profileData.following.length : 0}</Text>
+              <Text style={styles.userInfoSubTitle}>Following</Text>
+            </View>
+          </TouchableOpacity>                
         </View>
-
-        {posts.map((item) => (
-          <PostCard key={item.id} item={item} />
-        ))}
+        {selectedTab == 0 ? (
+          <>
+            {posts.map((item) => (
+            <PostCard key={item.id} item={item} />
+            ))}
+          </>      
+        ) : selectedTab == 1 ? (
+          <>
+            {followers.map((item, index) => (
+            <AvatarComponent key={index} item={item}
+            onFollowsChange={(followers, following) => setProfileData({ ...profileData, followers: followers, following: following })}
+            onUserPress={() => navigation.push('profileScreen', {userId: item})}/>
+            ))}
+          </>      
+        ) : (
+          <>
+            {following.map((item, index) => (
+            <AvatarComponent key={index} item={item}
+            onFollowsChange={(followers, following) => setProfileData({ ...profileData, followers: followers, following: following })}
+            onUserPress={() => navigation.push('profileScreen', {userId: item})}
+            />
+            ))}
+          </>  
+        )}       
       </ScrollView>
     </View>
   )
@@ -132,12 +249,13 @@ const styles = StyleSheet.create({
   container:{
     flex: 1,
     backgroundColor: '#fff',
-    padding: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 20,
   },
   userImg: {
-    height: 150,
-    width: 150,
-    borderRadius: 75,
+    height: 130,
+    width: 130,
+    borderRadius: 65,
   },
   userName: {
     fontSize: 18,
@@ -159,7 +277,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   userBtn: {
-    borderColor: '#2e64e5',
+    borderColor: '#66cc00',
     borderWidth: 2,
     borderRadius: 3,
     paddingVertical: 8,
@@ -167,7 +285,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
   },
   userBtnTxt: {
-    color: '#2e64e5',
+    color: '#66cc00',
   },
   userInfoWrapper: {
     flexDirection: 'row',
@@ -177,6 +295,9 @@ const styles = StyleSheet.create({
   },
   userInfoItem: {
     justifyContent: 'center',
+    width: 100,
+    borderRadius: 5,
+    paddingVertical: 2
   },
   userInfoTitle: {
     fontSize: 20,

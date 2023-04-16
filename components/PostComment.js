@@ -1,14 +1,17 @@
-import { StyleSheet, Text, View, Image } from 'react-native'
+import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native'
 import React from 'react'
 
-const PostComment = ({item}) => {
+const PostComment = ({item, onUserPress}) => {
   return (
     <View
         style={styles.container}>
-        <Image
-            source={{uri: item.profile ? item.profile : 'https://cdn-icons-png.flaticon.com/512/1946/1946429.png'}}
-            style={styles.image}
-        />
+        <TouchableOpacity onPress={onUserPress}>
+            <Image
+                source={{uri: item.profile ? item.profile : 'https://cdn-icons-png.flaticon.com/512/1946/1946429.png'}}
+                style={styles.image}
+            />
+        </TouchableOpacity>
+        
         <View style={styles.textContainer}>
             <Text style={{fontSize: 16, fontWeight: '600'}}>
                 {item.name}
