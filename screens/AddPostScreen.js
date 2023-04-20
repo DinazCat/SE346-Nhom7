@@ -7,7 +7,8 @@ import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import { AuthContext } from '../navigation/AuthProvider';
 export default AddPostScreen= function({navigation}) {
-    const [image,setimage] = useState(null);
+    const [image,setimage] = useState([]);
+    const [imageUrl,setimageUrl] = useState([]);
     const [text, setText] = useState('');
     const [uploading, setUploading] = useState(false);
     const [transferred, setTransferred] = useState(0);
@@ -26,14 +27,19 @@ export default AddPostScreen= function({navigation}) {
         width: 300,
         height: 400,
         cropping: true,
-      }).then(image => {
-        // console.log(image);
-        setimage(image.path);
+      }).then(img => {
+        let image2 = image.slice();
+        image2.push(img);
+        setimage(image2);
       });
     };
     const submitPost = async() => {
       try {
-        const imageUrl = await uploadImage();
+        for(let i = 0; i < image.length; i++)
+        {
+          imageUrl[i] = await uploadImage(image[i].path);
+        }
+       // const imageUrl = await uploadImage();
         const docRef = await firestore().collection('posts').add({
           postId: null,
           userId: user.uid,
@@ -60,7 +66,7 @@ export default AddPostScreen= function({navigation}) {
       }
     }
     
-    const uploadImage = async ()=>{
+    const uploadImage = async (image)=>{
       if(image == null) return null;
         const uploadUri = image;
         let filename = uploadUri.substring(uploadUri.lastIndexOf('/')+1);
@@ -157,7 +163,7 @@ export default AddPostScreen= function({navigation}) {
             placeholderTextColor={'rgba(0,0,0,0.8)'}
             onChangeText={TextChange}
           />
-          {image == null ? (
+          {image.length==0? (
             <View>
               <Image
                 source={require('../assets/MonAn.jpg')}
@@ -174,12 +180,12 @@ export default AddPostScreen= function({navigation}) {
               </Text>
             </View>
           ) : null}
-          {/* <ScrollView style={{flexDirection:'column', marginTop:70}}>
+          <ScrollView style={{flexDirection:'column', marginTop:70}}>
             {
               image.map(each=>{
                 return(  
                     <View >
-                      <Image source={{uri:each.uri}} style={{height:200, width:400, marginTop:5}} resizeMode='cover'/>
+                      <Image source={{uri:each.path}} style={{height:200, width:400, marginTop:5}} resizeMode='cover'/>
                       <TouchableOpacity style={{ marginTop:3, position:'absolute'}} onPress={()=>{
                         let filterRssult=image.filter(function(element){
                           return element !== each;
@@ -194,12 +200,12 @@ export default AddPostScreen= function({navigation}) {
              
             }
   
-          </ScrollView> */}
-         {image!=null? <Image
+          </ScrollView>
+         {/* {image!=null? <Image
             source={{uri: image}}
             style={{height: 300, width: 400, marginTop: 70}}
             resizeMode="contain"
-          />:null}
+          />:null} */}
         </View>
         <View style={{marginTop: 10}}>
           <TouchableOpacity

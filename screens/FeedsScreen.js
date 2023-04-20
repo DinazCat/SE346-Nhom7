@@ -56,7 +56,7 @@ export default function FeedsScreen({navigation}) {
           navigation.navigate('profileScreen', {userId: user.uid})}}>
           <Image style={styles.UserImage} source={{uri: user.photoURL}}/>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('addPostScreen')}>
+        <TouchableOpacity onPress={() => navigation.push('addPostScreen')}>
           <View style={styles.addPostTextContainer}>
             <Text>What did you eat today? Share with everyone</Text>
           </View>          
@@ -74,6 +74,7 @@ export default function FeedsScreen({navigation}) {
                   postId: item.postId,
                   comments: item.comments,
                 })}
+                onImagePress={()=>{navigation.navigate('detailScreen',{item})}}
               />
             )}
             keyExtractor={(item) => item.postId}

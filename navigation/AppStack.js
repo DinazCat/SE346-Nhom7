@@ -5,6 +5,7 @@ import AddPostScreen from '../screens/AddPostScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import CommentScreen from '../screens/CommentScreen';
 import EditProfileScreen from '../screens/EditProfileScreen';
+import DetailPostScreen from '../screens/DetailPost';
 const Stack = createNativeStackNavigator();
 
 export default function AppStack() {
@@ -28,6 +29,11 @@ export default function AppStack() {
       <Stack.Screen 
         name='commentScreen' 
         component={CommentScreen} 
+        options={{ header: () => null }}
+      />
+       <Stack.Screen 
+        name='detailScreen' 
+        component={DetailPostScreen} 
         options={{ header: () => null }}
       />
       <Stack.Screen

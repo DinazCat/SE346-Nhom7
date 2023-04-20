@@ -3,13 +3,12 @@ import React, { useEffect, useState } from 'react'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
-const PostCard = ({item, onUserPress, onCommentPress,}) => {
+const PostCard = ({item, onUserPress, onCommentPress,onImagePress}) => {
 
     const [liked, setLiked] = useState();
-    
+
     useEffect(() => {
         getLikeStatus(item.likes);
-        
     })
 
     const getLikeStatus = (likes) => {
@@ -54,6 +53,101 @@ const PostCard = ({item, onUserPress, onCommentPress,}) => {
           .catch(error => {});
         setLiked(!liked);
       };
+      function bocuc(){
+        if(item.postImg.length== 1)
+        {
+          return(
+            <View>
+            <TouchableOpacity onPress={onImagePress}>
+            <Image source={{uri:item.postImg[0]}} style={styles.PostImage1} resizeMode='cover'/>
+            </TouchableOpacity>
+            </View>
+    
+          )
+        }
+        else if(item.postImg.length == 2)
+        {
+          return(
+            <View style={{flexDirection:'row'}}>
+                <TouchableOpacity onPress={onImagePress}>
+            <Image source={{uri:item.postImg[0]}} style={styles.PostImage2} resizeMode='cover'/>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={onImagePress}>
+            <Image source={{uri:item.postImg[1]}} style={[styles.PostImage2, {marginLeft:3}]} resizeMode='cover'/>
+            </TouchableOpacity>
+            </View>
+          )
+        }
+        else if(item.postImg.length== 3)
+        {
+          return(
+            <View style={{flexDirection:'column'}}>
+            <TouchableOpacity onPress={onImagePress}>
+            <Image source={{uri:item.postImg[0]}} style={styles.PostImage1} resizeMode='cover'/>
+            </TouchableOpacity>
+           
+            <View style={{flexDirection:'row'}}>
+            <TouchableOpacity onPress={onImagePress}>
+            <Image source={{uri:item.postImg[1]}} style={styles.PostImage3}  resizeMode='cover'/>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={onImagePress}>
+            <Image source={{uri:item.postImg[2]}} style={[styles.PostImage2, {marginLeft:3}]} resizeMode='cover'/>
+            </TouchableOpacity>
+            </View>
+            </View>
+          )
+        }
+        else if(item.postImg.length == 4)
+        {
+          return(
+            <View style={{flexDirection:'column'}}>
+              <View style={{flexDirection:'row'}}>
+              <TouchableOpacity onPress={onImagePress}>
+              <Image source={{uri:item.postImg[0]}} style={styles.PostImage3}  resizeMode='cover'/>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={onImagePress}>
+              <Image source={{uri:item.postImg[1]}} style={[styles.PostImage2, {marginLeft:3}]} resizeMode='cover'/>
+              </TouchableOpacity>
+              </View>
+              <View style={{flexDirection:'row'}}>
+              <TouchableOpacity onPress={onImagePress}>
+              <Image source={{uri:item.postImg[2]}} style={styles.PostImage3} resizeMode='cover'/>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={onImagePress}>
+              <Image source={{uri:item.postImg[3]}} style={[styles.PostImage2, {marginLeft:3}]} resizeMode='cover'/>
+              </TouchableOpacity>
+              </View>
+            </View>
+          )
+        }
+        else if(item.postImg.length > 4)
+        {
+          return(
+            <View style={{flexDirection:'column'}}>
+              <View style={{flexDirection:'row'}}>
+              <TouchableOpacity onPress={onImagePress}>
+              <Image source={{uri:item.postImg[0]}} style={styles.PostImage3} resizeMode='cover'/>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={onImagePress}>
+              <Image source={{uri:item.postImg[1]}} style={[styles.PostImage2, {marginLeft:3}]} resizeMode='cover'/>
+              </TouchableOpacity>
+              </View>
+              <View style={{flexDirection:'row'}}>
+              <TouchableOpacity onPress={onImagePress}>
+              <Image source={{uri:item.postImg[2]}} style={styles.PostImage3} resizeMode='cover'/>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={onImagePress}>
+              <View style={{ justifyContent:'center'}}>
+              <Image source={{uri:item.postImg[3]}} style={[styles.PostImage2, {marginLeft:3, opacity:.4}]} resizeMode='cover'/>
+              <Text style={styles.CountText}>+{item.postImg.length-3}</Text>
+              </View>
+              </TouchableOpacity>
+              </View>
+            </View>
+          )
+        }
+        else return null
+      }
  
   return (
     <View style={styles.Container}>
@@ -71,8 +165,9 @@ const PostCard = ({item, onUserPress, onCommentPress,}) => {
 
         <Text style={styles.PostText}>{item.postText}</Text>
 
-        <Image style={[styles.PostImgsContainer, {height: item.postImg ? 250 : 0}]} 
-            source={{uri:item.postImg}} />   
+        {/* <Image style={[styles.PostImgsContainer, {height: item.postImg[0] ? 250 : 0}]} 
+            source={{uri:item.postImg[0]}} />    */}
+            {bocuc()}
 
         <View style={styles.devider}/>
 
@@ -141,12 +236,31 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15,
         marginBottom: 15,
     },
+    CountText:{
+        position:'absolute',
+        fontWeight:600, 
+        alignSelf:'center', 
+        color:'#FFCC00', 
+        fontSize:30
+    },
     PostImgsContainer:{
         width: '100%', 
     
     },
-    PostImage:{
-
+    PostImage1:{
+        height:200,
+        width:400,
+        marginTop:5,
+    },
+    PostImage2:{
+        height:200,
+        width:198, 
+        marginTop:5
+    },
+    PostImage3:{
+        height:200, 
+        width:198, 
+        marginTop:5
     },
     devider:{
         borderBottomColor: '#DDDDDD',
