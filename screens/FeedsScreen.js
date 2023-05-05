@@ -11,6 +11,7 @@ export default function FeedsScreen({navigation}) {
   const {user, logout} = useContext(AuthContext);
   const [posts, setPosts]= useState(null);
   const [loading, setLoading] = useState(true);
+
   useEffect(()=>{
     const fetchPosts = async()=>{
       try{
@@ -21,7 +22,7 @@ export default function FeedsScreen({navigation}) {
         .get()
         .then((querySnapshot)=>{
           querySnapshot.forEach(doc =>{
-            const {userId,post, postImg, postTime, comments,likes,name,userImg,} = doc.data();
+            const {userId,postFoodName, postFoodRating, postFoodMaking, postFoodIngredient, postFoodSummary, postImg, postTime, comments,likes,name,userImg,} = doc.data();
             var Time = new Date(postTime._seconds * 1000).toDateString() + ' at ' + new Date(postTime._seconds * 1000).toLocaleTimeString()
             list.push({          
               postId: doc.id,
@@ -29,7 +30,11 @@ export default function FeedsScreen({navigation}) {
               userName: name,
               userImg: userImg,
               postTime: Time,
-              postText: post,
+              postFoodName: postFoodName,
+              postFoodRating: postFoodRating,
+              postFoodIngredient:postFoodIngredient,
+              postFoodMaking: postFoodMaking,
+              postFoodSummary: postFoodSummary,
               postImg: postImg,
               liked: true,
               likes: likes,
@@ -49,7 +54,10 @@ export default function FeedsScreen({navigation}) {
   },[])
   return (
     <View style={styles.container}>
-      <FormButton title='Logout' onPress={() => logout()}></FormButton>
+      {/* <FormButton title='Logout' onPress={() => logout()}></FormButton> */}
+      <TouchableOpacity onPress={() => navigation.push("searchScreen")}>
+            <Icon name={'search'} style={styles.ButtonSearch} />
+       </TouchableOpacity>
 
       <View style={{flexDirection: 'row', alignItems: 'center'}}>
         <TouchableOpacity onPress={() => { console.log(user);
@@ -119,5 +127,10 @@ const styles = StyleSheet.create({
     alignSelf:'flex-end',
     width:50,
     height:40
+  },
+  ButtonSearch:{
+    color: 'black', 
+    fontSize: 25, 
+    padding: 5
   }
 })

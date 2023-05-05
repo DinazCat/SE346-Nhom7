@@ -9,11 +9,41 @@ import { AuthContext } from '../navigation/AuthProvider';
 export default AddPostScreen= function({navigation}) {
     const [image,setimage] = useState([]);
     const [imageUrl,setimageUrl] = useState([]);
-    const [text, setText] = useState('');
+    const [FoodName, setFoodName] = useState("");
+    const [Ingredient, setIngredient] = useState("");
+    const [Making, setMaking] = useState("");
+    const [Summary, setSummary] = useState("");
     const [uploading, setUploading] = useState(false);
     const [transferred, setTransferred] = useState(0);
+    const [selectedTab, setSelectedTab] = useState(0);
+    const [defaultRating, setdefaulRating] = useState(0);
+    const [maxRating, setmaxRating] = useState([1,2,3,4,5])
+    const starImgFilled = "https://github.com/tranhonghan/images/blob/main/star_filled.png?raw=true";
+    const starImgCorner = "https://raw.githubusercontent.com/tranhonghan/images/main/star_corner.png";
     const {user} = useContext(AuthContext);
-    const TextChange = (Text)=>{setText(Text)};
+    const TextChangeFoodName = (Text)=>{setFoodName(Text)};
+    const TextChangeIngredient = (Text)=>{setIngredient(Text)};
+    const TextChangeMaking = (Text)=>{setMaking(Text)};
+    const TextChangeSummary= (Text)=>{setSummary(Text)};
+    const CustomRatingBar = () => {
+      return (
+        <View style={styles.customRatingBarStyle}>
+          {
+            maxRating.map((item, key)=>{
+              return (
+                <TouchableOpacity
+                activeOpacity={0.7}
+                key={item}
+                onPress={()=> setdefaulRating(item)}>
+                  <Image style={styles.starImgStyle}
+                  source={item <= defaultRating ? {uri: starImgFilled} : {uri:starImgCorner}}/>
+                </TouchableOpacity>
+              )
+            })
+          }
+        </View>
+      )
+    }
     function allowPost()
     {
       if(image!=null || text !='')
@@ -43,7 +73,11 @@ export default AddPostScreen= function({navigation}) {
         const docRef = await firestore().collection('posts').add({
           postId: null,
           userId: user.uid,
-          post: text,
+          postFoodName: FoodName,
+          postFoodRating:defaultRating,       
+          postFoodIngredient:Ingredient,  
+          postFoodMaking:Making,  
+          postFoodSummary:Summary,  
           postImg: imageUrl,
           postTime: firestore.Timestamp.fromDate(new Date()),
           likes: [],
@@ -155,14 +189,54 @@ export default AddPostScreen= function({navigation}) {
             {user.displayName}
           </Text>
         </View>
-        <View style={{height: 545, flexDirection: 'column'}}>
-          <TextInput
-            placeholder="Bạn đang nghĩ gì?"
-            multiline={true}
-            style={{fontSize: 16, marginLeft: 3}}
-            placeholderTextColor={'rgba(0,0,0,0.8)'}
-            onChangeText={TextChange}
-          />
+        {selectedTab == 0 ? (
+          <>
+           <View style={styles.TextBox}>
+           <Icon name={"pencil-alt"} style={{ color: "#FFCC00", fontSize: 30, marginLeft:340,position:"absolute" }} />
+           <ScrollView>
+             <Text style={styles.TextStyle}>Tên món ăn</Text>
+           <TextInput
+             multiline={true}
+             style={{fontSize: 16, marginLeft: 3}}
+             value={FoodName}
+             onChangeText={TextChangeFoodName}
+           />
+           <View style={{height:1, width:'90%', backgroundColor: 'black', alignSelf:"center"}}/>
+            <Text style={styles.TextStyle}>Độ khó</Text>
+            <CustomRatingBar/>
+            <Text style={styles.TextStyle}>Nguyên liệu</Text>
+           <TextInput
+             multiline={true}
+             value={Ingredient}
+             style={{fontSize: 16, marginLeft: 3}}
+             onChangeText={TextChangeIngredient}
+           />
+            <View style={{height:1, width:'90%', backgroundColor: 'black', alignSelf:"center"}}/>
+           <Text style={styles.TextStyle}>Cách làm</Text>
+           <TextInput
+             multiline={true}
+             value={Making}
+             style={{fontSize: 16, marginLeft: 3}}
+             onChangeText={TextChangeMaking}
+           />
+            <View style={{height:1, width:'90%', backgroundColor: 'black', alignSelf:"center"}}/>
+           <Text style={styles.TextStyle}>Tổng kết</Text>
+           <TextInput
+             multiline={true}
+             value={Summary}
+             style={{fontSize: 16, marginLeft: 3}}
+             onChangeText={TextChangeSummary}
+           />
+            <View style={{height:1, width:'90%', backgroundColor: 'black', alignSelf:"center"}}/>
+           </ScrollView>
+ 
+           </View>  
+           </>  
+        ) : (
+          <View style={{height: 545, flexDirection: 'column'}}>
+         
+          
+          
           {image.length==0? (
             <View>
               <Image
@@ -180,7 +254,7 @@ export default AddPostScreen= function({navigation}) {
               </Text>
             </View>
           ) : null}
-          <ScrollView style={{flexDirection:'column', marginTop:70}}>
+          <ScrollView style={{flexDirection:'column', }}>
             {
               image.map(each=>{
                 return(  
@@ -201,21 +275,28 @@ export default AddPostScreen= function({navigation}) {
             }
   
           </ScrollView>
-         {/* {image!=null? <Image
-            source={{uri: image}}
-            style={{height: 300, width: 400, marginTop: 70}}
-            resizeMode="contain"
-          />:null} */}
-        </View>
-        <View style={{marginTop: 10}}>
+          <TouchableOpacity onPress={pickImageAsync}>
+          <Icon
+              name={'images'}
+              style={{
+                marginLeft: 300,
+                color: 'green',
+                fontSize: 50,
+                alignSelf: 'center',
+              }}
+            /> 
+          </TouchableOpacity>
+        </View>     
+        )} 
+       
+        <View style={styles.Wrapper}>
           <TouchableOpacity
             style={{
               height: 42,
               flexDirection: 'row',
-              backgroundColor: '#FFCC00',
             }}
-            onPress={pickImageAsync}>
-            <Icon
+            onPress={() => {setSelectedTab(0)}}>
+               {/* <Icon
               name={'images'}
               style={{
                 marginLeft: 4,
@@ -223,16 +304,36 @@ export default AddPostScreen= function({navigation}) {
                 fontSize: 30,
                 alignSelf: 'center',
               }}
-            />
+            /> */}
+            <View style={{justifyContent: 'center',backgroundColor: selectedTab == 0 ? '#f545' : '#FFCC00'}}>
             <Text
               style={{
-                marginLeft: 10,
                 alignSelf: 'center',
                 fontSize: 16,
                 fontWeight: '600',
               }}>
-              +Thêm ảnh
+              Bài viết
             </Text>
+            </View>
+            
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              height: 42,
+              flexDirection: 'row',
+            }}
+            // onPress={pickImageAsync}
+            onPress={() => {setSelectedTab(1)}}>
+            <View style={{justifyContent: 'center',backgroundColor: selectedTab == 1 ? '#f545' : '#FFCC00'}}>
+            <Text
+              style={{
+                alignSelf: 'center',
+                fontSize: 16,
+                fontWeight: '600',
+              }}>
+              Thêm ảnh
+            </Text>
+            </View>
           </TouchableOpacity>
         </View>
       </View>
@@ -244,5 +345,41 @@ export default AddPostScreen= function({navigation}) {
       flex: 1,
       backgroundColor: '#fff',
     },
+    TextBox:{
+      height:545,
+      width:"95%", 
+      borderColor:"black", 
+      borderWidth:1, 
+      borderRadius:20, 
+      marginLeft:10,
+    },
+    TextStyle:
+    {
+      fontSize: 18, 
+      marginLeft: 6,
+      marginTop:20,
+      color:"black",
+      fontWeight:"600"
+
+    },
+    Wrapper: {
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      alignItems:'center',
+      width: '100%',
+      marginTop: 10,
+      backgroundColor: '#FFCC00'
+    },
+    customRatingBarStyle:{
+      flexDirection:"row",
+      marginLeft:6,
+      marginTop:5
+    },
+    starImgStyle:{
+      width:30,
+      height:30,
+      resizeMode:'cover'
+    }
+
   })
   

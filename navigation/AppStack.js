@@ -6,6 +6,7 @@ import ProfileScreen from '../screens/ProfileScreen';
 import CommentScreen from '../screens/CommentScreen';
 import EditProfileScreen from '../screens/EditProfileScreen';
 import DetailPostScreen from '../screens/DetailPost';
+import SearchScreen from '../screens/SearchScreen';
 const Stack = createNativeStackNavigator();
 
 export default function AppStack() {
@@ -14,6 +15,11 @@ export default function AppStack() {
       <Stack.Screen 
         name='feedsScreen' 
         component={FeedsScreen} 
+        options={{ header: () => null }}
+      />
+       <Stack.Screen 
+        name='searchScreen' 
+        component={SearchScreen} 
         options={{ header: () => null }}
       />
       <Stack.Screen 

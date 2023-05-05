@@ -6,6 +6,10 @@ import auth from '@react-native-firebase/auth';
 const PostCard = ({item, onUserPress, onCommentPress,onImagePress}) => {
 
     const [liked, setLiked] = useState();
+    const [defaultRating, setdefaulRating] = useState(item.postFoodRating);
+    const [maxRating, setmaxRating] = useState([1,2,3,4,5])
+    const starImgFilled = "https://github.com/tranhonghan/images/blob/main/star_filled.png?raw=true";
+    const starImgCorner = "https://raw.githubusercontent.com/tranhonghan/images/main/star_corner.png";
 
     useEffect(() => {
         getLikeStatus(item.likes);
@@ -148,7 +152,20 @@ const PostCard = ({item, onUserPress, onCommentPress,onImagePress}) => {
         }
         else return null
       }
- 
+      const CustomRatingBar = () => {
+        return (
+          <View style={styles.customRatingBarStyle}>
+            {
+              maxRating.map((item, key)=>{
+                return (
+                    <Image style={styles.starImgStyle}
+                    source={item <= defaultRating ? {uri: starImgFilled} : {uri:starImgCorner}}/>
+                )
+              })
+            }
+          </View>
+        )
+      }
   return (
     <View style={styles.Container}>
         <View style={styles.UserInfoContainer}>
@@ -162,8 +179,20 @@ const PostCard = ({item, onUserPress, onCommentPress,onImagePress}) => {
                 <Text style={styles.PostTime}>{item.postTime}</Text>
             </View>
         </View>
-
-        <Text style={styles.PostText}>{item.postText}</Text>
+        <View style={{flexDirection:"row"}}>
+        <Text style={styles.PostTitle}>Tên món ăn:</Text>
+        <Text style={styles.PostText}>{item.postFoodName}</Text>
+        </View>
+        <View style={{flexDirection:"row"}}>
+        <Text style={styles.PostTitle}>Độ khó:</Text>
+        <CustomRatingBar/>
+        </View>
+        <Text style={styles.PostTitle}>Nguyên liệu:</Text>
+        <Text style={styles.PostText}>{item.postFoodIngredient}</Text>
+        <Text style={styles.PostTitle}>Cách làm:</Text>
+        <Text style={styles.PostText}>{item.postFoodMaking}</Text>
+        <Text style={styles.PostTitle}>Tổng kết:</Text>
+        <Text style={styles.PostText}>{item.postFoodSummary}</Text>
 
         {/* <Image style={[styles.PostImgsContainer, {height: item.postImg[0] ? 250 : 0}]} 
             source={{uri:item.postImg[0]}} />    */}
@@ -234,7 +263,15 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontFamily: 'Lato-Regular',
         paddingHorizontal: 15,
-        marginBottom: 15,
+        marginBottom: 10,
+    },
+    PostTitle:{
+        fontSize: 16,
+        fontFamily: 'Lato-Regular',
+        paddingHorizontal: 15,
+        marginBottom: 10,
+        fontWeight:"600",
+        color:"black"
     },
     CountText:{
         position:'absolute',
@@ -287,6 +324,17 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginTop: 5,
         marginLeft: 5,
+    },
+    customRatingBarStyle:{
+        flexDirection:"row",
+        marginLeft:12,
+        marginBottom: 10,
+        paddingHorizontal: 15,
+    },
+    starImgStyle:{
+        width:20,
+        height:20,
+        resizeMode:'cover'
     }
 
 })
