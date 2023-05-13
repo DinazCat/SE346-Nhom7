@@ -7,6 +7,7 @@ import CommentScreen from '../screens/CommentScreen';
 import EditProfileScreen from '../screens/EditProfileScreen';
 import DetailPostScreen from '../screens/DetailPost';
 import SearchScreen from '../screens/SearchScreen';
+import EditComment from '../screens/EditComment';
 const Stack = createNativeStackNavigator();
 
 export default function AppStack() {
@@ -55,7 +56,12 @@ export default function AppStack() {
             elevation: 0,
           },
         }}
-    />
+      />
+      <Stack.Screen 
+        name='editComment' 
+        component={EditComment} 
+        options={{ header: () => null }}
+      />
     </Stack.Navigator>
   );
 }

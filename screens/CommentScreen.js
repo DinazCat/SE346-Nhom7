@@ -9,19 +9,21 @@ import PostComment from '../components/PostComment';
 const CommentScreen = ({navigation}) => {
   const route = useRoute();
   const [comment, setComment] = useState('');
-  const [commentsList, setCommentsList] = useState([]);
+  const [commentList, setCommentList] = useState([]);
   const inputRef = useRef();
   const {user} = useContext(AuthContext);
+  const onCommentChanged = route.params.onCommentChanged
 
   useEffect(() => {
-    postId = route.params.postId;
-    comments = route.params.comments;
-    setCommentsList(comments);
-  }, []);
+    postId = route.params?.postId;
+    if (route.params?.comments) {
+      setCommentList(route.params.comments);
+    }
+  }, [route.params?.comments]);
 
   const handlePostComment = () => {
     if(comment.length > 0){
-      let temComments = comments;
+      let temComments = commentList;
       temComments.push({
         userId: user.uid,
         comment: comment,
@@ -37,20 +39,46 @@ const CommentScreen = ({navigation}) => {
         })
         .then(() => {
           console.log('post updated comment!');
+          setComment('');
           getNewComments();
+          onCommentChanged();
         })
         .catch(error => {});
       inputRef.current.clear();
     }
   };
+  handleDeleteComment = (item, index) =>{
+    let temComments = commentList;
+      temComments.splice(index, 1);
+      firestore()
+        .collection('posts')
+        .doc(postId)
+        .update({
+          comments: temComments,
+        })
+        .then(() => {
+          console.log('Comment deleted successfully');
+          getNewComments();
+          onCommentChanged();
+        })
+        .catch(error => {
+          console.log('Error deleting comment: ', error);
+        });
+  }
+  
   const getNewComments = () => {
     firestore()
       .collection('posts')
       .doc(postId)
       .get()
       .then(documentSnapshot => {
-        setCommentsList(documentSnapshot.data().comments);
+        setCommentList(documentSnapshot.data().comments);
       });
+  };
+
+  const handleCommentUpdated = () => {
+    getNewComments();
+    onCommentChanged();
   };
 
   return (
@@ -67,11 +95,17 @@ const CommentScreen = ({navigation}) => {
         <Text style={styles.headerText}>Comments</Text>       
       </View>
       <FlatList
-        data={commentsList}
-        renderItem={({item}) => (
+        data={commentList}
+        renderItem={({item, index}) => (
             <PostComment
                 item={item}
-                onUserPress={() => navigation.navigate('profileScreen', {userId: item.userId})}/>
+                onUserPress={() => navigation.navigate('profileScreen', {userId: item.userId})}
+                onDelete={() => handleDeleteComment(item, index)}
+                onEdit={() => navigation.navigate('editComment', {
+                  item: item,
+                  cmtId: index,
+                  onCommentUpdated: handleCommentUpdated 
+                })}/>
         )}
         />
       <View

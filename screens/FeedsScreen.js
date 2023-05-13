@@ -12,49 +12,54 @@ export default function FeedsScreen({navigation}) {
   const [posts, setPosts]= useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(()=>{
-    const fetchPosts = async()=>{
-      try{
-        const list = [];
-        await firestore()
-        .collection('posts')
-        .orderBy('postTime', 'desc')
-        .get()
-        .then((querySnapshot)=>{
-          querySnapshot.forEach(doc =>{
-            const {userId,postFoodName, postFoodRating, postFoodMaking, postFoodIngredient, postFoodSummary, postImg, postTime, comments,likes,name,userImg,} = doc.data();
-            var Time = new Date(postTime._seconds * 1000).toDateString() + ' at ' + new Date(postTime._seconds * 1000).toLocaleTimeString()
-            list.push({          
-              postId: doc.id,
-              userId: userId,
-              userName: name,
-              userImg: userImg,
-              postTime: Time,
-              postFoodName: postFoodName,
-              postFoodRating: postFoodRating,
-              postFoodIngredient:postFoodIngredient,
-              postFoodMaking: postFoodMaking,
-              postFoodSummary: postFoodSummary,
-              postImg: postImg,
-              liked: true,
-              likes: likes,
-              comments: comments,
-              liked: false,
-            });
-          })
-
+  const fetchPosts = async()=>{
+    try{
+      const list = [];
+      await firestore()
+      .collection('posts')
+      .orderBy('postTime', 'desc')
+      .get()
+      .then((querySnapshot)=>{
+        querySnapshot.forEach(doc =>{
+          const {userId,postFoodName, postFoodRating, postFoodMaking, postFoodIngredient, postFoodSummary, postImg, postTime, comments,likes,name,userImg,} = doc.data();
+          var Time = new Date(postTime._seconds * 1000).toDateString() + ' at ' + new Date(postTime._seconds * 1000).toLocaleTimeString()
+          list.push({          
+            postId: doc.id,
+            userId: userId,
+            userName: name,
+            userImg: userImg,
+            postTime: Time,
+            postFoodName: postFoodName,
+            postFoodRating: postFoodRating,
+            postFoodIngredient:postFoodIngredient,
+            postFoodMaking: postFoodMaking,
+            postFoodSummary: postFoodSummary,
+            postImg: postImg,
+            liked: true,
+            likes: likes,
+            comments: comments,
+            liked: false,
+          });
         })
-        setPosts(list);
-        if(loading){ setLoading(false) };
-      } catch(e){
-        console.log(e);
-      }
+
+      })
+      setPosts(list);
+      if(loading){ setLoading(false) };
+    } catch(e){
+      console.log(e);
     }
+  }
+  
+  useEffect(()=>{
     fetchPosts();
   },[])
+  
+
+  const handleCommentChanged = () => {
+    fetchPosts();
+  };
   return (
     <View style={styles.container}>
-      {/* <FormButton title='Logout' onPress={() => logout()}></FormButton> */}
       <TouchableOpacity onPress={() => navigation.push("searchScreen")}>
             <Icon name={'search'} style={styles.ButtonSearch} />
        </TouchableOpacity>
@@ -81,6 +86,7 @@ export default function FeedsScreen({navigation}) {
                 onCommentPress={() => navigation.navigate('commentScreen', {
                   postId: item.postId,
                   comments: item.comments,
+                  onCommentChanged: handleCommentChanged
                 })}
                 onImagePress={()=>{navigation.navigate('detailScreen',{item})}}
               />
@@ -89,13 +95,7 @@ export default function FeedsScreen({navigation}) {
             // ListHeaderComponent={ListHeader}
             // ListFooterComponent={ListHeader}
             showsVerticalScrollIndicator={false}             
-          />
-
-          {/* <TouchableOpacity
-          style={styles.ButtonPost} 
-          onpress={()=> navigation.navigate('addPostScreen')}>
-          <Icon name={"plus-circle"} style={{color:'green', fontSize: 40}} />
-          </TouchableOpacity> */}    
+          />  
       </View> 
     </View>
   );
