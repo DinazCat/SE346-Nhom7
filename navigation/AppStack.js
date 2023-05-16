@@ -8,6 +8,7 @@ import EditProfileScreen from '../screens/EditProfileScreen';
 import DetailPostScreen from '../screens/DetailPost';
 import SearchScreen from '../screens/SearchScreen';
 import EditComment from '../screens/EditComment';
+import EditPostScreen from'../screens/EditPostScreen';
 const Stack = createNativeStackNavigator();
 
 export default function AppStack() {
@@ -26,6 +27,11 @@ export default function AppStack() {
       <Stack.Screen 
         name='addPostScreen' 
         component={AddPostScreen} 
+        options={{ header: () => null }}
+      />
+       <Stack.Screen 
+        name='editPostScreen' 
+        component={EditPostScreen} 
         options={{ header: () => null }}
       />
       <Stack.Screen 

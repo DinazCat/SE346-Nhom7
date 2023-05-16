@@ -82,13 +82,14 @@ export default function FeedsScreen({navigation}) {
             renderItem={({item}) => (
               <PostCard
                 item={item}
-                onUserPress={() => navigation.navigate('profileScreen', {userId: item.userId})}
+                onUserPress={() => navigation.navigate('profileScreen', {userId: item.userId, listp:posts, onGoback: (items) => setPosts(items)})}
                 onCommentPress={() => navigation.navigate('commentScreen', {
                   postId: item.postId,
                   comments: item.comments,
                   onCommentChanged: handleCommentChanged
                 })}
                 onImagePress={()=>{navigation.navigate('detailScreen',{item})}}
+                editright={false}
               />
             )}
             keyExtractor={(item) => item.postId}

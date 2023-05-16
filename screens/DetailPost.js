@@ -42,9 +42,9 @@ export default function DetailPostScreen({navigation,route}) {
         <View style={[styles.Container,{height:650}]}>
         <ScrollView style={{flexDirection:'column'}}>
             {
-              route.params.item.postImg.map(each=>{
+              route.params.item.postImg.map((each,key)=>{
                 return(  
-                    <View >
+                    <View key={key}>
                       <Image source={{uri:each}} style={{height:300, width:400, marginTop:5}} resizeMode='cover'/>
                     </View>     
                 );

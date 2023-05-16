@@ -1,11 +1,19 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity, useContext } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { StyleSheet, Text, View, Image, TouchableOpacity, useContext, Modal,alert } from 'react-native'
+import React, { useEffect, useRef, useState } from 'react'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
-const PostCard = ({item, onUserPress, onCommentPress,onImagePress}) => {
+import Icon from 'react-native-vector-icons/FontAwesome5';
+import {Menu, MenuOption, MenuOptions, MenuTrigger, MenuProvider} from 'react-native-popup-menu'
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { AuthContext } from '../navigation/AuthProvider';
+import Animated, { Easing } from 'react-native-reanimated';
+import { Screen } from 'react-native-screens';
+
+const PostCard = ({item, onUserPress, onCommentPress,onImagePress,deletePost,editright,editPost}) => {
 
     const [liked, setLiked] = useState();
+    const [Allow, SetAllow] = useState(false);
     const [defaultRating, setdefaulRating] = useState(item.postFoodRating);
     const [maxRating, setmaxRating] = useState([1,2,3,4,5])
     const starImgFilled = "https://github.com/tranhonghan/images/blob/main/star_filled.png?raw=true";
@@ -13,6 +21,7 @@ const PostCard = ({item, onUserPress, onCommentPress,onImagePress}) => {
 
     useEffect(() => {
         getLikeStatus(item.likes);
+        allow();
     })
 
     const getLikeStatus = (likes) => {
@@ -158,7 +167,7 @@ const PostCard = ({item, onUserPress, onCommentPress,onImagePress}) => {
             {
               maxRating.map((item, key)=>{
                 return (
-                    <Image style={styles.starImgStyle}
+                    <Image key={key} style={styles.starImgStyle}
                     source={item <= defaultRating ? {uri: starImgFilled} : {uri:starImgCorner}}/>
                 )
               })
@@ -166,6 +175,51 @@ const PostCard = ({item, onUserPress, onCommentPress,onImagePress}) => {
           </View>
         )
       }
+     // const {user} = useContext(AuthContext);
+      function allow()
+      {
+        if( auth().currentUser.uid ===  item.userId)
+        {
+          SetAllow(true);
+        }
+        else SetAllow(false);
+      }
+      const PopupMenu = () =>{
+        const[visible,setvisible] = useState(false);
+        const options = [
+          {
+            title:'Xóa',
+            action:()=>{
+              deletePost(item.id)
+            },
+
+          },
+          {
+            title:'Sửa',
+            action:()=>{
+              editPost();
+            },
+          }
+        ];
+    
+        return(
+          <View style={{flexDirection:'row'}}>
+           {visible&& <View style = {styles.popup}>
+                {
+                  options.map((op,i)=>(
+                    <TouchableOpacity  style={[styles.popupitem,{borderBottomWidth:i===options.length-1?0:1}]} key={i} onPress={op.action}>
+                      <Text>{op.title}</Text>
+                    </TouchableOpacity>
+                  ))
+                }
+              </View>}
+           <TouchableOpacity style={styles.MenuButton} onPress={()=>setvisible(!visible)}>
+                <Icon name={'ellipsis-h'}  />
+            </TouchableOpacity>
+          </View>
+        )
+      }
+    
   return (
     <View style={styles.Container}>
         <View style={styles.UserInfoContainer}>
@@ -178,6 +232,9 @@ const PostCard = ({item, onUserPress, onCommentPress,onImagePress}) => {
                 </TouchableOpacity>                
                 <Text style={styles.PostTime}>{item.postTime}</Text>
             </View>
+            <View style={{flex:1}}/>
+          {(Allow && editright ) && <PopupMenu/>}
+           
         </View>
         <View style={{flexDirection:"row"}}>
         <Text style={styles.PostTitle}>Tên món ăn:</Text>
@@ -335,6 +392,29 @@ const styles = StyleSheet.create({
         width:20,
         height:20,
         resizeMode:'cover'
+    },
+    MenuButton:{
+      color: 'black', 
+      fontSize: 30, 
+      padding: 10,
+      alignSelf:"center",
+    },
+    popup:{
+      borderRadius:8,
+      borderColor:'#333',
+      borderWidth:1,
+      backgroundColor:'#fff',
+      width:50,
+      height:65,
+      textAlign:'center',
+    },
+    popupitem:
+    {
+      borderBottomColor:'black', 
+      alignItems:'center', 
+      width:35, 
+      alignSelf:'center',
+      paddingVertical:5
     }
 
 })

@@ -50,19 +50,19 @@ const EditProfileScreen = () => {
     .collection('users')
     .doc(user.uid)
     .update({
-      name: userData.name,
-      about: userData.about,
-      email: userData.email,
-      phone: userData.phone,
-      country: userData.country,
-      city: userData.city,
-      userImg: imgUrl,
+     name: userData.name,
+     about: userData.about,
+     email: userData.email,
+     phone: userData.phone,
+     country: userData.country,
+     city: userData.city,
+     userImg: imgUrl,
     })
     .then(() => {
       console.log('User Updated!');
       Alert.alert(
         'Profile Updated!',
-        'Your profile has been updated successfully.'
+        'Your Profile has been updated successfully.'
       );
     })
   };

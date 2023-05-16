@@ -6,17 +6,17 @@ import ImagePicker from 'react-native-image-crop-picker';
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import { AuthContext } from '../navigation/AuthProvider';
-export default AddPostScreen= function({navigation}) {
-    const [image,setimage] = useState([]);
+export default EditPostScreen= function({navigation, route}) {
+    const [image,setimage] = useState(route.params.item.postImg);
     const [imageUrl,setimageUrl] = useState([]);
-    const [FoodName, setFoodName] = useState("");
-    const [Ingredient, setIngredient] = useState("");
-    const [Making, setMaking] = useState("");
-    const [Summary, setSummary] = useState("");
+    const [FoodName, setFoodName] = useState(route.params.item.postFoodName);
+    const [Ingredient, setIngredient] = useState(route.params.item.postFoodIngredient);
+    const [Making, setMaking] = useState(route.params.item.postFoodMaking);
+    const [Summary, setSummary] = useState(route.params.item.postFoodSummary);
     const [uploading, setUploading] = useState(false);
     const [transferred, setTransferred] = useState(0);
     const [selectedTab, setSelectedTab] = useState(0);
-    const [defaultRating, setdefaulRating] = useState(0);
+    const [defaultRating, setdefaulRating] = useState(route.params.item.postFoodRating);
     const [maxRating, setmaxRating] = useState([1,2,3,4,5])
     const starImgFilled = "https://github.com/tranhonghan/images/blob/main/star_filled.png?raw=true";
     const starImgCorner = "https://raw.githubusercontent.com/tranhonghan/images/main/star_corner.png";
@@ -25,6 +25,7 @@ export default AddPostScreen= function({navigation}) {
     const TextChangeIngredient = (Text)=>{setIngredient(Text)};
     const TextChangeMaking = (Text)=>{setMaking(Text)};
     const TextChangeSummary= (Text)=>{setSummary(Text)};
+
     const CustomRatingBar = () => {
       return (
         <View style={styles.customRatingBarStyle}>
@@ -59,49 +60,70 @@ export default AddPostScreen= function({navigation}) {
         cropping: true,
       }).then(img => {
         let image2 = image.slice();
-        image2.push(img);
+        console.log(img.path);
+        image2.push(img.path);
         setimage(image2);
       });
     };
-    const submitPost = async() => {
+    const SavePost=async()=>{
+        await firestore()
+        .collection('posts')
+        .doc(route.params.item.postId)
+        .update({
+            postFoodIngredient:Ingredient,
+            postFoodMaking:Making,
+            postFoodName:FoodName,
+            postFoodRating:defaultRating,
+            postFoodSummary:Summary,
+            postImg:imageUrl,
+        })
+        .then(() => {
+          console.log('Post Updated!');
+          Alert.alert(
+            'Post Updated!',
+            'Your Post has been updated successfully.'
+          );
+        })
+    }
+    const editPost = async() => {
+    firestore().collection('posts')
+    .doc(route.params.item.postId)
+    .get()
+    .then(documentSnapshot => {
+      if(documentSnapshot.exists)
+      {
+        const {postImg} = documentSnapshot.data();
+        if(postImg != null)
+        {
+          for(let i = 0; i<postImg.length; i++)
+          {
+            const storageRef = storage().refFromURL(postImg[i]);
+            const imageRef = storage().ref(storageRef.fullPath);
+            imageRef
+            .delete()
+            .then(()=>{ })
+            .catch((e)=>{console.log('error when delete image '+e)})
+          }
+          
+        }
+      
+      }
+    })
       try {
         for(let i = 0; i < image.length; i++)
         {
-          imageUrl[i] = await uploadImage(image[i].path);
+          imageUrl[i] = await uploadImage(image[i]);
+          if(i == image.length-1) SavePost();
         }
-       // const imageUrl = await uploadImage();
-        const docRef = await firestore().collection('posts').add({
-          postId: null,
-          userId: user.uid,
-          postFoodName: FoodName,
-          postFoodRating:defaultRating,       
-          postFoodIngredient:Ingredient,  
-          postFoodMaking:Making,  
-          postFoodSummary:Summary,  
-          postImg: imageUrl,
-          postTime: firestore.Timestamp.fromDate(new Date()),
-          likes: [],
-          comments: [],
-          name: user.displayName,
-          userImg: user.photoURL,
-        });
-        await firestore().collection('posts').doc(docRef.id).update({
-          postId: docRef.id
-        });
-        console.log('post added');
-        Alert.alert(
-          'Post uploaded',
-          'Your post has been upload to the Firebase Cloud Storage successfully!'
-        );
-        navigation.push('feedsScreen');
-        setText('');
-      } catch (error) {
+    }
+      catch (error) {
         console.log('something went wrong!', error);
       }
     }
     
     const uploadImage = async (image)=>{
       if(image == null) return null;
+      if(image.includes('https')) return image;
         const uploadUri = image;
         let filename = uploadUri.substring(uploadUri.lastIndexOf('/')+1);
         const extension = filename.split('.').pop();
@@ -136,18 +158,17 @@ export default AddPostScreen= function({navigation}) {
       <View style={styles.container}>
         <View
           style={{
-            // marginTop: 50,
             height: 50,
             flexDirection: 'row',
             alignItems: 'center',
             backgroundColor: '#FFFF99',
           }}>
-          <TouchableOpacity onPress={()=> navigation.navigate('feedsScreen')}>
+          <TouchableOpacity onPress={()=> navigation.goBack()}>
             <Icon name={'arrow-left'} style={{color: 'black', fontSize: 30, padding: 5}} />
           </TouchableOpacity>
 
           <Text style={{fontSize: 20, flex: 1, marginLeft: 5}}>
-            Tạo bài viết
+            Sửa bài viết
           </Text>
           {uploading ? (
             <View style={{justifyContent: 'center', alignItems: 'center'}}>
@@ -156,9 +177,9 @@ export default AddPostScreen= function({navigation}) {
             </View>
           ) : (
             <Button
-              title={'Đăng'}
+              title={'Lưu'}
               color={allowPost() == true ? '#FFCC00' : '#BBBBBB'}
-              onPress={submitPost}
+              onPress={editPost}
             />
           )}
           <View style={{marginRight: 5}} />
@@ -258,8 +279,8 @@ export default AddPostScreen= function({navigation}) {
             {
               image.map((each,key)=>{
                 return(  
-                    <View key={key} >
-                      <Image source={{uri:each.path}} style={{height:200, width:400, marginTop:5}} resizeMode='cover'/>
+                    <View key={key}>
+                      <Image source={{uri:each}} style={{height:200, width:400, marginTop:5}} resizeMode='cover'/>
                       <TouchableOpacity style={{ marginTop:3, position:'absolute'}} onPress={()=>{
                         let filterRssult=image.filter(function(element){
                           return element !== each;
@@ -296,15 +317,6 @@ export default AddPostScreen= function({navigation}) {
               flexDirection: 'row',
             }}
             onPress={() => {setSelectedTab(0)}}>
-               {/* <Icon
-              name={'images'}
-              style={{
-                marginLeft: 4,
-                color: 'green',
-                fontSize: 30,
-                alignSelf: 'center',
-              }}
-            /> */}
             <View style={{justifyContent: 'center',backgroundColor: selectedTab == 0 ? '#f545' : '#FFCC00'}}>
             <Text
               style={{

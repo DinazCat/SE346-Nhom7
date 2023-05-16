@@ -1,10 +1,10 @@
-import { StyleSheet, Text, View, ScrollView, Image, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, Image, TouchableOpacity, Alert } from 'react-native'
 import React, { useContext, useEffect,useState } from 'react'
 import { AuthContext } from '../navigation/AuthProvider'
 import firestore from '@react-native-firebase/firestore';
 import PostCard from '../components/PostCard';
 import AvatarComponent from '../components/AvatarComponent';
-
+import storage from '@react-native-firebase/storage';
 const ProfileScreen = ({navigation, route}) => {
   const {user, logout} = useContext(AuthContext);
   const {userId} = route.params;
@@ -25,21 +25,40 @@ const ProfileScreen = ({navigation, route}) => {
       .get()
       .then((querySnapshot)=>{
         querySnapshot.forEach(doc =>{
-          const {userId,post, postImg, postTime, comments,likes,name,userImg,} = doc.data();
-          var Time = new Date(postTime._seconds * 1000).toDateString() + ' at ' + new Date(postTime._seconds * 1000).toLocaleTimeString()
-          list.push({          
-            id: doc.id,
-            userId: userId,
-            userName: name,
-            userImg: userImg,
-            postTime: Time,
-            postText: post,
-            postImg: postImg,
-            likes: likes,
-            comments: comments,
-          });
-        })
-
+        //   const {userId,post, postImg, postTime, comments,likes,name,userImg,} = doc.data();
+        //   var Time = new Date(postTime._seconds * 1000).toDateString() + ' at ' + new Date(postTime._seconds * 1000).toLocaleTimeString()
+        //   list.push({          
+        //     id: doc.id,
+        //     userId: userId,
+        //     userName: name,
+        //     userImg: userImg,
+        //     postTime: Time,
+        //     postText: post,
+        //     postImg: postImg,
+        //     likes: likes,
+        //     comments: comments,
+        //   });
+        // })
+        const {userId,postFoodName, postFoodRating, postFoodMaking, postFoodIngredient, postFoodSummary, postImg, postTime, comments,likes,name,userImg,} = doc.data();
+        var Time = new Date(postTime._seconds * 1000).toDateString() + ' at ' + new Date(postTime._seconds * 1000).toLocaleTimeString()
+        list.push({          
+          postId: doc.id,
+          userId: userId,
+          userName: name,
+          userImg: userImg,
+          postTime: Time,
+          postFoodName: postFoodName,
+          postFoodRating: postFoodRating,
+          postFoodIngredient:postFoodIngredient,
+          postFoodMaking: postFoodMaking,
+          postFoodSummary: postFoodSummary,
+          postImg: postImg,
+          liked: true,
+          likes: likes,
+          comments: comments,
+          liked: false,
+        });
+      })
       })
       setPosts(list);
       if(loading){ setLoading(false) };
@@ -153,7 +172,44 @@ const ProfileScreen = ({navigation, route}) => {
       console.log(error);
     });
   }
-
+  deleteP = id => {
+    firestore()
+    .collection('posts')
+    .doc(id)
+    .delete()
+    .then(()=>{Alert.alert('Post deleted')})
+    .catch(e=>console.log("error when delete: "+e))
+  }
+  deletepost = id => {
+    const filteredData = posts.filter(item => item.postId !== id);
+    setPosts(filteredData);
+    const filterlistP = (route.params.listp).filter( item => item.postId !== id);
+    route.params.onGoback(filterlistP);
+    firestore().collection('posts')
+    .doc(id)
+    .get()
+    .then(documentSnapshot => {
+      if(documentSnapshot.exists)
+      {
+        const {postImg} = documentSnapshot.data();
+        if(postImg != null)
+        {
+          for(let i = 0; i<postImg.length; i++)
+          {
+            const storageRef = storage().refFromURL(postImg[i]);
+            const imageRef = storage().ref(storageRef.fullPath);
+            imageRef
+            .delete()
+            .then(()=>{ if(i == postImg.length-1) deleteP(id)})
+            .catch((e)=>{console.log('error when delete image '+e)})
+          }
+          
+        }
+      
+      }
+    })
+   
+  }
   return (
     <View style={{flex: 1, backgroundColor: '#fff'}}>
       <ScrollView
@@ -216,8 +272,11 @@ const ProfileScreen = ({navigation, route}) => {
         </View>
         {selectedTab == 0 ? (
           <>
-            {posts.map((item) => (
-            <PostCard key={item.id} item={item} />
+            {posts.map((item,key) => (
+            <PostCard key={key} item={item} 
+            editPost={()=>navigation.push('editPostScreen',{item})}
+            deletePost={()=>deletepost(item.postId)}
+            editright={true}/>
             ))}
           </>      
         ) : selectedTab == 1 ? (
