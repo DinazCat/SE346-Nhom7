@@ -3,6 +3,7 @@ import React, {useEffect, useContext, useState, useRef} from 'react';
 import firestore from '@react-native-firebase/firestore';
 import {useRoute} from '@react-navigation/native';
 import { AuthContext } from '../navigation/AuthProvider';
+import auth from '@react-native-firebase/auth';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import PostComment from '../components/PostComment';
 
@@ -16,6 +17,7 @@ const CommentScreen = ({navigation}) => {
 
   useEffect(() => {
     postId = route.params?.postId;
+    console.log(route.params.postOwner)
     if (route.params?.comments) {
       setCommentList(route.params.comments);
     }
@@ -45,6 +47,20 @@ const CommentScreen = ({navigation}) => {
         })
         .catch(error => {});
       inputRef.current.clear();
+      //add notification
+      if(route.params.postOwner != auth().currentUser.uid)
+      firestore().collection('Notification').add({
+        PostownerId: route.params.postOwner,
+        guestId: auth().currentUser.uid,
+        guestName:auth().currentUser.displayName ,
+        guestImg:auth().currentUser.photoURL,
+        classify:'Cmt',
+        time:firestore.Timestamp.fromDate(new Date()),
+        text: auth().currentUser.displayName+' đã bình luận bài viết của bạn về món ăn: '+ route.params.Foodname,
+        postid: route.params?.postId,
+        Read:'no',
+
+      }).then().catch((e)=>{console.log("error "+ e); console.log( auth().currentUser.uid)});
     }
   };
   handleDeleteComment = (item, index) =>{

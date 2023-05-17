@@ -5,6 +5,7 @@ import firestore from '@react-native-firebase/firestore';
 import PostCard from '../components/PostCard';
 import AvatarComponent from '../components/AvatarComponent';
 import storage from '@react-native-firebase/storage';
+import auth from '@react-native-firebase/auth';
 const ProfileScreen = ({navigation, route}) => {
   const {user, logout} = useContext(AuthContext);
   const {userId} = route.params;
@@ -94,10 +95,50 @@ const ProfileScreen = ({navigation, route}) => {
   }
     return(status);
   };
+  const ReloadPosts = async()=>{
+    try{
+      const list = [];
+      await firestore()
+      .collection('posts')
+      .orderBy('postTime', 'desc')
+      .get()
+      .then((querySnapshot)=>{
+        querySnapshot.forEach(doc =>{
+          const {userId,postFoodName, postFoodRating, postFoodMaking, postFoodIngredient, postFoodSummary, postImg, postTime, comments,likes,name,userImg,} = doc.data();
+          var Time = new Date(postTime._seconds * 1000).toDateString() + ' at ' + new Date(postTime._seconds * 1000).toLocaleTimeString()
+          list.push({          
+            postId: doc.id,
+            userId: userId,
+            userName: name,
+            userImg: userImg,
+            postTime: Time,
+            postFoodName: postFoodName,
+            postFoodRating: postFoodRating,
+            postFoodIngredient:postFoodIngredient,
+            postFoodMaking: postFoodMaking,
+            postFoodSummary: postFoodSummary,
+            postImg: postImg,
+            liked: true,
+            likes: likes,
+            comments: comments,
+            liked: false,
+          });
+        })
 
+      })
+      route.params.onGoback(list);
+    } catch(e){
+      console.log(e);
+    }
+  }
+  
+  useEffect(()=>{
+    fetchPosts();
+  },[])
   useEffect(() => {
     getProfile();
     fetchPosts();
+   // ReloadPosts();
     navigation.addListener("focus", () => setLoading(!loading));
   }, [navigation, loading, route.params?.userId]);
 
@@ -115,10 +156,36 @@ const ProfileScreen = ({navigation, route}) => {
                 break;
             }
         } 
-        if (!flag) {tempFollowers.push(user.uid)}                    
+        if (!flag) {tempFollowers.push(user.uid);
+        //add notification
+        firestore().collection('Notification').add({
+          PostownerId: userId,
+          guestId: auth().currentUser.uid,
+          guestName: auth().currentUser.displayName,
+          guestImg:auth().currentUser.photoURL,
+          classify:'Follow',
+          time:firestore.Timestamp.fromDate(new Date()),
+          text: auth().currentUser.displayName+' đang theo dõi bạn.',
+          postid: '',
+          Read:'no',
+
+        });
+        }                    
     } 
     else {
       tempFollowers.push(user.uid);
+      firestore().collection('Notification').add({
+        PostownerId: userId,
+        guestId: auth().currentUser.uid,
+        guestName: auth().currentUser.displayName,
+        guestImg:auth().currentUser.photoURL,
+        classify:'Follow',
+        time:firestore.Timestamp.fromDate(new Date()),
+        text: auth().currentUser.displayName+' đang theo dõi bạn.',
+        postid: '',
+        Read:'no',
+
+      });
     }
 
     firestore()

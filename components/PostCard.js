@@ -48,10 +48,39 @@ const PostCard = ({item, onUserPress, onCommentPress,onImagePress,deletePost,edi
                     break;
                 }
             } 
-            if (!flag) {tempLikes.push(auth().currentUser.uid)}                    
+            if (!flag) {
+              tempLikes.push(auth().currentUser.uid);
+               //add notification
+               if(item.userId != auth().currentUser.uid)
+              firestore().collection('Notification').add({
+                PostownerId: item.userId,
+                guestId: auth().currentUser.uid,
+                guestName: auth().currentUser.displayName,
+                guestImg:auth().currentUser.photoURL,
+                classify:'Like',
+                time:firestore.Timestamp.fromDate(new Date()),
+                text: auth().currentUser.displayName+' đã thích bài viết của bạn về món ăn: '+ item.postFoodName,
+                postid: item.postId,
+                Read:'no',
+      
+              });
+            }                    
         } 
         else {
           tempLikes.push(auth().currentUser.uid);
+          if(item.userId != auth().currentUser.uid)
+          firestore().collection('Notification').add({
+            PostownerId: item.userId,
+            guestId: auth().currentUser.uid,
+            guestName: auth().currentUser.displayName,
+            guestImg:auth().currentUser.photoURL,
+            classify:'Like',
+            time:firestore.Timestamp.fromDate(new Date()),
+            text: auth().currentUser.displayName+' đã thích bài viết của bạn về món ăn: '+ item.postFoodName,
+            postid: item.postId,
+            Read:'no',
+  
+          });
         }
     
         firestore()
@@ -65,6 +94,7 @@ const PostCard = ({item, onUserPress, onCommentPress,onImagePress,deletePost,edi
           })
           .catch(error => {});
         setLiked(!liked);
+       
       };
       function bocuc(){
         if(item.postImg.length== 1)

@@ -1,17 +1,20 @@
 import React, {useEffect, useState, useContext} from 'react';
-import {View, ScrollView, Text, StyleSheet, FlatList,Button,TouchableOpacity,Image, alert} from 'react-native';
+import {View, ScrollView, Text, StyleSheet, FlatList,Button,TouchableOpacity,Image, ActivityIndicator, RefreshControl} from 'react-native';
 import FormButton from '../components/FormButton';
 import { AuthContext } from '../navigation/AuthProvider';
+import auth from '@react-native-firebase/auth';
 import PostCard from '../components/PostCard';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import firestore from '@react-native-firebase/firestore';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 
 export default function FeedsScreen({navigation}) {
   const {user, logout} = useContext(AuthContext);
   const [posts, setPosts]= useState(null);
   const [loading, setLoading] = useState(true);
-
+  const [refreshing, setrefreshing] = useState(true);
+  const [mark, setmark] = useState(false);
   const fetchPosts = async()=>{
     try{
       const list = [];
@@ -44,26 +47,62 @@ export default function FeedsScreen({navigation}) {
 
       })
       setPosts(list);
+      setrefreshing(false);
       if(loading){ setLoading(false) };
     } catch(e){
       console.log(e);
     }
   }
-  
+  const getMark= async()=>
+  {
+    await firestore()
+    .collection('Notification')
+    .get()
+    .then((querySnapshot)=>{
+      querySnapshot.forEach(doc =>{
+      const {PostownerId, Read,} = doc.data();
+      if(PostownerId == auth().currentUser.uid)
+      {
+        if(Read == 'no')
+        {
+         setmark(true);
+        }
+      }
+      })
+    })
+    
+  }
   useEffect(()=>{
     fetchPosts();
+    getMark();
   },[])
   
 
   const handleCommentChanged = () => {
     fetchPosts();
   };
+  const onRefresh=()=>{
+    setPosts([]);
+    fetchPosts();
+    getMark();
+  
+  }
   return (
     <View style={styles.container}>
+      <View style={{flexDirection:'row'}}>
+        <View style={{flex:1}}/>
       <TouchableOpacity onPress={() => navigation.push("searchScreen")}>
             <Icon name={'search'} style={styles.ButtonSearch} />
        </TouchableOpacity>
+       <TouchableOpacity onPress={() => {navigation.push("nofiScreen"), setmark(false)}}>
+        <View>
+            <Icon name={'bell'} style={styles.ButtonSearch} />
+           {(mark)&&<FontAwesome name="circle" style={styles.smallcircle}/>}
+        </View>        
+       </TouchableOpacity>
 
+      </View>
+      
       <View style={{flexDirection: 'row', alignItems: 'center'}}>
         <TouchableOpacity onPress={() => { console.log(user);
           navigation.navigate('profileScreen', {userId: user.uid})}}>
@@ -77,26 +116,34 @@ export default function FeedsScreen({navigation}) {
       </View>
       
       <View style={{flex:1}}>
+        {refreshing ? <ActivityIndicator/>:
         <FlatList
-            data={posts}
-            renderItem={({item}) => (
-              <PostCard
-                item={item}
-                onUserPress={() => navigation.navigate('profileScreen', {userId: item.userId, listp:posts, onGoback: (items) => setPosts(items)})}
-                onCommentPress={() => navigation.navigate('commentScreen', {
-                  postId: item.postId,
-                  comments: item.comments,
-                  onCommentChanged: handleCommentChanged
-                })}
-                onImagePress={()=>{navigation.navigate('detailScreen',{item})}}
-                editright={false}
-              />
-            )}
-            keyExtractor={(item) => item.postId}
-            // ListHeaderComponent={ListHeader}
-            // ListFooterComponent={ListHeader}
-            showsVerticalScrollIndicator={false}             
-          />  
+        data={posts}
+        renderItem={({item}) => (
+          <PostCard
+            item={item}
+            onUserPress={() => navigation.navigate('profileScreen', {userId: item.userId, listp:posts, onGoback: (items) => setPosts(items)})}
+            onCommentPress={() => navigation.navigate('commentScreen', {
+              postId: item.postId,
+              comments: item.comments,
+              Foodname: item.postFoodName,
+              postOwner: item.userId,
+              onCommentChanged: handleCommentChanged
+            })}
+            onImagePress={()=>{navigation.navigate('detailScreen',{item})}}
+            editright={false}
+          />
+        )}
+        keyExtractor={(item) => item.postId}
+        // ListHeaderComponent={ListHeader}
+        // ListFooterComponent={ListHeader}
+        showsVerticalScrollIndicator={false}   
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh}/>
+        }          
+      />  
+        }
+        
       </View> 
     </View>
   );
@@ -133,5 +180,11 @@ const styles = StyleSheet.create({
     color: 'black', 
     fontSize: 25, 
     padding: 5
+  },
+  smallcircle:{
+    position:'absolute', 
+    color:'#3300FF', 
+    marginLeft:15, 
+    marginVertical:5
   }
 })

@@ -86,29 +86,29 @@ export default EditPostScreen= function({navigation, route}) {
         })
     }
     const editPost = async() => {
-    firestore().collection('posts')
-    .doc(route.params.item.postId)
-    .get()
-    .then(documentSnapshot => {
-      if(documentSnapshot.exists)
-      {
-        const {postImg} = documentSnapshot.data();
-        if(postImg != null)
-        {
-          for(let i = 0; i<postImg.length; i++)
-          {
-            const storageRef = storage().refFromURL(postImg[i]);
-            const imageRef = storage().ref(storageRef.fullPath);
-            imageRef
-            .delete()
-            .then(()=>{ })
-            .catch((e)=>{console.log('error when delete image '+e)})
-          }
+    // firestore().collection('posts')
+    // .doc(route.params.item.postId)
+    // .get()
+    // .then(documentSnapshot => {
+    //   if(documentSnapshot.exists)
+    //   {
+    //     const {postImg} = documentSnapshot.data();
+    //     if(postImg != null)
+    //     {
+    //       for(let i = 0; i<postImg.length; i++)
+    //       {
+    //         const storageRef = storage().refFromURL(postImg[i]);
+    //         const imageRef = storage().ref(storageRef.fullPath);
+    //         imageRef
+    //         .delete()
+    //         .then(()=>{ })
+    //         .catch((e)=>{console.log('error when delete image '+e)})
+    //       }
           
-        }
+    //     }
       
-      }
-    })
+    //   }
+    // })
       try {
         for(let i = 0; i < image.length; i++)
         {
