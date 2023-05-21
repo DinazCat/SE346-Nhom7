@@ -2,13 +2,12 @@ import React from "react";
 import {View, Text, StyleSheet} from "react-native";
 
 import TabContainer from "../components/TabContainer";
+import AppStack from "../navigation/AppStack";
 
 const HomeScreen = () => {
   return (
     <TabContainer>
-      <View style={styles.container}>
-        <Text style={styles.text}>Blogs Screen</Text>
-      </View>
+      <AppStack/>
     </TabContainer>
   );
 };

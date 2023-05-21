@@ -36,7 +36,7 @@ const TabsNavigator = () => {
           tabBarIcon: ({focused}) => (
             <View style={styles.tabIconContainer}>
               <Image
-                source={require("../image/Home.png")}
+                source={require("../assets/img1.png")}
                 resizeMode="contain"
                 style={[styles.tabIcon, getIconColor(focused)]}
               />
@@ -57,7 +57,7 @@ const TabsNavigator = () => {
           tabBarIcon: ({focused}) => (
             <View style={styles.tabIconContainer}>
               <Image
-                source={require("../image/Graph.png")}
+                source={require("../assets/img1.png")}
                 resizeMode="contain"
                 style={[styles.tabIcon, getIconColor(focused)]}
               />
@@ -78,7 +78,7 @@ const TabsNavigator = () => {
           tabBarIcon: ({focused}) => (
             <View style={styles.tabIconContainer}>
               <Image
-                source={require("../image/Add.png")}
+                source={require("../assets/img1.png")}
                 resizeMode="contain"
                 style={[styles.tabIcon, getIconColor(focused)]}
               />
@@ -99,7 +99,7 @@ const TabsNavigator = () => {
           tabBarIcon: ({focused}) => (
             <View style={styles.tabIconContainer}>
               <Image
-                source={require("../image/blogger.png")}
+                source={require("../assets/img1.png")}
                 resizeMode="contain"
                 style={[styles.tabIcon, getIconColor(focused)]}
               />
@@ -120,7 +120,7 @@ const TabsNavigator = () => {
           tabBarIcon: ({focused}) => (
             <View style={styles.tabIconContainer}>
               <Image
-                source={require("../image/Setting.png")}
+                source={require("../assets/img1.png")}
                 resizeMode="contain"
                 style={[styles.tabIcon, getIconColor(focused)]}
               />
