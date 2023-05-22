@@ -7,6 +7,7 @@ import PostCard from '../components/PostCard';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import firestore from '@react-native-firebase/firestore';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import { Linking } from 'react-native';
 
 
 export default function FeedsScreen({navigation}) {
@@ -75,6 +76,16 @@ export default function FeedsScreen({navigation}) {
   useEffect(()=>{
     fetchPosts();
     getMark();
+    const openPostDetailScreen = async (event) => {
+      const { url } = event;
+      const postId = url.split('?postId=')[1];
+      navigation.navigate('detailScreen', { postId: postId });
+    };
+    Linking.addEventListener('url', openPostDetailScreen);
+
+    return () => {
+      Linking?.removeEventListener?.('url', openPostDetailScreen);
+    };
   },[])
   
 
@@ -130,7 +141,7 @@ export default function FeedsScreen({navigation}) {
               postOwner: item.userId,
               onCommentChanged: handleCommentChanged
             })}
-            onImagePress={()=>{navigation.navigate('detailScreen',{item})}}
+            onImagePress={()=>{navigation.navigate('detailScreen',{postId: item.postId})}}
             editright={false}
           />
         )}

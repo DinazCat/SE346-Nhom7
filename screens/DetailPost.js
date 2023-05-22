@@ -7,29 +7,50 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import firestore from '@react-native-firebase/firestore';
 
 export default function DetailPostScreen({navigation,route}) {
+    const [postData, setPost] = useState(null);
+    const {postId} = route.params;
     onUserPress=() => navigation.navigate('profileScreen', {userId: route.params.item.userId})
     const Item = ({each}) => (
         <Image style={[styles.PostImgsContainer, {height: each ? 250 : 0}]} 
         source={{uri:each}} />
       );
-      useEffect(() => {
-        console.log(route.params.item.userName);
-    })
+
+    const getPost = async() => {
+        await firestore()
+        .collection('posts')
+        .doc(postId)
+        .get()
+        .then((documentSnapshot) => {
+        if (documentSnapshot.exists) {
+            const data = documentSnapshot.data();
+            setPost(data);
+            console.log('Data fetched:', data);
+        } else {
+            console.log('Document does not exist');
+            console.log(postId);
+        }
+        })
+        .catch((error) => {
+            console.log('Error getting document:', error);
+            console.log(postId);
+        });
+    }
+    useEffect(()=>{
+        getPost();
+      },[postId])
     return (
         <View style={styles.Container}>
             <View style={styles.UserInfoContainer}>
                 <TouchableOpacity onPress={onUserPress}>
-                    <Image style={styles.UserImage} source={{uri: route.params.item.userImg}}/>
+                    <Image style={styles.UserImage} source={{uri: postData?  postData.userImg : 'https://cdn-icons-png.flaticon.com/512/1946/1946429.png'}}/>
                 </TouchableOpacity>            
                 <View style={styles.UserInfoTextContainer}>
                     <TouchableOpacity onPress={onUserPress}>
-                        <Text style={styles.UsernameText}>{route.params.item.userName}</Text>
+                        <Text style={styles.UsernameText}>{postData?  postData.name : ''}</Text>
                     </TouchableOpacity>                
-                    <Text style={styles.PostTime}>{route.params.item.postTime}</Text>
+                    <Text style={styles.PostTime}>{postData?  postData.name : ''}</Text>
                 </View>
             </View>
-    
-            <Text style={styles.PostText}>{route.params.item.postText}</Text>
     
             {/* <Image style={[styles.PostImgsContainer, {height: item.postImg[0] ? 250 : 0}]} 
                 source={{uri:item.postImg[0]}} />    */}
@@ -40,30 +61,22 @@ export default function DetailPostScreen({navigation,route}) {
         keyExtractor={item => item}
         /> */}
         <View style={[styles.Container,{height:650}]}>
-        <ScrollView style={{flexDirection:'column'}}>
-            {
-              route.params.item.postImg.map((each,key)=>{
-                return(  
-                    <View key={key}>
-                      <Image source={{uri:each}} style={{height:300, width:400, marginTop:5}} resizeMode='cover'/>
-                    </View>     
-                );
-              })
-             
-            }
-  
-          </ScrollView>
-        </View>
-        
-          
-        </View>
-      )
-    // return(
-    //     <View>
-    //         <Text>Hahahah</Text>
-    //     </View>
-    // )
-    }
+            <ScrollView style={{flexDirection:'column'}}>
+                {
+                postData?.postImg.map((each,key)=>{
+                    return(  
+                        <View key={key}>
+                        <Image source={{uri:each}} style={{height:300, width:400, marginTop:5}} resizeMode='cover'/>
+                        </View>     
+                    );
+                })
+                
+                }
+            </ScrollView>
+        </View>      
+    </View>
+    )
+}
     
   
     const styles = StyleSheet.create({

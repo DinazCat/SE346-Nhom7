@@ -5,10 +5,9 @@ import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {Menu, MenuOption, MenuOptions, MenuTrigger, MenuProvider} from 'react-native-popup-menu'
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { AuthContext } from '../navigation/AuthProvider';
 import Animated, { Easing } from 'react-native-reanimated';
-import { Screen } from 'react-native-screens';
+import Share from 'react-native-share';
 
 const PostCard = ({item, onUserPress, onCommentPress,onImagePress,deletePost,editright,editPost}) => {
 
@@ -96,6 +95,20 @@ const PostCard = ({item, onUserPress, onCommentPress,onImagePress,deletePost,edi
         setLiked(!liked);
        
       };
+
+      const onSharePost = () => {
+        const postLink = 'https://foodblog?postId=' + item.postId;
+        const shareMessage = `Tên món ăn: ${item.postFoodName}\nĐộ khó: ${item.postFoodRating}\nNguyên liệu: ${item.postFoodIngredient}\nCách làm: ${item.postFoodMaking}\nTổng kết: ${item.postFoodSummary}\n\nXem thêm tại: ${postLink}`;
+        const options = {
+          title: 'Chia sẻ bài đăng',
+          message: shareMessage,
+        };                      
+        Share.open(options)
+          .catch((err) => {
+            console.log('Error when sharing:', err);
+          });
+      };
+
       function bocuc(){
         if(item.postImg.length== 1)
         {
@@ -305,6 +318,12 @@ const PostCard = ({item, onUserPress, onCommentPress,onImagePress,deletePost,edi
                         {item.comments.length === 1 ? '1 Comment' :
                         item.comments.length > 1 ? item.comments.length + ' Comments' :
                         'Comment'}</Text>
+                </View>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={onSharePost}>
+                <View style={styles.Interaction}>
+                    <Ionicons name="arrow-redo-outline"size={25}/>
+                    <Text style={styles.InteractionText}>Share</Text>
                 </View>
             </TouchableOpacity>
         </View>
