@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import {View, Text, StyleSheet, ScrollView, Image, TouchableOpacity} from "react-native";
 import ProgressCircle from 'react-native-progress-circle'
+import DateTimePicker from '@react-native-community/datetimepicker';
 const HomeScreen = () => {
   const [baseGoal, setBaseGoal] = useState(0);
   const [exercise, setExercise] = useState(0);
@@ -11,17 +12,45 @@ const HomeScreen = () => {
   const [snacks, setSnacks] = useState(0);
   const [remaining, setRemaining] = useState(0);
   const [isOver, setIsOver] = useState('Remaining');
+  const [date, setDate] = useState(new Date());
+  const [show, setShow] = useState(false);
+  const [time, setTime] = useState('Today');
+
+
+
+  
+  const onChange = (event, selectedDate) => {
+    const currentDate = selectedDate || date;
+     setShow(false);
+     setDate(currentDate);
+     let tempDate = new Date(currentDate);
+     let newDate = new Date();
+     let today = newDate.getDate() + '/' + (newDate.getMonth() + 1) + '/' + newDate.getFullYear();
+     let fDate = tempDate.getDate() + '/' + (tempDate.getMonth() + 1) + '/' + tempDate.getFullYear();
+     if (today != fDate)
+      setTime(fDate);
+    else setTime('Today');
+ }
+ 
   return (
     <ScrollView>
         <View style={styles.container}>
-          <TouchableOpacity>
+        {show && (
+        <DateTimePicker
+          value={date}
+          mode={'date'}
+          display='default'
+          onChange={onChange}
+        />
+      )}
+          <TouchableOpacity onPress={()=>setShow(true)}>
           <View style={{flexDirection: 'row', alignItems: "center", justifyContent: "center"}}>
             <Image
                 source={require("../assets/calendar.png")}
                 resizeMode="contain"
                 style={styles.tabIcon}
             />
-            <Text style={[styles.text, {fontWeight: "bold", margin: 5}]}>Today</Text>
+            <Text style={[styles.text, {fontWeight: "bold", margin: 5}]}>{time}</Text>
           </View>
           </TouchableOpacity>
         </View>
@@ -29,7 +58,7 @@ const HomeScreen = () => {
             <Text style={[styles.text, {color: '#444444'}]}>Remaining = Goal - Food + Exercire</Text>
             <View style={{flexDirection: 'row', alignItems: "center"}}>
                 <View style={{justifyContent: "center", alignItems: "center"}}>
-                  <TouchableOpacity style={{justifyContent: "center", alignItems: "center"}}>
+                  <TouchableOpacity style={{justifyContent: "center", alignItems: "center"}} >
                     <Text style={[styles.text, {color: '#FFFFFF', marginTop: 5}]}> Exercise </Text>
                     <Text style={[styles.text, {color: '#FFFFFF', fontWeight: "bold"}]}> {exercise} </Text>
                   </TouchableOpacity>
@@ -53,7 +82,7 @@ const HomeScreen = () => {
                     percent={30}
                     radius={70}
                     borderWidth={8}
-                    color="#84D07D"
+                    color="#84D07D" //phần trăm chiếm
                     shadowColor="#FFFFFF" //phần trăm không chiếm
                     bgColor="#CFCFCF" //ở trong vòng tròn
                   >
