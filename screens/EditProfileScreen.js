@@ -174,7 +174,7 @@ const EditProfileScreen = () => {
     <View style={styles.container}>
       <BottomSheet
         ref={this.sheetRef}
-        snapPoints={[330, 0]}
+        snapPoints={[370, 0]}
         renderContent={this.renderContent}
         renderHeader={this.renderHeader}
         initialSnap={1}
