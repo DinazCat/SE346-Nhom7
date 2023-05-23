@@ -285,7 +285,7 @@ const ProfileScreen = ({navigation, route}) => {
         showsVerticalScrollIndicator={false}>
         <Image
           style={styles.userImg}
-          source={{uri: profileData ? profileData.userImg : 'https://cdn-icons-png.flaticon.com/512/1946/1946429.png'}}
+          source={{uri: profileData ? profileData.userImg ? profileData.userImg : 'https://cdn-icons-png.flaticon.com/512/1946/1946429.png' : 'https://cdn-icons-png.flaticon.com/512/1946/1946429.png'}}
         />
         <Text style={styles.userName}>{profileData ? profileData.name : ''}</Text>
         <Text multiline style={styles.aboutUser}>

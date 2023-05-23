@@ -19,6 +19,7 @@ export default function FeedsScreen({navigation}) {
   const [loading, setLoading] = useState(true);
   const [refreshing, setrefreshing] = useState(true);
   const [mark, setmark] = useState(false);
+  const [userimg, setUserImg] = useState();
   const fetchPosts = async()=>{
     try{
       const list = [];
@@ -99,6 +100,7 @@ export default function FeedsScreen({navigation}) {
     setPosts([]);
     fetchPosts();
     getMark();
+    setUserImg(auth().currentUser.photoURL)
   
   }
 
@@ -269,7 +271,7 @@ export default function FeedsScreen({navigation}) {
       <View style={{flexDirection: 'row', alignItems: 'center'}}>
         <TouchableOpacity onPress={() => { console.log(user);
           navigation.navigate('profileScreen', {userId: user.uid})}}>
-          <Image style={styles.UserImage} source={{uri: user.photoURL}}/>
+          <Image style={styles.UserImage} source={{uri: userimg? userimg : user.photoURL? user.photoURL : 'https://cdn-icons-png.flaticon.com/512/1946/1946429.png'}}/>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.push('addPostScreen')}>
           <View style={styles.addPostTextContainer}>

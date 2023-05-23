@@ -2,6 +2,7 @@ import { StyleSheet, Text, View, TouchableOpacity,ImageBackground, TextInput, Al
 import React, {useEffect, useContext, useState} from 'react';
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
+import auth from '@react-native-firebase/auth';
 import ImagePicker from 'react-native-image-crop-picker';
 import Animated from 'react-native-reanimated';
 import BottomSheet from 'reanimated-bottom-sheet';
@@ -41,30 +42,39 @@ const EditProfileScreen = () => {
 
   const handleUpdate = async() => {
     let imgUrl = await uploadImage();
-
     if( imgUrl == null && userData.userImg ) {
       imgUrl = userData.userImg;
     }
-
-    firestore()
-    .collection('users')
-    .doc(user.uid)
-    .update({
-     name: userData.name,
-     about: userData.about,
-     email: userData.email,
-     phone: userData.phone,
-     country: userData.country,
-     city: userData.city,
-     userImg: imgUrl,
+    
+    try{
+      await firestore()
+      .collection('users')
+      .doc(user.uid)
+      .update({
+      name: userData.name,
+      about: userData.about,
+      email: userData.email,
+      userImg: imgUrl,
+      })
+      .then(() => {
+        console.log('User Updated!');
+        Alert.alert(
+          'Profile Updated!',
+          'Your Profile has been updated successfully.'
+        );
+      });
+    } catch(e){
+      console.log(e);
+    };
+    
+    auth().currentUser.updateProfile({
+      displayName: userData.name,
+      photoURL: imgUrl
     })
-    .then(() => {
-      console.log('User Updated!');
-      Alert.alert(
-        'Profile Updated!',
-        'Your Profile has been updated successfully.'
-      );
-    })
+    .catch((error) => {
+      console.log('Error updating displayName:', error);
+    });
+    setImage(imgUrl)
   };
 
   const uploadImage = async () => {
@@ -94,7 +104,6 @@ const EditProfileScreen = () => {
       await task;
 
       const url = await storageRef.getDownloadURL();
-
       setUploading(false);
       setImage(null);
       return url;
@@ -191,7 +200,8 @@ const EditProfileScreen = () => {
             <View>
               <ImageBackground
                 source={{
-                  uri: image ? image : userData ? userData.userImg :
+                  uri: image ? image : userData? userData.userImg? userData.userImg:
+                      'https://cdn-icons-png.flaticon.com/512/1144/1144811.png':
                       'https://cdn-icons-png.flaticon.com/512/1144/1144811.png'        
                 }}
                 style={{height: 100, width: 100}}
@@ -219,7 +229,7 @@ const EditProfileScreen = () => {
             placeholder="Name"
             placeholderTextColor="#666666"
             value={userData ? userData.name : ''}
-            onChangeText={(txt) => setUserData({...userData, lname: txt})}
+            onChangeText={(txt) => setUserData({...userData, name: txt})}
             autoCorrect={false}
             style={styles.textInput}
           />

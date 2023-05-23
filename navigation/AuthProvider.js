@@ -37,6 +37,27 @@ export const AuthProvider = ({ children }) => {
               const googleCredential = auth.GoogleAuthProvider.credential(idToken);
               // Sign-in the user with the credential
               await auth().signInWithCredential(googleCredential)
+              await auth().signInWithCredential(googleCredential)
+              .then(() => {
+                firestore().collection('users').doc(auth().currentUser.uid)
+                .set({
+                    id: auth().currentUser.uid,
+                    name: auth().currentUser.displayName,
+                    email: auth().currentUser.email,
+                    createdAt: firestore.Timestamp.fromDate(new Date()),
+                    userImg: auth().currentUser.photoURL,
+                    about: '',
+                    followers: [],
+                    following: [],
+                })
+                .catch(error => {
+                    console.log('Something went wrong with added user to firestore: ', error);
+                })
+              })
+              .catch(error => {
+                console.log('Something went wrong with gg login: ', error);
+                alert(e);
+              });
             } catch(error) {
               console.log({error});
               alert(e);
@@ -60,14 +81,7 @@ export const AuthProvider = ({ children }) => {
               const facebookCredential = auth.FacebookAuthProvider.credential(data.accessToken);
               // Sign-in the user with the credential
               await auth().signInWithCredential(facebookCredential)
-            } catch(error) {
-              console.log({error});
-              alert(e);
-            }
-          },
-          register: async (email, password) => {
-            try {
-              await auth().createUserWithEmailAndPassword(email, password)
+              await auth().signInWithCredential(googleCredential)
               .then(() => {
                 firestore().collection('users').doc(auth().currentUser.uid)
                 .set({
@@ -76,6 +90,7 @@ export const AuthProvider = ({ children }) => {
                     email: auth().currentUser.email,
                     createdAt: firestore.Timestamp.fromDate(new Date()),
                     userImg: auth().currentUser.photoURL,
+                    about: '',
                     followers: [],
                     following: [],
                 })
@@ -83,6 +98,42 @@ export const AuthProvider = ({ children }) => {
                     console.log('Something went wrong with added user to firestore: ', error);
                 })
               })
+              .catch(error => {
+                console.log('Something went wrong with fb login: ', error);
+                alert(e);
+              });
+            } catch(error) {
+              console.log({error});
+              alert(e);
+            }
+          },
+          register: async (email, password, name) => {
+            try {
+              await auth().createUserWithEmailAndPassword(email, password)
+              .then(() => {
+                firestore().collection('users').doc(auth().currentUser.uid)
+                .set({
+                    id: auth().currentUser.uid,
+                    name: name,
+                    email: auth().currentUser.email,
+                    createdAt: firestore.Timestamp.fromDate(new Date()),
+                    userImg: auth().currentUser.photoURL,
+                    about: '',
+                    followers: [],
+                    following: [],
+                })
+                .catch(error => {
+                    console.log('Something went wrong with added user to firestore: ', error);
+                })
+              });
+
+              auth().currentUser.updateProfile({
+                displayName: name,
+              })
+              .catch((error) => {
+                console.log('Error updating displayName:', error);
+              });           
+            
             } catch (e) {
               console.log(e);
               alert(e);
@@ -104,6 +155,7 @@ export const AuthProvider = ({ children }) => {
                     email: auth().currentUser.email,
                     createdAt: firestore.Timestamp.fromDate(new Date()),
                     userImg: auth().currentUser.photoURL,
+                    about: '',
                     followers: [],
                     following: [],
                 })
@@ -149,6 +201,7 @@ export const AuthProvider = ({ children }) => {
                     email: auth().currentUser.email,
                     createdAt: firestore.Timestamp.fromDate(new Date()),
                     userImg: auth().currentUser.photoURL,
+                    about: '',
                     followers: [],
                     following: [],
                 })

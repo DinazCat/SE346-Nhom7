@@ -7,6 +7,7 @@ import {AuthContext} from '../navigation/AuthProvider';
 
 const SignupScreen = ({navigation}) => {
   const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
@@ -22,6 +23,15 @@ const SignupScreen = ({navigation}) => {
         placeholderText="Email"
         iconType="user"
         keyboardType="email-address"
+        autoCapitalize="none"
+        autoCorrect={false}
+      />
+
+      <FormInput
+        labelValue={name}
+        onChangeText={(userName) => setName(userName)}
+        placeholderText="Username"
+        iconType="user"
         autoCapitalize="none"
         autoCorrect={false}
       />
@@ -46,31 +56,20 @@ const SignupScreen = ({navigation}) => {
         title="Sign up"
         onPress={() => {
           if(password == confirmPassword){
-            register(email, password)
+            register(email, password, name)
           }
           else{
             alert('Password confirmation does not match!')
           }
         }}
       />
-
-      <View style={styles.textPrivate}>
-        <Text style={styles.color_textPrivate}>
-          By registering, you confirm that you accept our{' '}
-        </Text>
-        <TouchableOpacity onPress={() => alert('Terms Clicked!')}>
-          <Text style={[styles.color_textPrivate, {color: '#e88832'}]}>
-            Terms of service
-          </Text>
-        </TouchableOpacity>
-        <Text style={styles.color_textPrivate}> and </Text>
-        <Text style={[styles.color_textPrivate, {color: '#e88832'}]}>
-          Privacy Policy
-        </Text>
-      </View>
-
+      <TouchableOpacity
+        style={styles.navButton}
+        onPress={() => navigation.navigate('loginScreen')}>
+        <Text style={styles.navButtonText}>Have an account? Sign in</Text>
+      </TouchableOpacity>
       {Platform.OS === 'android' ? (
-        <View>
+        <View style={{marginTop: 20}}>
           <SocialButton
             buttonTitle="Sign Up with Facebook"
             btnType="facebook"
@@ -89,11 +88,7 @@ const SignupScreen = ({navigation}) => {
         </View>
       ) : null}
 
-      <TouchableOpacity
-        style={styles.navButton}
-        onPress={() => navigation.navigate('loginScreen')}>
-        <Text style={styles.navButtonText}>Have an account? Sign in</Text>
-      </TouchableOpacity>
+      
     </View>
   );
 };
@@ -103,7 +98,6 @@ export default SignupScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
     backgroundColor:'#faf9ad',
@@ -112,6 +106,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Kufam-SemiBoldItalic',
     fontSize: 32,
     marginBottom: 10,
+    marginTop: 30,
     color: '#051d5f',
   },
   navButton: {
@@ -120,19 +115,8 @@ const styles = StyleSheet.create({
   navButtonText: {
     fontSize: 18,
     fontWeight: '500',
-    color: '#009900',
+    color: '#E68626',
     fontFamily: 'Lato-Regular',
-  },
-  textPrivate: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginVertical: 35,
-    justifyContent: 'center',
-  },
-  color_textPrivate: {
-    fontSize: 13,
-    fontWeight: '400',
-    fontFamily: 'Lato-Regular',
-    color: 'grey',
-  },
+    marginTop: 10
+  }
 });

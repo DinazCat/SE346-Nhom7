@@ -116,7 +116,7 @@ const AvatarComponent = ({item, onUserPress, onFollowsChange}) => {
     <View style={styles.container}>
       <TouchableOpacity onPress={onUserPress}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          <Image style={styles.UserImage} source={{uri: avatar ? avatar.userImg : 'https://i.pinimg.com/originals/84/2a/d6/842ad68b315b0f586c30b465221da609.jpg'}}/>
+          <Image style={styles.UserImage} source={{uri: avatar ? avatar.userImg ? avatar.userImg :'https://cdn-icons-png.flaticon.com/512/1946/1946429.png' : 'https://cdn-icons-png.flaticon.com/512/1946/1946429.png'}}/>
           <Text style={styles.UsernameText}>{avatar ? avatar.name : ''}</Text>
         </View>
       </TouchableOpacity>
