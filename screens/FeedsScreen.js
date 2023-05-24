@@ -22,12 +22,11 @@ export default function FeedsScreen({navigation}) {
   const [userimg, setUserImg] = useState();
   const fetchPosts = async()=>{
     try{
-      const list = [];
-      await firestore()
+      firestore()
       .collection('posts')
       .orderBy('postTime', 'desc')
-      .get()
-      .then((querySnapshot)=>{
+      .onSnapshot((querySnapshot)=>{
+        const list = [];
         querySnapshot.forEach(doc =>{
           const {userId,postFoodName, postFoodRating, postFoodMaking, postFoodIngredient, postFoodSummary, postImg, postTime, comments,likes,name,userImg,} = doc.data();
           var Time = new Date(postTime._seconds * 1000).toDateString() + ' at ' + new Date(postTime._seconds * 1000).toLocaleTimeString()
@@ -49,21 +48,21 @@ export default function FeedsScreen({navigation}) {
             liked: false,
           });
         })
+        setPosts(list);
+        setrefreshing(false);
+        if(loading){ setLoading(false) };
 
       })
-      setPosts(list);
-      setrefreshing(false);
-      if(loading){ setLoading(false) };
+     
     } catch(e){
       console.log(e);
     }
   }
   const getMark= async()=>
   {
-    await firestore()
+    firestore()
     .collection('Notification')
-    .get()
-    .then((querySnapshot)=>{
+    .onSnapshot((querySnapshot)=>{
       querySnapshot.forEach(doc =>{
       const {PostownerId, Read,} = doc.data();
       if(PostownerId == auth().currentUser.uid)
@@ -106,11 +105,10 @@ export default function FeedsScreen({navigation}) {
 
   const getUnsortedPosts = async () => {
     try{
-      const list = [];
-      await firestore()
+     firestore()
       .collection('posts')
-      .get()
-      .then((querySnapshot)=>{
+      .onSnapshot((querySnapshot)=>{
+        const list = [];
         querySnapshot.forEach(doc =>{
           const {userId,postFoodName, postFoodRating, postFoodMaking, postFoodIngredient, postFoodSummary, postImg, postTime, comments,likes,name,userImg,} = doc.data();
           var Time = new Date(postTime._seconds * 1000).toDateString() + ' at ' + new Date(postTime._seconds * 1000).toLocaleTimeString()

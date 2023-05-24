@@ -10,13 +10,13 @@ const NotificationScreen = ({navigation}) => {
   const [noread, setnoread] = useState([]);
   const [read, setread] = useState([]);
   const getNotification = async () => {
-    let listNo =[];
-    let listYes = [];
-    await firestore()
+  
+   firestore()
     .collection('Notification')
     .orderBy('time', 'desc')
-    .get()
-    .then((querySnapshot)=>{
+    .onSnapshot((querySnapshot)=>{
+      let listNo =[];
+      let listYes = [];
       querySnapshot.forEach(doc =>{
       const {PostownerId, Read, classify, guestId, guestImg, guestName, postid, text, time,} = doc.data();
       var Time = new Date(time._seconds * 1000).toDateString() + ' at ' + new Date(time._seconds * 1000).toLocaleTimeString();
@@ -49,11 +49,13 @@ const NotificationScreen = ({navigation}) => {
         }
       }
 
-      })
+      });
+      setnoread(listNo);
+      setread(listYes);
+      //console.log("thay");
 
     })
-    setnoread(listNo);
-    setread(listYes);
+
   }
   useEffect(()=>{
     getNotification();

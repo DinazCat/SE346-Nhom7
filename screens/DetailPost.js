@@ -8,12 +8,31 @@ import firestore from '@react-native-firebase/firestore';
 
 export default function DetailPostScreen({navigation,route}) {
     const [postData, setPost] = useState(null);
+    const [posttime, setPtime] = useState('');
+    const [defaultRating, setdefaulRating] = useState();
+    const [maxRating, setmaxRating] = useState([1,2,3,4,5])
+    const starImgFilled = "https://github.com/tranhonghan/images/blob/main/star_filled.png?raw=true";
+    const starImgCorner = "https://raw.githubusercontent.com/tranhonghan/images/main/star_corner.png";
     const {postId} = route.params;
-    onUserPress=() => navigation.navigate('profileScreen', {userId: route.params.item.userId})
+    onUserPress=() => navigation.navigate('profileScreen', {userId: postData.userId})
     const Item = ({each}) => (
         <Image style={[styles.PostImgsContainer, {height: each ? 250 : 0}]} 
         source={{uri:each}} />
       );
+      const CustomRatingBar = () => {
+        return (
+          <View style={styles.customRatingBarStyle}>
+            {
+              maxRating.map((item, key)=>{
+                return (
+                    <Image key={key} style={styles.starImgStyle}
+                    source={item <= defaultRating ? {uri: starImgFilled} : {uri:starImgCorner}}/>
+                )
+              })
+            }
+          </View>
+        )
+      }
 
     const getPost = async() => {
         await firestore()
@@ -24,7 +43,10 @@ export default function DetailPostScreen({navigation,route}) {
         if (documentSnapshot.exists) {
             const data = documentSnapshot.data();
             setPost(data);
-            console.log('Data fetched:', data);
+            setdefaulRating(documentSnapshot.data().postFoodRating);
+            var Time = new Date(documentSnapshot.data().postTime._seconds * 1000).toDateString() + ' at ' + new Date(documentSnapshot.data().postTime._seconds * 1000).toLocaleTimeString();
+            setPtime(Time);
+           // console.log('Data fetched:', defaultRating);
         } else {
             console.log('Document does not exist');
             console.log(postId);
@@ -48,30 +70,39 @@ export default function DetailPostScreen({navigation,route}) {
                     <TouchableOpacity onPress={onUserPress}>
                         <Text style={styles.UsernameText}>{postData?  postData.name : ''}</Text>
                     </TouchableOpacity>                
-                    <Text style={styles.PostTime}>{postData?  postData.name : ''}</Text>
+                    <Text style={styles.PostTime}>{postData?  posttime: ''}</Text>
                 </View>
             </View>
     
-            {/* <Image style={[styles.PostImgsContainer, {height: item.postImg[0] ? 250 : 0}]} 
-                source={{uri:item.postImg[0]}} />    */}
-                
-        {/* <FlatList
-        data={route.params.item.postImg}
-        renderItem={(item) => <Item each={item} />}
-        keyExtractor={item => item}
-        /> */}
         <View style={[styles.Container,{height:650}]}>
             <ScrollView style={{flexDirection:'column'}}>
-                {
-                postData?.postImg.map((each,key)=>{
+                
+                    <>
+                     <View style={{flexDirection:"row"}}>
+                     <Text style={styles.PostTitle}>Tên món ăn:</Text>
+                     <Text style={styles.PostText}>{postData? postData.postFoodName:""}</Text>
+                     </View>
+                     <View style={{flexDirection:"row"}}>
+                     <Text style={styles.PostTitle}>Độ khó:</Text>
+                     <CustomRatingBar/>
+                     </View>
+                     <Text style={styles.PostTitle}>Nguyên liệu:</Text>
+                     <Text style={styles.PostText}>{postData?postData.postFoodIngredient:""}</Text>
+                     <Text style={styles.PostTitle}>Cách làm:</Text>
+                     <Text style={styles.PostText}>{postData?postData.postFoodMaking:""}</Text>
+                     <Text style={styles.PostTitle}>Tổng kết:</Text>
+                     <Text style={styles.PostText}>{postData?postData.postFoodSummary:""}</Text>
+                     
+               { postData?.postImg.map((each,key)=>{
                     return(  
                         <View key={key}>
                         <Image source={{uri:each}} style={{height:300, width:400, marginTop:5}} resizeMode='cover'/>
                         </View>     
                     );
-                })
+                })}
+                </>
                 
-                }
+                
             </ScrollView>
         </View>      
     </View>
@@ -152,6 +183,25 @@ export default function DetailPostScreen({navigation,route}) {
             fontWeight: 'bold',
             marginTop: 5,
             marginLeft: 5,
-        }
+        },
+        PostTitle:{
+            fontSize: 16,
+            fontFamily: 'Lato-Regular',
+            paddingHorizontal: 15,
+            marginBottom: 10,
+            fontWeight:"600",
+            color:"white"
+        },
+        customRatingBarStyle:{
+            flexDirection:"row",
+            marginLeft:12,
+            marginBottom: 10,
+            paddingHorizontal: 15,
+        },
+        starImgStyle:{
+            width:20,
+            height:20,
+            resizeMode:'cover'
+        },
     
     })

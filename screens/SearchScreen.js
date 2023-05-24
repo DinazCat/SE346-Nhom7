@@ -117,10 +117,12 @@ const SearchScreen = ({navigation}) => {
         if(text != ""){
             console.log(AppUser[0]);
             const newData = AppUser.filter((item)=>{
-                const itemData = (item.name+"").toUpperCase();
+              if(item.name != null){
+                const itemData = (item.name).toUpperCase();
                 const textData = text.toUpperCase();
                 if (itemData.indexOf(textData)>-1){console.log("1");return item;}
-                else {return null;}
+               // else {return null;}
+              }
             });
             setPeopleFilter(newData);
             setContent(text);
