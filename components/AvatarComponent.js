@@ -2,6 +2,7 @@ import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native'
 import React, {useState, useEffect} from 'react'
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
+import SendNoti from './SendNoti';
 
 const AvatarComponent = ({item, onUserPress, onFollowsChange}) => {
 
@@ -52,10 +53,38 @@ const AvatarComponent = ({item, onUserPress, onFollowsChange}) => {
                 break;
             }
         } 
-        if (!flag) {tempFollowers.push(auth().currentUser.uid)}                    
+        if (!flag) {
+          tempFollowers.push(auth().currentUser.uid)
+          firestore().collection('Notification').add({
+            PostownerId: userId,
+            guestId: auth().currentUser.uid,
+            guestName: auth().currentUser.displayName,
+            guestImg:auth().currentUser.photoURL,
+            classify:'Follow',
+            time:firestore.Timestamp.fromDate(new Date()),
+            text: auth().currentUser.displayName+' đang theo dõi bạn.',
+            postid: '',
+            Read:'no',
+    
+          });
+          SendNoti(auth().currentUser.displayName+' đang theo dõi bạn.', userId);
+        }                    
     } 
     else {
       tempFollowers.push(auth().currentUser.uid);
+      firestore().collection('Notification').add({
+        PostownerId: userId,
+        guestId: auth().currentUser.uid,
+        guestName: auth().currentUser.displayName,
+        guestImg:auth().currentUser.photoURL,
+        classify:'Follow',
+        time:firestore.Timestamp.fromDate(new Date()),
+        text: auth().currentUser.displayName+' đang theo dõi bạn.',
+        postid: '',
+        Read:'no',
+
+      });
+      SendNoti(auth().currentUser.displayName+' đang theo dõi bạn.',userId);
     }
 
     firestore()

@@ -6,6 +6,7 @@ import PostCard from '../components/PostCard';
 import AvatarComponent from '../components/AvatarComponent';
 import storage from '@react-native-firebase/storage';
 import auth from '@react-native-firebase/auth';
+import SendNoti from '../components/SendNoti';
 const ProfileScreen = ({navigation, route}) => {
   const {user, logout} = useContext(AuthContext);
   const {userId} = route.params;
@@ -170,6 +171,7 @@ const ProfileScreen = ({navigation, route}) => {
           Read:'no',
 
         });
+        SendNoti(auth().currentUser.displayName+' đang theo dõi bạn.',userId);
         }                    
     } 
     else {
@@ -186,6 +188,7 @@ const ProfileScreen = ({navigation, route}) => {
         Read:'no',
 
       });
+      SendNoti(auth().currentUser.displayName+' đang theo dõi bạn.',userId);
     }
 
     firestore()

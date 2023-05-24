@@ -8,6 +8,7 @@ import {Menu, MenuOption, MenuOptions, MenuTrigger, MenuProvider} from 'react-na
 import { AuthContext } from '../navigation/AuthProvider';
 import Animated, { Easing } from 'react-native-reanimated';
 import Share from 'react-native-share';
+import SendNoti from './SendNoti';
 
 const PostCard = ({item, onUserPress, onCommentPress,onImagePress,deletePost,editright,editPost}) => {
 
@@ -35,7 +36,7 @@ const PostCard = ({item, onUserPress, onCommentPress,onImagePress,deletePost,edi
         }
         setLiked(status);
     }; 
-
+   
     const onLike = (item) => {
         let tempLikes = item.likes;
         if (tempLikes.length > 0) {
@@ -63,6 +64,7 @@ const PostCard = ({item, onUserPress, onCommentPress,onImagePress,deletePost,edi
                 Read:'no',
       
               });
+              SendNoti( auth().currentUser.displayName+' đã thích bài viết của bạn về món ăn: '+ item.postFoodName,item.userId);
             }                    
         } 
         else {
@@ -80,6 +82,7 @@ const PostCard = ({item, onUserPress, onCommentPress,onImagePress,deletePost,edi
             Read:'no',
   
           });
+          SendNoti( auth().currentUser.displayName+' đã thích bài viết của bạn về món ăn: '+ item.postFoodName, item.userId);
         }
     
         firestore()

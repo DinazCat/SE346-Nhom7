@@ -3,11 +3,24 @@ import auth from '@react-native-firebase/auth';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { LoginManager, AccessToken } from 'react-native-fbsdk-next';
 import firestore from '@react-native-firebase/firestore';
+import messaging from '@react-native-firebase/messaging';
 
 export const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
+    const getFcmToken = async () => {
+      try {
+        const token = await messaging().getToken();
+        console.log('FCM token:', token);
+        firestore().collection('users').doc(auth().currentUser.uid).set({
+          token: token
+      }, { merge: true });
+
+      } catch (error) {
+        console.log('Error retrieving FCM token:', error);
+      }
+    };
     return (
       <AuthContext.Provider
         value={{
@@ -16,6 +29,7 @@ export const AuthProvider = ({ children }) => {
           login: async (email, password) => {
             try {
               await auth().signInWithEmailAndPassword(email, password);
+              getFcmToken();
             } catch (e) {
               console.log(e);
               alert(e);
@@ -37,6 +51,7 @@ export const AuthProvider = ({ children }) => {
               const googleCredential = auth.GoogleAuthProvider.credential(idToken);
               // Sign-in the user with the credential
               await auth().signInWithCredential(googleCredential)
+              getFcmToken();
               await auth().signInWithCredential(googleCredential)
               .then(() => {
                 firestore().collection('users').doc(auth().currentUser.uid)

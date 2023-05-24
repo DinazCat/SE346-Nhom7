@@ -6,7 +6,7 @@ import { AuthContext } from '../navigation/AuthProvider';
 import auth from '@react-native-firebase/auth';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import PostComment from '../components/PostComment';
-
+import SendNoti from '../components/SendNoti';
 const CommentScreen = ({navigation}) => {
   const route = useRoute();
   const [comment, setComment] = useState('');
@@ -22,6 +22,7 @@ const CommentScreen = ({navigation}) => {
       setCommentList(route.params.comments);
     }
   }, [route.params?.comments]);
+
 
   const handlePostComment = () => {
     if(comment.length > 0){
@@ -61,6 +62,7 @@ const CommentScreen = ({navigation}) => {
         Read:'no',
 
       }).then().catch((e)=>{console.log("error "+ e); console.log( auth().currentUser.uid)});
+      SendNoti(auth().currentUser.displayName+' đã bình luận bài viết của bạn về món ăn: '+ route.params.Foodname,route.params.postOwner);
     }
   };
   handleDeleteComment = (item, index) =>{
