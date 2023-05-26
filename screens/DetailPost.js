@@ -62,47 +62,71 @@ export default function DetailPostScreen({navigation,route}) {
       },[postId])
     return (
         <View style={styles.Container}>
+            <View style={styles.headerContainer}>
             <View style={styles.UserInfoContainer}>
-                <TouchableOpacity onPress={onUserPress}>
-                    <Image style={styles.UserImage} source={{uri: postData?  postData.userImg : 'https://cdn-icons-png.flaticon.com/512/1946/1946429.png'}}/>
-                </TouchableOpacity>            
-                <View style={styles.UserInfoTextContainer}>
-                    <TouchableOpacity onPress={onUserPress}>
-                        <Text style={styles.UsernameText}>{postData?  postData.name : ''}</Text>
-                    </TouchableOpacity>                
-                    <Text style={styles.PostTime}>{postData?  posttime: ''}</Text>
-                </View>
+                        <TouchableOpacity onPress={onUserPress}>
+                            <Image style={styles.UserImage} source={{uri: postData?  postData.userImg : 'https://cdn-icons-png.flaticon.com/512/1946/1946429.png'}}/>
+                        </TouchableOpacity>            
+                        <View style={styles.UserInfoTextContainer}>
+                            <TouchableOpacity onPress={onUserPress}>
+                                <Text style={styles.UsernameText}>{postData?  postData.name : ''}</Text>
+                            </TouchableOpacity>                
+                            <Text style={styles.PostTime}>{postData?  posttime: ''}</Text>
+                        </View>
+                    </View>
+                <Text style={styles.foodname}>{postData? postData.postFoodName:""}</Text> 
             </View>
-    
+            
+            
         <View style={[styles.Container,{height:650}]}>
-            <ScrollView style={{flexDirection:'column'}}>
-                
+            <ScrollView style={{flexDirection:'column'}}>               
                     <>
-                     <View style={{flexDirection:"row"}}>
-                     <Text style={styles.PostTitle}>Tên món ăn:</Text>
-                     <Text style={styles.PostText}>{postData? postData.postFoodName:""}</Text>
-                     </View>
-                     <View style={{flexDirection:"row"}}>
-                     <Text style={styles.PostTitle}>Độ khó:</Text>
-                     <CustomRatingBar/>
-                     </View>
-                     <Text style={styles.PostTitle}>Nguyên liệu:</Text>
+                    <View style={styles.userInfoWrapper}>
+                        <View style={styles.userInfoItem}>
+                        <Text style={styles.userInfoTitle}>1</Text>
+                        <Text style={styles.userInfoSubTitle}>Servings</Text>
+                        </View>
+                        <View style={styles.userInfoItem}>
+                        <Text style={styles.userInfoTitle}>1h</Text>
+                        <Text style={styles.userInfoSubTitle}>Prep</Text>
+                        </View>
+                        <View style={styles.userInfoItem}>
+                        <Text style={styles.userInfoTitle}>10m</Text>
+                        <Text style={styles.userInfoSubTitle}>Cooking</Text>
+                        </View>                                   
+                    </View>     
+                    <View style={styles.userInfoWrapper}>
+                        <View style={styles.userInfoItem}>
+                        <Text style={styles.userInfoTitle}>200</Text>
+                        <Text style={styles.userInfoSubTitle}>Cal/serving</Text>
+                        </View>
+                        <View style={styles.userInfoItem}>
+                        <CustomRatingBar/>
+                        <Text style={styles.userInfoSubTitle}>Difficulty</Text>
+                        </View>                              
+                    </View>              
+                     <View style={styles.split}/>
+                     <Text style={[styles.PostTitle, {color: '#5AC30D'}]}>Ingredients</Text>
                      <Text style={styles.PostText}>{postData?postData.postFoodIngredient:""}</Text>
-                     <Text style={styles.PostTitle}>Cách làm:</Text>
+                     <View style={styles.split}/>
+                     <Text style={[styles.PostTitle, {color: '#CE3E3E'}]}>Steps</Text>
                      <Text style={styles.PostText}>{postData?postData.postFoodMaking:""}</Text>
-                     <Text style={styles.PostTitle}>Tổng kết:</Text>
+                     <View style={styles.split}/>
+                     <Text style={[styles.PostTitle, {color: '#546ED5'}]}>Summary</Text>
                      <Text style={styles.PostText}>{postData?postData.postFoodSummary:""}</Text>
+                     <View style={styles.split}/>
+                     <Text style={[styles.PostTitle, {color: '#23D8A3'}]}>Tag</Text>
+                     <Text style={styles.PostText}></Text>
                      
                { postData?.postImg.map((each,key)=>{
                     return(  
                         <View key={key}>
-                        <Image source={{uri:each}} style={{height:300, width:400, marginTop:5}} resizeMode='cover'/>
+                        <Image source={{uri:each}} style={{height:270, width:400, marginTop:5, borderRadius: 7}} resizeMode='cover'/>
                         </View>     
                     );
                 })}
                 </>
-                
-                
+                              
             </ScrollView>
         </View>      
     </View>
@@ -112,20 +136,34 @@ export default function DetailPostScreen({navigation,route}) {
   
     const styles = StyleSheet.create({
         Container:{
-            backgroundColor: '#1C1C1C',
             width: '100%',
             marginBottom: 10,
             borderRadius: 5,
+            backgroundColor: '#fff',
+            padding: 5
         },
+        foodname:{
+            fontSize: 50,
+            textAlign: 'center',
+            color: '#000',
+            fontFamily: 'WishShore',
+        },
+        headerContainer:{
+            paddingVertical: 5,
+            borderBottomWidth: 1,
+            borderBottomColor: '#DDD',
+        },
+        
         UserInfoContainer:{
             flexDirection: 'row',
             justifyContent: 'flex-start',
             padding: 5,
+            
         },
         UserImage:{
-            width: 40,
-            height: 40,
-            borderRadius: 20,
+            width: 46,
+            height: 46,
+            borderRadius: 23,
         },
         UserInfoTextContainer:{
             flexDirection: 'column',
@@ -133,21 +171,16 @@ export default function DetailPostScreen({navigation,route}) {
             marginLeft: 5,
         },
         UsernameText:{
-            fontSize: 14,
+            fontSize: 16,
             fontWeight: 'bold',
-            color:"white",
-            fontFamily: 'Lato-Regular',
         },
         PostTime:{
-            fontSize: 12,
+            fontSize: 13,
             color:"white",
-            fontFamily: 'Lato-Regular',
-            color: '#666',
+            color: '#888',
         },
         PostText:{
-            fontSize: 14,
-            fontFamily: 'Lato-Regular',
-            color:"white",
+            fontSize: 16,
             paddingHorizontal: 15,
             marginBottom: 15,
         },
@@ -185,23 +218,49 @@ export default function DetailPostScreen({navigation,route}) {
             marginLeft: 5,
         },
         PostTitle:{
-            fontSize: 16,
+            fontSize: 18,
             fontFamily: 'Lato-Regular',
             paddingHorizontal: 15,
             marginBottom: 10,
-            fontWeight:"600",
-            color:"white"
+            fontWeight:"900",
         },
         customRatingBarStyle:{
             flexDirection:"row",
-            marginLeft:12,
             marginBottom: 10,
-            paddingHorizontal: 15,
         },
         starImgStyle:{
             width:20,
             height:20,
             resizeMode:'cover'
         },
-    
+        split: {
+            height: 1,
+            backgroundColor: '#DDD',
+            marginVertical: 10,
+            marginHorizontal: 5
+        },
+        userInfoWrapper: {
+            flexDirection: 'row',
+            justifyContent: 'space-around',
+            width: '100%',
+            marginVertical: 15,
+          },
+          userInfoItem: {
+            justifyContent: 'center',
+            width: 100,
+            borderRadius: 5,
+            paddingVertical: 2,
+          },
+          userInfoTitle: {
+            fontSize: 20,
+            fontWeight: 'bold',
+            marginBottom: 5,
+            textAlign: 'center',
+            color: '#E8B51A'
+          },
+          userInfoSubTitle: {
+            fontSize: 13,
+            color: '#666',
+            textAlign: 'center',
+          },
     })

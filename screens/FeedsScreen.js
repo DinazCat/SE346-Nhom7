@@ -239,7 +239,7 @@ export default function FeedsScreen({navigation}) {
     <View style={styles.container}>
        <BottomSheet
         ref={sheetRef}
-        snapPoints={[450, 0]}
+        snapPoints={[400, 0]}
         renderContent={renderContent}
         renderHeader={renderHeader}
         initialSnap={1}
@@ -313,7 +313,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     padding: 10,
-    flexDirection:'column'
+    flexDirection:'column',
   },
   UserImage:{
     width: 50,
