@@ -287,7 +287,6 @@ export default function FeedsScreen({navigation}) {
             onUserPress={() => navigation.navigate('profileScreen', {userId: item.userId, listp:posts, onGoback: (items) => setPosts(items)})}
             onCommentPress={() => navigation.navigate('commentScreen', {
               postId: item.postId,
-              comments: item.comments,
               Foodname: item.postFoodName,
               postOwner: item.userId,
               onCommentChanged: handleCommentChanged

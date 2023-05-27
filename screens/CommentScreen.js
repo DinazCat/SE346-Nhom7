@@ -16,13 +16,26 @@ const CommentScreen = ({navigation}) => {
   const onCommentChanged = route.params.onCommentChanged
 
   useEffect(() => {
-    postId = route.params?.postId;
-    console.log(route.params.postOwner)
-    if (route.params?.comments) {
-      setCommentList(route.params.comments);
-    }
+    postId = route.params?.postId;  
+    fetchComments();
   }, [route.params?.comments]);
 
+  const fetchComments = async() => {
+    firestore()
+    .collection('posts')
+    .doc(postId)
+    .onSnapshot((documentSnapshot) => {
+    if (documentSnapshot.exists) {
+        const comments = documentSnapshot.data().comments || [];
+        setCommentList(comments);
+    } else {
+        console.log('Document does not exist');
+    }
+    })
+    .catch((error) => {
+        console.log('Error getting document:', error);
+    });
+  }
 
   const handlePostComment = () => {
     if(comment.length > 0){

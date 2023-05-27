@@ -8,7 +8,7 @@ import storage from '@react-native-firebase/storage';
 import auth from '@react-native-firebase/auth';
 import SendNoti from '../components/SendNoti';
 const ProfileScreen = ({navigation, route}) => {
-  const {user, logout} = useContext(AuthContext);
+  const {user} = useContext(AuthContext);
   const {userId} = route.params;
   const [posts, setPosts] = useState([]);
   const [followers, setFollowers] = useState([]);
@@ -55,10 +55,8 @@ const ProfileScreen = ({navigation, route}) => {
           postFoodMaking: postFoodMaking,
           postFoodSummary: postFoodSummary,
           postImg: postImg,
-          liked: true,
           likes: likes,
           comments: comments,
-          liked: false,
         });
       })
       })
@@ -70,11 +68,10 @@ const ProfileScreen = ({navigation, route}) => {
   }
 
   const getProfile = async() => {
-    await firestore()
+    firestore()
     .collection('users')
     .doc(userId)
-    .get()
-    .then((documentSnapshot) => {
+    .onSnapshot((documentSnapshot) => {
       if( documentSnapshot.exists ) {
         setProfileData(documentSnapshot.data());
         setFollowers(documentSnapshot.data().followers);
@@ -133,9 +130,6 @@ const ProfileScreen = ({navigation, route}) => {
     }
   }
   
-  useEffect(()=>{
-    fetchPosts();
-  },[])
   useEffect(() => {
     getProfile();
     fetchPosts();
@@ -297,9 +291,6 @@ const ProfileScreen = ({navigation, route}) => {
         <View style={styles.userBtnWrapper}>
           {(userId != user.uid) ? (
             <>
-              <TouchableOpacity style={styles.userBtn} onPress={() => {}}>
-                <Text style={styles.userBtnTxt}>Message</Text>
-              </TouchableOpacity>
               <TouchableOpacity style={styles.userBtn} onPress={() => onFollow(profileData)}>
                 <Text style={styles.userBtnTxt}>{getFollowStatus(profileData ? profileData.followers : null) ? 'Unfollow' : 'Follow'}</Text>
               </TouchableOpacity>
@@ -311,10 +302,7 @@ const ProfileScreen = ({navigation, route}) => {
                 onPress={() => {
                   navigation.navigate('editProfileScreen');
                 }}>
-                <Text style={styles.userBtnTxt}>Edit</Text>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.userBtn} onPress={() => logout()}>
-                <Text style={styles.userBtnTxt}>Logout</Text>
+                <Text style={styles.userBtnTxt}>Edit Profile</Text>
               </TouchableOpacity>
             </>
           )}
@@ -406,15 +394,19 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   userBtn: {
+    width: '40%',
     borderColor: '#66cc00',
     borderWidth: 2,
     borderRadius: 3,
     paddingVertical: 8,
     paddingHorizontal: 12,
     marginHorizontal: 5,
+    alignItems: 'center'
   },
   userBtnTxt: {
     color: '#66cc00',
+    fontSize: 16,
+    fontWeight: '500'
   },
   userInfoWrapper: {
     flexDirection: 'row',

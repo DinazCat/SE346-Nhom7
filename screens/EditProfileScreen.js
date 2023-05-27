@@ -74,6 +74,46 @@ const EditProfileScreen = () => {
     .catch((error) => {
       console.log('Error updating displayName:', error);
     });
+
+    try{
+      //update username and userimg in posts
+      const postsRef = firestore().collection('posts');
+      const querySnapshot = await postsRef.where('userId', '==', user.uid).get();
+      querySnapshot.forEach((doc) => {
+        const postData = doc.data();
+        const postRef = postsRef.doc(doc.id);
+        const updatedPostData = {
+          ...postData,
+          userImg: imgUrl,
+          name: userData.name,
+        };
+        doc.ref.update(updatedPostData);
+      });  
+      // update username and userimg in comments  
+      const querySnapshot2 = await postsRef.get();
+      querySnapshot2.forEach((doc) => {
+        const postRef = postsRef.doc(doc.id);
+        const comments = doc.data().comments || [];
+    
+        // Cập nhật thông tin userimg và username mới trong mảng "comments"
+        const updatedComments = comments.map((comment) => {
+          if (comment.userId === user.uid) {
+            return {
+              ...comment,
+              profile: imgUrl,
+              name: userData.name,
+            };
+          }
+          return comment;
+        });
+    
+        // Cập nhật mảng "comments" trong document
+        postRef.update({ comments: updatedComments });
+      });
+    } catch(e){
+      console.log(e);
+    };
+
     setImage(imgUrl)
   };
 
