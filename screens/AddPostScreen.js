@@ -1,16 +1,17 @@
 import React, {useEffect, useState, useContext} from 'react';
-import {View, ScrollView, Text, StyleSheet, FlatList, TouchableOpacity,Button,TextInput, Image, Alert, ActivityIndicator} from 'react-native';
+import {View, ScrollView, Text, StyleSheet, FlatList, TouchableOpacity,Button,TextInput, Image, Alert, ActivityIndicator, KeyboardAvoidingView} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import ImagePicker from 'react-native-image-crop-picker';
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import { AuthContext } from '../navigation/AuthProvider';
+import { Picker } from '@react-native-picker/picker';
 export default AddPostScreen= function({navigation}) {
     const [image,setimage] = useState([]);
     const [imageUrl,setimageUrl] = useState([]);
     const [FoodName, setFoodName] = useState("");
-    const [Ingredient, setIngredient] = useState("");
+    const [Ingredient, setIngredient] = useState([]);
     const [Making, setMaking] = useState("");
     const [Summary, setSummary] = useState("");
     const [uploading, setUploading] = useState(false);
@@ -18,13 +19,27 @@ export default AddPostScreen= function({navigation}) {
     const [selectedTab, setSelectedTab] = useState(0);
     const [defaultRating, setdefaulRating] = useState(0);
     const [maxRating, setmaxRating] = useState([1,2,3,4,5])
+    const [hashtag, sethashtag] = useState([]);
+    const [Total, setTotal] = useState("");
+    const [Cal, setCal] = useState("");
+    const [Prep, setPrep] = useState("");
+    const [Cookingtime, setCookingtime] = useState("");
+
     const starImgFilled = "https://github.com/tranhonghan/images/blob/main/star_filled.png?raw=true";
     const starImgCorner = "https://raw.githubusercontent.com/tranhonghan/images/main/star_corner.png";
     const {user} = useContext(AuthContext);
     const TextChangeFoodName = (Text)=>{setFoodName(Text)};
-    const TextChangeIngredient = (Text)=>{setIngredient(Text)};
+    const TextChangeIngredient = (text,index)=>{
+      const i = Ingredient.findIndex(item => item.id === index);
+      const newdata = [...Ingredient];
+      newdata[i].name = text;
+      setIngredient(newdata)};
     const TextChangeMaking = (Text)=>{setMaking(Text)};
     const TextChangeSummary= (Text)=>{setSummary(Text)};
+    const TextChangetotal = (Text)=>{setTotal(Text)};
+    const TextChangecal = (Text)=>{setCal(Text)};
+    const TextChangeprep = (Text)=>{setPrep(Text)};
+    const TextChangecooking= (Text)=>{setCookingtime(Text)};
     const CustomRatingBar = () => {
       return (
         <View style={styles.customRatingBarStyle}>
@@ -69,6 +84,10 @@ export default AddPostScreen= function({navigation}) {
         {
           imageUrl[i] = await uploadImage(image[i].path);
         }
+        for (let i = 0; i < Ingredient.length; i++)
+        {
+          if(Ingredient[i].dv == "") Ingredient[i].dv = "g";
+        }
        // const imageUrl = await uploadImage();
         const docRef = await firestore().collection('posts').add({
           postId: null,
@@ -79,6 +98,11 @@ export default AddPostScreen= function({navigation}) {
           postFoodMaking:Making,  
           postFoodSummary:Summary,  
           postImg: imageUrl,
+          total:Total,
+          Calories:Cal,
+          Prep:Prep,
+          Cooking:Cookingtime,
+          hashtags:hashtag,
           postTime: firestore.Timestamp.fromDate(new Date()),
           likes: [],
           comments: [],
@@ -93,8 +117,8 @@ export default AddPostScreen= function({navigation}) {
           'Post uploaded',
           'Your post has been upload to the Firebase Cloud Storage successfully!'
         );
-        navigation.push('feedsScreen');
-        setText('');
+       // navigation.push('feedsScreen');
+       // setText('');
       } catch (error) {
         console.log('something went wrong!', error);
       }
@@ -131,6 +155,133 @@ export default AddPostScreen= function({navigation}) {
         setimage(null);
 
     }
+   
+    const [mainingredient, setmainingredient] = useState([
+      {key:"Beans & Peas", tick: false}, {key:" Beef", tick: false}, {key:"Chicken", tick: false}, {key:"Egg", tick: false},{key: "Seafood", tick: false},{key: "Pork", tick: false},{key: "Pasta", tick: false}])
+    const [diettype, setdiettype] =useState( [
+        {key:"Low-Fat", tick: false},{key:"High-Protein", tick: false},{key:"Vegetarian", tick: false},{key:"Keto", tick: false},{key:"Mediterranean", tick: false},{key:"High-Fiber", tick: false}
+    ]);
+    const [mealtype, setmealtype] =useState( [
+        {key:"Breakfast", tick: false},{key:"Lunch", tick: false},{key:"Dinner", tick: false},{key:"Snack", tick: false}
+    ]);
+    const [cookingstyle, setcookingstyle ]= useState([
+        {key: "Fast Prep", tick: false}, {key:"No Cooking", tick: false}, {key:" Fast & Easy", tick: false}, {key:"Slow Cooker", tick: false}, {key:"Grilling", tick: false}
+    ]);
+    const [course, setcourse] = useState( [
+        {key:"Salads & Dressings", tick: false}, {key:"Desserts", tick: false}, {key:"Sides", tick: false}, {key:"Beverages & Smoothies", tick: false},{key: "Soups & Stews", tick: false}
+    ])
+   
+    const Hashtags = ({each})=>(
+        <TouchableOpacity style={{backgroundColor:(each.tick)?'#9ACD32':'#E6E6FA', marginLeft:15, marginTop:10, alignItems:'center', borderRadius:15, borderColor:'#8470FF', borderWidth:1}}
+        onPress={()=>{
+          const index1 = mainingredient.findIndex(item => item === each);
+          if(index1 != -1)
+          {
+            const newData = [...mainingredient];
+            newData[index1].tick = !each.tick;
+            setmainingredient(newData);
+          }
+          const index2 = course.findIndex(item => item === each);
+          if(index2 != -1)
+          {
+            const newData = [...course];
+            newData[index2].tick = !each.tick;
+            setcourse(newData);
+          }
+          const index3 = cookingstyle.findIndex(item => item === each);
+          if(index3 != -1)
+          {
+            const newData = [...cookingstyle];
+            newData[index3].tick = !each.tick;
+            setcookingstyle(newData);
+          }
+          const index4 = mealtype.findIndex(item => item === each);
+          if(index4 != -1)
+          {
+            const newData = [...mealtype];
+            newData[index4].tick = !each.tick;
+            setmealtype(newData);
+          }
+          const index5 = diettype.findIndex(item => item === each);
+          if(index5 != -1)
+          {
+            const newData = [...diettype];
+            newData[index5].tick = !each.tick;
+            setdiettype(newData);
+          }
+         if(hashtag.length>0)
+         {
+          let flag = false;
+          for(let i = 0; i < hashtag.length; i++)
+          {
+            if(hashtag[i] == each.key){
+              hashtag.splice(i, 1); 
+                    flag = true;
+                    break;
+            }
+          }
+          if(flag==false)hashtag.push(each.key);
+         }
+         else hashtag.push(each.key);
+        // console.log("size "+hashtag.length)
+         
+        }}>
+            <Text style={styles.TextStyle}>{each.key}</Text>
+        </TouchableOpacity>
+        
+    )
+    const [options, setOp] = useState( [
+        { label: 'g', value: 'g' },
+        { label: 'kg', value: 'kg' },
+        { label: 'ml', value: 'ml' },
+        { label: 'l', value: 'l' },
+        { label: 'cup', value: 'cup' },
+        { label: 'teaspoon', value: 'tsp' },
+        { label: 'tablespoon', value: 'tbsp' },
+        { label: 'piece', value: 'piece' },
+        { label: 'pieces', value: 'pieces' },
+        // Add more options as needed
+      ]);
+    const [selectedValue, setSelectedValue] = useState();
+
+  const handleChange = (value) => {
+    setSelectedValue(value);
+  };
+    const Item = ( {itemI} ) => (
+        <View style={{flexDirection:'column', height:100, backgroundColor:'#FFFAF0', width:"95%",alignSelf:'center'}}>
+            <TouchableOpacity onPress={()=> {
+                const newArray = Ingredient.filter(item => item.id !== itemI.id);
+                let i = 0;
+                newArray.map((each)=>{each.id = i; i=i+1;})
+                setIngredient(newArray);          
+            }}>
+            <Icon name={'minus-circle'} style={{color: 'black', fontSize: 20, padding: 5}} />
+          </TouchableOpacity>
+             <View style={{flexDirection:'row', height:100, backgroundColor:'#FFFAF0', width:"100%", alignSelf:'center'}} >
+            <TextInput  multiline={true} style={{ width:"50%", height:50, borderBottomColor:'black', borderBottomWidth:1}} onChangeText={(val)=>n = val}
+                onEndEditing={()=>itemI.name = n}
+                defaultValue={itemI.name}/>
+            <Text>Wty:</Text>
+            <TextInput style={{ width:"10%", height:50, borderBottomColor:'black', borderBottomWidth:1,textAlign:'center'}}onChangeText={(val)=>n = val}
+                onEndEditing={()=>itemI.wty = n}
+                defaultValue={itemI.wty}/>
+            <Picker
+        selectedValue={itemI.dv}
+        onValueChange={(value)=> {itemI.dv = value, setSelectedValue(value), console.log(itemI)}}
+        style={{height:50, width:120}}
+      >
+        {options.map((option) => (
+          <Picker.Item
+            key={option.value}
+            label={option.label}
+            value={option.value}
+          />
+        ))}
+      </Picker>                
+        </View>  
+        </View>     
+      );
+   
       
     return (
       <View style={styles.container}>
@@ -163,22 +314,16 @@ export default AddPostScreen= function({navigation}) {
           )}
           <View style={{marginRight: 5}} />
         </View>
-        <View
+       
+        {selectedTab == 0 && (
+          <>
+          <KeyboardAvoidingView style={{flex:1}} behavior='height'>
+              <ScrollView>
+           <View
           style={{
             height: 70,
             flexDirection: 'row',
           }}>
-          <Image
-            source={{uri: user.photoURL}}
-            style={{
-              width: 50,
-              height: 50,
-              borderRadius: 30,
-              marginLeft: 10,
-              backgroundColor: 'black',
-              alignSelf: 'center',
-            }}
-          />
           <Text
             style={{
               marginLeft: 10,
@@ -186,57 +331,207 @@ export default AddPostScreen= function({navigation}) {
               fontWeight: '700',
               alignSelf: 'center',
             }}>
-            {user.displayName}
+            Step 1. Something about food
           </Text>
         </View>
-        {selectedTab == 0 ? (
-          <>
            <View style={styles.TextBox}>
            <Icon name={"pencil-alt"} style={{ color: "#FFCC00", fontSize: 30, marginLeft:340,position:"absolute" }} />
            <ScrollView>
-             <Text style={styles.TextStyle}>Tên món ăn</Text>
+             <Text style={[styles.TextStyle,{marginTop:20}]}>Food name</Text>
            <TextInput
-             multiline={true}
-             style={{fontSize: 16, marginLeft: 3}}
+             style={{fontSize: 16, 
+                marginLeft: 3, 
+                borderBottomColor:'black', 
+                alignSelf:'center',
+                borderBottomWidth:1, 
+                width:"90%", }}
              value={FoodName}
              onChangeText={TextChangeFoodName}
            />
-           <View style={{height:1, width:'90%', backgroundColor: 'black', alignSelf:"center"}}/>
-            <Text style={styles.TextStyle}>Độ khó</Text>
+            <Text style={[styles.TextStyle,{marginTop:20}]}>level of difficulty</Text>
             <CustomRatingBar/>
-            <Text style={styles.TextStyle}>Nguyên liệu</Text>
-           <TextInput
-             multiline={true}
-             value={Ingredient}
-             style={{fontSize: 16, marginLeft: 3}}
-             onChangeText={TextChangeIngredient}
+            <View style={styles.InputBox}>
+            <Text  style={styles.TextStyle}>Total</Text>
+            <TextInput
+             style={styles.InputStyle}
+             value={Total}
+             onChangeText={TextChangetotal}
            />
-            <View style={{height:1, width:'90%', backgroundColor: 'black', alignSelf:"center"}}/>
-           <Text style={styles.TextStyle}>Cách làm</Text>
+            <Text>servings</Text>
+            </View>
+            
+            <View style={styles.InputBox}>
+            <Text style={styles.TextStyle}>Calories</Text>
            <TextInput
-             multiline={true}
-             value={Making}
-             style={{fontSize: 16, marginLeft: 3}}
-             onChangeText={TextChangeMaking}
+             style={styles.InputStyle}
+             value={Cal}
+             onChangeText={TextChangecal}
            />
-            <View style={{height:1, width:'90%', backgroundColor: 'black', alignSelf:"center"}}/>
-           <Text style={styles.TextStyle}>Tổng kết</Text>
+            <Text>cals/serving</Text>
+            </View>
+            <View style={styles.InputBox}>
+            <Text style={styles.TextStyle}>Prep time</Text>
            <TextInput
-             multiline={true}
-             value={Summary}
-             style={{fontSize: 16, marginLeft: 3}}
-             onChangeText={TextChangeSummary}
+             style={styles.InputStyle}
+             value={Prep}
+             onChangeText={TextChangeprep}
            />
-            <View style={{height:1, width:'90%', backgroundColor: 'black', alignSelf:"center"}}/>
+            </View>
+            <View style={styles.InputBox}>
+            <Text style={styles.TextStyle}>Cooking time</Text>
+           <TextInput
+             style={styles.InputStyle}
+             value={Cookingtime}
+             onChangeText={TextChangecooking}
+           />
+            </View>
            </ScrollView>
  
            </View>  
+           </ScrollView>
+           </KeyboardAvoidingView>
            </>  
-        ) : (
-          <View style={{height: 545, flexDirection: 'column'}}>
-         
-          
-          
+        ) }
+        {(selectedTab==1)&& (
+            <>
+            <KeyboardAvoidingView style={{flex:1}} behavior='height'>
+              <ScrollView>
+          <View
+          style={{
+            height: 70,
+            flexDirection: 'row',
+          }}>
+          <Text
+            style={{
+              marginLeft: 10,
+              fontSize: 18,
+              fontWeight: '700',
+              alignSelf: 'center',
+            }}>
+            Step 2. How to make food?
+          </Text>
+        </View>
+           <View style={styles.TextBox}>
+            <ScrollView>
+            <View style={{flexDirection:'row'}}>
+            <Text style={[styles.TextStyle,{marginTop:20}]}>What ingredients are there?</Text>
+           <TouchableOpacity onPress={()=>{
+             const newData = [
+                ...Ingredient,
+                { id:Ingredient.length,name:"", wty:"", dv:"" },
+              ];
+            setIngredient(newData);
+           }}>
+          <Icon
+              name={'cart-plus'}
+              style={{
+                marginLeft:15,
+                color: 'green',
+                marginTop:10,
+                fontSize: 40 
+              }}
+            /> 
+          </TouchableOpacity>
+
+            </View>
+           <FlatList
+        data={Ingredient}
+        renderItem={({item})=><Item itemI={item} />}
+        keyExtractor={(item, index) => index.toString()}
+      />
+       <Text style={[styles.TextStyle,{marginTop:20}]}>Give me the recipe of your food</Text>
+           <TextInput
+           multiline={true}
+             style={{fontSize: 16, 
+                marginLeft: 3, 
+                borderBottomColor:'black', 
+                alignSelf:'center',
+                borderBottomWidth:1, 
+                width:"90%", }}
+                value={Making}
+             onChangeText={TextChangeMaking}
+           />
+           <Text style={[styles.TextStyle,{marginTop:20}]}>Do you want to say something?</Text>
+           <TextInput
+           multiline={true}
+             style={{fontSize: 16, 
+                marginLeft: 3, 
+                borderBottomColor:'black', 
+                alignSelf:'center',
+                borderBottomWidth:1, 
+                width:"90%", }}
+                value={Summary}
+             onChangeText={TextChangeSummary}
+           />
+        </ScrollView>
+
+           </View>
+           </ScrollView>
+           </KeyboardAvoidingView>
+           </>
+        )}
+        {(selectedTab==2)&&(
+            <>
+           <View
+          style={{
+            height: 70,
+            flexDirection: 'row',
+          }}>
+          <Text
+            style={{
+              marginLeft: 10,
+              fontSize: 18,
+              fontWeight: '700',
+              alignSelf: 'center',
+            }}>
+            Step 3. Choose hashtags
+          </Text>
+        </View>
+           <View style={styles.TextBox}>
+            <ScrollView>
+            <Text style={[styles.TextStyle,{marginTop:20}]}>Meal Type</Text>
+            <FlatList
+        data={mealtype}
+        renderItem={({item})=><Hashtags each={item} />}
+        keyExtractor={(item, index) => index.toString()}
+        numColumns={3}
+      />
+            <Text style={[styles.TextStyle,{marginTop:20}]}>Cooking Style</Text>
+            <FlatList
+        data={cookingstyle}
+        renderItem={({item})=><Hashtags each={item} />}
+        keyExtractor={(item, index) => index.toString()}
+        numColumns={3}
+      />
+            <Text style={[styles.TextStyle,{marginTop:20}]}>Course</Text>
+            <FlatList
+        data={course}
+        renderItem={({item})=><Hashtags each={item} />}
+        keyExtractor={(item, index) => index.toString()}
+        numColumns={3}
+      />
+            <Text style={[styles.TextStyle,{marginTop:20}]}>Main Ingredient</Text>
+            <FlatList
+        data={mainingredient}
+        renderItem={({item})=><Hashtags each={item} />}
+        keyExtractor={(item, index) => index.toString()}
+        numColumns={3}
+      />
+            <Text style={[styles.TextStyle,{marginTop:20}]}>Diet Type</Text>
+            <FlatList
+        data={diettype}
+        renderItem={({item})=><Hashtags each={item} />}
+        keyExtractor={(item, index) => index.toString()}
+        numColumns={3}
+      />
+      <View style={{height:50, width:"100%"}}/>
+            </ScrollView>
+
+            </View>
+            </>
+        )}
+        {(selectedTab==3)&&(
+            <View style={{height: 570, flexDirection: 'column'}}>  
           {image.length==0? (
             <View>
               <Image
@@ -254,7 +549,7 @@ export default AddPostScreen= function({navigation}) {
               </Text>
             </View>
           ) : null}
-          <ScrollView style={{flexDirection:'column', }}>
+          <ScrollView style={{flexDirection:'column' }}>
             {
               image.map((each,key)=>{
                 return(  
@@ -286,7 +581,7 @@ export default AddPostScreen= function({navigation}) {
               }}
             /> 
           </TouchableOpacity>
-        </View>     
+        </View>
         )} 
        
         <View style={styles.Wrapper}>
@@ -295,26 +590,19 @@ export default AddPostScreen= function({navigation}) {
               height: 42,
               flexDirection: 'row',
             }}
-            onPress={() => {setSelectedTab(0)}}>
-               {/* <Icon
-              name={'images'}
+            onPress={()=>{ 
+                if(selectedTab > 0){
+                    setSelectedTab(selectedTab-1);    
+                }}}>
+               <Icon
+              name={'hand-point-left'}
               style={{
-                marginLeft: 4,
+                marginLeft: 15,
                 color: 'green',
                 fontSize: 30,
                 alignSelf: 'center',
               }}
-            /> */}
-            <View style={{justifyContent: 'center',backgroundColor: selectedTab == 0 ? '#f545' : '#FFCC00'}}>
-            <Text
-              style={{
-                alignSelf: 'center',
-                fontSize: 16,
-                fontWeight: '600',
-              }}>
-              Bài viết
-            </Text>
-            </View>
+            />
             
           </TouchableOpacity>
           <TouchableOpacity
@@ -323,30 +611,31 @@ export default AddPostScreen= function({navigation}) {
               flexDirection: 'row',
             }}
             // onPress={pickImageAsync}
-            onPress={() => {setSelectedTab(1)}}>
-            <View style={{justifyContent: 'center',backgroundColor: selectedTab == 1 ? '#f545' : '#FFCC00'}}>
-            <Text
+        onPress={()=>{
+            if(selectedTab < 3){
+                setSelectedTab(selectedTab+1);
+            }}}>
+             <Icon
+              name={'hand-point-right'}
               style={{
+                marginRight: 15,
+                color: 'green',
+                fontSize: 30,
                 alignSelf: 'center',
-                fontSize: 16,
-                fontWeight: '600',
-              }}>
-              Thêm ảnh
-            </Text>
-            </View>
+              }}
+            />
           </TouchableOpacity>
         </View>
       </View>
-    );
-  }
-
-  const styles = StyleSheet.create({
+    )
+}
+const styles = StyleSheet.create({
     container:{
       flex: 1,
       backgroundColor: '#fff',
     },
     TextBox:{
-      height:545,
+      height:500,
       width:"95%", 
       borderColor:"black", 
       borderWidth:1, 
@@ -357,17 +646,29 @@ export default AddPostScreen= function({navigation}) {
     {
       fontSize: 18, 
       marginLeft: 6,
-      marginTop:20,
       color:"black",
       fontWeight:"600"
-
+    },
+    InputStyle:{
+        fontSize: 16, 
+        marginLeft: 3, 
+        borderBottomColor:'black', 
+        borderBottomWidth:1, 
+        width:"40%", 
+        textAlign:'center'
+    },
+    InputBox:{
+        flexDirection:'row', 
+        marginTop:20, 
+        height:50, 
+        alignItems:'center'
     },
     Wrapper: {
       flexDirection: 'row',
-      justifyContent: 'space-around',
-      alignItems:'center',
+      justifyContent: 'space-between',
+    //   alignItems:'center',
       width: '100%',
-      marginTop: 10,
+      marginTop: 55,
       backgroundColor: '#FFCC00'
     },
     customRatingBarStyle:{
@@ -382,4 +683,3 @@ export default AddPostScreen= function({navigation}) {
     }
 
   })
-  

@@ -290,12 +290,16 @@ const PostCard = ({item, onUserPress, onCommentPress,onImagePress,deletePost,edi
         <Text style={styles.PostTitle}>Độ khó:</Text>
         <CustomRatingBar/>
         </View>
-        <Text style={styles.PostTitle}>Nguyên liệu:</Text>
+        <TouchableOpacity onPress={onImagePress}>
+          <Text style={{textDecorationLine:'underline', color:'blue',paddingHorizontal: 15,
+        marginBottom: 10,}}>See Detail</Text>
+        </TouchableOpacity>
+        {/* <Text style={styles.PostTitle}>Nguyên liệu:</Text>
         <Text style={styles.PostText}>{item.postFoodIngredient}</Text>
         <Text style={styles.PostTitle}>Cách làm:</Text>
         <Text style={styles.PostText}>{item.postFoodMaking}</Text>
         <Text style={styles.PostTitle}>Tổng kết:</Text>
-        <Text style={styles.PostText}>{item.postFoodSummary}</Text>
+        <Text style={styles.PostText}>{item.postFoodSummary}</Text> */}
 
         {/* <Image style={[styles.PostImgsContainer, {height: item.postImg[0] ? 250 : 0}]} 
             source={{uri:item.postImg[0]}} />    */}

@@ -83,21 +83,21 @@ export default function DetailPostScreen({navigation,route}) {
                     <>
                     <View style={styles.userInfoWrapper}>
                         <View style={styles.userInfoItem}>
-                        <Text style={styles.userInfoTitle}>1</Text>
+                        <Text style={styles.userInfoTitle}>{postData?postData.total:""}</Text>
                         <Text style={styles.userInfoSubTitle}>Servings</Text>
                         </View>
                         <View style={styles.userInfoItem}>
-                        <Text style={styles.userInfoTitle}>1h</Text>
+                        <Text style={styles.userInfoTitle}>{postData?postData.Prep:""}</Text>
                         <Text style={styles.userInfoSubTitle}>Prep</Text>
                         </View>
                         <View style={styles.userInfoItem}>
-                        <Text style={styles.userInfoTitle}>10m</Text>
+                        <Text style={styles.userInfoTitle}>{postData?postData.Cooking:""}</Text>
                         <Text style={styles.userInfoSubTitle}>Cooking</Text>
                         </View>                                   
                     </View>     
                     <View style={styles.userInfoWrapper}>
                         <View style={styles.userInfoItem}>
-                        <Text style={styles.userInfoTitle}>200</Text>
+                        <Text style={styles.userInfoTitle}>{postData?postData.Calories:""}</Text>
                         <Text style={styles.userInfoSubTitle}>Cal/serving</Text>
                         </View>
                         <View style={styles.userInfoItem}>
@@ -106,17 +106,39 @@ export default function DetailPostScreen({navigation,route}) {
                         </View>                              
                     </View>              
                      <View style={styles.split}/>
+                     <View style={{backgroundColor:'#F5F5F5'}}>
                      <Text style={[styles.PostTitle, {color: '#5AC30D'}]}>Ingredients</Text>
-                     <Text style={styles.PostText}>{postData?postData.postFoodIngredient:""}</Text>
+                     {/* <Text style={styles.PostText}>{postData?postData.postFoodIngredient:""}</Text> */}
+                     {
+                        postData?.postFoodIngredient.map((each,key)=>{
+                            return(
+                                    <Text style={styles.PostText} key={key}>{"- "+each.name + " ("+ each.wty+" "+ each.dv+")"}</Text>
+                            )
+                        })
+                     }
+                     </View>
                      <View style={styles.split}/>
+                     <View style={{backgroundColor:'#F5F5F5'}}>
                      <Text style={[styles.PostTitle, {color: '#CE3E3E'}]}>Steps</Text>
                      <Text style={styles.PostText}>{postData?postData.postFoodMaking:""}</Text>
+                     </View>
                      <View style={styles.split}/>
+                     <View style={{backgroundColor:'#F5F5F5'}}>
                      <Text style={[styles.PostTitle, {color: '#546ED5'}]}>Summary</Text>
                      <Text style={styles.PostText}>{postData?postData.postFoodSummary:""}</Text>
+                     </View>
                      <View style={styles.split}/>
+                     <View style={{backgroundColor:'#F5F5F5'}}>
                      <Text style={[styles.PostTitle, {color: '#23D8A3'}]}>Tag</Text>
-                     <Text style={styles.PostText}></Text>
+                     {/* <Text style={styles.PostText}></Text> */}
+                     {
+                        postData?.hashtags.map((each,key)=>{
+                            return(
+                                    <Text style={styles.PostText} key={key}>{"- "+each}</Text>
+                            )
+                        })
+                     }
+                     </View>
                      
                { postData?.postImg.map((each,key)=>{
                     return(  
@@ -180,9 +202,10 @@ export default function DetailPostScreen({navigation,route}) {
             color: '#888',
         },
         PostText:{
-            fontSize: 16,
+            fontSize: 18,
             paddingHorizontal: 15,
             marginBottom: 15,
+            color:'black',
         },
         PostImgsContainer:{
             width: '100%', 

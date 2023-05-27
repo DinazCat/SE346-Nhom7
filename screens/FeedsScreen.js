@@ -28,7 +28,7 @@ export default function FeedsScreen({navigation}) {
       .onSnapshot((querySnapshot)=>{
         const list = [];
         querySnapshot.forEach(doc =>{
-          const {userId,postFoodName, postFoodRating, postFoodMaking, postFoodIngredient, postFoodSummary, postImg, postTime, comments,likes,name,userImg,} = doc.data();
+          const {userId,postFoodName, postFoodRating, postFoodMaking, postFoodIngredient, postFoodSummary, postImg, postTime, comments,likes,name,userImg,total, Calories, Prep, Cooking, hashtags} = doc.data();
           var Time = new Date(postTime._seconds * 1000).toDateString() + ' at ' + new Date(postTime._seconds * 1000).toLocaleTimeString()
           list.push({          
             postId: doc.id,
@@ -41,6 +41,7 @@ export default function FeedsScreen({navigation}) {
             postFoodIngredient:postFoodIngredient,
             postFoodMaking: postFoodMaking,
             postFoodSummary: postFoodSummary,
+            total:total, Calories:Calories, Prep:Prep, Cooking:Cooking, hashtags:hashtags,
             postImg: postImg,
             liked: true,
             likes: likes,
@@ -110,7 +111,7 @@ export default function FeedsScreen({navigation}) {
       .onSnapshot((querySnapshot)=>{
         const list = [];
         querySnapshot.forEach(doc =>{
-          const {userId,postFoodName, postFoodRating, postFoodMaking, postFoodIngredient, postFoodSummary, postImg, postTime, comments,likes,name,userImg,} = doc.data();
+          const {userId,postFoodName, postFoodRating, postFoodMaking, postFoodIngredient, postFoodSummary, postImg, postTime, comments,likes,name,userImg,total, Calories, Prep, Cooking, hashtags} = doc.data();
           var Time = new Date(postTime._seconds * 1000).toDateString() + ' at ' + new Date(postTime._seconds * 1000).toLocaleTimeString()
           list.push({          
             postId: doc.id,
@@ -123,6 +124,7 @@ export default function FeedsScreen({navigation}) {
             postFoodIngredient:postFoodIngredient,
             postFoodMaking: postFoodMaking,
             postFoodSummary: postFoodSummary,
+            total:total, Calories:Calories, Prep:Prep, Cooking:Cooking, hashtags:hashtags,
             postImg: postImg,
             likes: likes,
             comments: comments,
