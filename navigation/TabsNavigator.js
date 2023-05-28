@@ -6,7 +6,7 @@ import HomeScreen from "../screens/HomeScreen.js";
 import StatisticsScreen from "../screens/StatisticsScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 import BlogsScreen from "../screens/BlogsScreen.js";
-import AddScreen from "../screens/AddScreen.js";
+import AddScreenHome from "../screens/AddScreenHome.js";
 
 import {useTabMenu} from "../context/TabContext";
 
@@ -36,7 +36,7 @@ const TabsNavigator = () => {
           tabBarIcon: ({focused}) => (
             <View style={styles.tabIconContainer}>
               <Image
-                source={require("../assets/img1.png")}
+                source={require("../assets/home_48px.png")}
                 resizeMode="contain"
                 style={[styles.tabIcon, getIconColor(focused)]}
               />
@@ -57,7 +57,7 @@ const TabsNavigator = () => {
           tabBarIcon: ({focused}) => (
             <View style={styles.tabIconContainer}>
               <Image
-                source={require("../assets/img1.png")}
+                source={require("../assets/graph_48px.png")}
                 resizeMode="contain"
                 style={[styles.tabIcon, getIconColor(focused)]}
               />
@@ -70,7 +70,7 @@ const TabsNavigator = () => {
       />
       <Tab.Screen
         name="Add"
-        component={AddScreen}
+        component={AddScreenHome}
         options={{
           tabBarItemStyle: {
             height: 0,
@@ -78,7 +78,7 @@ const TabsNavigator = () => {
           tabBarIcon: ({focused}) => (
             <View style={styles.tabIconContainer}>
               <Image
-                source={require("../assets/img1.png")}
+                source={require("../assets/add_48px.png")}
                 resizeMode="contain"
                 style={[styles.tabIcon, getIconColor(focused)]}
               />
@@ -99,7 +99,7 @@ const TabsNavigator = () => {
           tabBarIcon: ({focused}) => (
             <View style={styles.tabIconContainer}>
               <Image
-                source={require("../assets/img1.png")}
+                source={require("../assets/blog_48px.png")}
                 resizeMode="contain"
                 style={[styles.tabIcon, getIconColor(focused)]}
               />
@@ -120,7 +120,7 @@ const TabsNavigator = () => {
           tabBarIcon: ({focused}) => (
             <View style={styles.tabIconContainer}>
               <Image
-                source={require("../assets/img1.png")}
+                source={require("../assets/settings_48px.png")}
                 resizeMode="contain"
                 style={[styles.tabIcon, getIconColor(focused)]}
               />
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
   tabBar: {
     position: "absolute",
     height: 56,
-    bottom: 200,
+    bottom: 0,
     backgroundColor: "#fff",
     borderTopColor: "transparent",
     shadowColor: "#000",
