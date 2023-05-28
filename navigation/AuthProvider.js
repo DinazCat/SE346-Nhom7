@@ -50,10 +50,11 @@ export const AuthProvider = ({ children }) => {
               // Create a Google credential with the token
               const googleCredential = auth.GoogleAuthProvider.credential(idToken);
               // Sign-in the user with the credential
-              await auth().signInWithCredential(googleCredential)
-              getFcmToken();
+             // await auth().signInWithCredential(googleCredential)
+             // getFcmToken();
               await auth().signInWithCredential(googleCredential)
               .then(() => {
+                getFcmToken();
                 firestore().collection('users').doc(auth().currentUser.uid)
                 .set({
                     id: auth().currentUser.uid,

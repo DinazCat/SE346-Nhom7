@@ -27,21 +27,7 @@ const ProfileScreen = ({navigation, route}) => {
       .get()
       .then((querySnapshot)=>{
         querySnapshot.forEach(doc =>{
-        //   const {userId,post, postImg, postTime, comments,likes,name,userImg,} = doc.data();
-        //   var Time = new Date(postTime._seconds * 1000).toDateString() + ' at ' + new Date(postTime._seconds * 1000).toLocaleTimeString()
-        //   list.push({          
-        //     id: doc.id,
-        //     userId: userId,
-        //     userName: name,
-        //     userImg: userImg,
-        //     postTime: Time,
-        //     postText: post,
-        //     postImg: postImg,
-        //     likes: likes,
-        //     comments: comments,
-        //   });
-        // })
-        const {userId,postFoodName, postFoodRating, postFoodMaking, postFoodIngredient, postFoodSummary, postImg, postTime, comments,likes,name,userImg,} = doc.data();
+        const {userId,postFoodName, postFoodRating, postFoodMaking, postFoodIngredient, postFoodSummary, postImg, postTime, comments,likes,name,userImg,total, Calories, Prep, Cooking, hashtags} = doc.data();
         var Time = new Date(postTime._seconds * 1000).toDateString() + ' at ' + new Date(postTime._seconds * 1000).toLocaleTimeString()
         list.push({          
           postId: doc.id,
@@ -53,6 +39,7 @@ const ProfileScreen = ({navigation, route}) => {
           postFoodRating: postFoodRating,
           postFoodIngredient:postFoodIngredient,
           postFoodMaking: postFoodMaking,
+          total:total, Calories:Calories, Prep:Prep, Cooking:Cooking, hashtags:hashtags,
           postFoodSummary: postFoodSummary,
           postImg: postImg,
           likes: likes,

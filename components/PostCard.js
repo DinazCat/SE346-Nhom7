@@ -290,10 +290,15 @@ const PostCard = ({item, onUserPress, onCommentPress,onImagePress,deletePost,edi
         <Text style={styles.PostTitle}>Độ khó:</Text>
         <CustomRatingBar/>
         </View>
+        <View style={{flexDirection:"row"}}>
+        <Text style={styles.PostTitle}>Calories:</Text>
+        <Text style={styles.PostText}>{item.Calories + " (cal/serving)"}</Text>
+        </View>
         <TouchableOpacity onPress={onImagePress}>
           <Text style={{textDecorationLine:'underline', color:'blue',paddingHorizontal: 15,
         marginBottom: 10,}}>See Detail</Text>
         </TouchableOpacity>
+        
         {/* <Text style={styles.PostTitle}>Nguyên liệu:</Text>
         <Text style={styles.PostText}>{item.postFoodIngredient}</Text>
         <Text style={styles.PostTitle}>Cách làm:</Text>

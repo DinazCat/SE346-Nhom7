@@ -9,6 +9,7 @@ import { AuthContext } from '../navigation/AuthProvider';
 import { Picker } from '@react-native-picker/picker';
 export default AddPostScreen= function({navigation}) {
     const [image,setimage] = useState([]);
+    const [followers, setFollowers] = useState([]);
     const [imageUrl,setimageUrl] = useState([]);
     const [FoodName, setFoodName] = useState("");
     const [Ingredient, setIngredient] = useState([]);
@@ -59,6 +60,20 @@ export default AddPostScreen= function({navigation}) {
         </View>
       )
     }
+    const getfollower = async() => {
+      await firestore()
+      .collection('users')
+      .doc(user.uid)
+      .get()
+      .then((documentSnapshot) => {
+        if( documentSnapshot.exists ) {
+          setFollowers(documentSnapshot.data().followers);
+        }
+      })
+    }
+    useEffect(() => {
+      getfollower();
+     }, []);
     function allowPost()
     {
       if(image!=null || text !='')
@@ -117,8 +132,23 @@ export default AddPostScreen= function({navigation}) {
           'Post uploaded',
           'Your post has been upload to the Firebase Cloud Storage successfully!'
         );
-       // navigation.push('feedsScreen');
-       // setText('');
+        navigation.push('feedsScreen');
+        for(let i = 0; i < followers.length; i++){
+          firestore().collection('Notification').add({
+            PostownerId: followers[i],
+            guestId: auth().currentUser.uid,
+            guestName: auth().currentUser.displayName,
+            guestImg:auth().currentUser.photoURL,
+            classify:'post',
+            time:firestore.Timestamp.fromDate(new Date()),
+            text: auth().currentUser.displayName+' đã đăng 1 bài viết về món ăn: '+ FoodName,
+            postid: docRef.id,
+            Read:'no',
+  
+          });
+          SendNoti( auth().currentUser.displayName+' đã đăng 1 bài viết về món ăn: '+ FoodName, followers[i]);
+        }
+       
       } catch (error) {
         console.log('something went wrong!', error);
       }
@@ -259,7 +289,7 @@ export default AddPostScreen= function({navigation}) {
           </TouchableOpacity>
              <View style={{flexDirection:'row', height:100, backgroundColor:'#FFFAF0', width:"100%", alignSelf:'center'}} >
             <TextInput  multiline={true} style={{ width:"50%", height:50, borderBottomColor:'black', borderBottomWidth:1}} onChangeText={(val)=>n = val}
-                onEndEditing={()=>itemI.name = n}
+                onEndEditing={()=>{itemI.name = n}}
                 defaultValue={itemI.name}/>
             <Text>Wty:</Text>
             <TextInput style={{ width:"10%", height:50, borderBottomColor:'black', borderBottomWidth:1,textAlign:'center'}}onChangeText={(val)=>n = val}
@@ -317,8 +347,8 @@ export default AddPostScreen= function({navigation}) {
        
         {selectedTab == 0 && (
           <>
-          <KeyboardAvoidingView style={{flex:1}} behavior='height'>
-              <ScrollView>
+          <KeyboardAvoidingView style={{}} behavior='height'>
+              <ScrollView >
            <View
           style={{
             height: 70,
@@ -394,7 +424,7 @@ export default AddPostScreen= function({navigation}) {
         ) }
         {(selectedTab==1)&& (
             <>
-            <KeyboardAvoidingView style={{flex:1}} behavior='height'>
+            <KeyboardAvoidingView style={{}} behavior='height'>
               <ScrollView>
           <View
           style={{
@@ -438,7 +468,7 @@ export default AddPostScreen= function({navigation}) {
         data={Ingredient}
         renderItem={({item})=><Item itemI={item} />}
         keyExtractor={(item, index) => index.toString()}
-      />
+         />
        <Text style={[styles.TextStyle,{marginTop:20}]}>Give me the recipe of your food</Text>
            <TextInput
            multiline={true}
@@ -526,12 +556,11 @@ export default AddPostScreen= function({navigation}) {
       />
       <View style={{height:50, width:"100%"}}/>
             </ScrollView>
-
             </View>
             </>
         )}
         {(selectedTab==3)&&(
-            <View style={{height: 570, flexDirection: 'column'}}>  
+            <View style={{height: 560, flexDirection: 'column'}}>  
           {image.length==0? (
             <View>
               <Image
@@ -635,7 +664,7 @@ const styles = StyleSheet.create({
       backgroundColor: '#fff',
     },
     TextBox:{
-      height:500,
+      height:490,
       width:"95%", 
       borderColor:"black", 
       borderWidth:1, 
@@ -668,7 +697,7 @@ const styles = StyleSheet.create({
       justifyContent: 'space-between',
     //   alignItems:'center',
       width: '100%',
-      marginTop: 55,
+      marginTop: 10,
       backgroundColor: '#FFCC00'
     },
     customRatingBarStyle:{
