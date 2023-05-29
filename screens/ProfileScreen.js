@@ -103,7 +103,6 @@ const ProfileScreen = ({navigation, route}) => {
             postFoodMaking: postFoodMaking,
             postFoodSummary: postFoodSummary,
             postImg: postImg,
-            liked: true,
             likes: likes,
             comments: comments,
             liked: false,
@@ -355,6 +354,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     paddingHorizontal: 10,
     paddingVertical: 20,
+    marginBottom: 60
   },
   userImg: {
     height: 130,

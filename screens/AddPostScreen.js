@@ -202,7 +202,7 @@ export default AddPostScreen= function({navigation}) {
     ])
    
     const Hashtags = ({each})=>(
-        <TouchableOpacity style={{backgroundColor:(each.tick)?'#9ACD32':'#E6E6FA', marginLeft:15, marginTop:10, alignItems:'center', borderRadius:15, borderColor:'#8470FF', borderWidth:1}}
+        <TouchableOpacity style={{backgroundColor:(each.tick)?'#9ACD32':'#E6E6FA', marginLeft:15, marginTop:10, alignItems:'center', borderRadius:15, borderColor:'#8470FF', borderWidth:1, padding: 1, paddingEnd: 6}}
         onPress={()=>{
           const index1 = mainingredient.findIndex(item => item === each);
           if(index1 != -1)
@@ -378,10 +378,10 @@ export default AddPostScreen= function({navigation}) {
              value={FoodName}
              onChangeText={TextChangeFoodName}
            />
-            <Text style={[styles.TextStyle,{marginTop:20}]}>level of difficulty</Text>
+            <Text style={[styles.TextStyle,{marginTop:20, width: 150}]}>Level of difficulty</Text>
             <CustomRatingBar/>
             <View style={styles.InputBox}>
-            <Text  style={styles.TextStyle}>Total</Text>
+            <Text  style={[styles.TextStyle,{width: 120}]}>Total:</Text>
             <TextInput
              style={styles.InputStyle}
              value={Total}
@@ -391,7 +391,7 @@ export default AddPostScreen= function({navigation}) {
             </View>
             
             <View style={styles.InputBox}>
-            <Text style={styles.TextStyle}>Calories</Text>
+            <Text style={[styles.TextStyle,{width: 120}]}>Calories:</Text>
            <TextInput
              style={styles.InputStyle}
              value={Cal}
@@ -400,7 +400,7 @@ export default AddPostScreen= function({navigation}) {
             <Text>cals/serving</Text>
             </View>
             <View style={styles.InputBox}>
-            <Text style={styles.TextStyle}>Prep time</Text>
+            <Text style={[styles.TextStyle,{width: 120}]}>Prep time:</Text>
            <TextInput
              style={styles.InputStyle}
              value={Prep}
@@ -408,7 +408,7 @@ export default AddPostScreen= function({navigation}) {
            />
             </View>
             <View style={styles.InputBox}>
-            <Text style={styles.TextStyle}>Cooking time</Text>
+            <Text style={[styles.TextStyle,{width: 120}]}>Cooking time:</Text>
            <TextInput
              style={styles.InputStyle}
              value={Cookingtime}
@@ -673,7 +673,7 @@ const styles = StyleSheet.create({
     },
     TextStyle:
     {
-      fontSize: 18, 
+      fontSize: 17, 
       marginLeft: 6,
       color:"black",
       fontWeight:"600"
@@ -684,7 +684,9 @@ const styles = StyleSheet.create({
         borderBottomColor:'black', 
         borderBottomWidth:1, 
         width:"40%", 
-        textAlign:'center'
+        textAlign:'center',
+        marginRight: 4,
+        paddingBottom: 0
     },
     InputBox:{
         flexDirection:'row', 

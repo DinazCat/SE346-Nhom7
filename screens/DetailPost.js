@@ -162,7 +162,7 @@ export default function DetailPostScreen({navigation,route}) {
             marginBottom: 10,
             borderRadius: 5,
             backgroundColor: '#fff',
-            padding: 5
+            padding: 5,
         },
         foodname:{
             fontSize: 50,
@@ -246,6 +246,7 @@ export default function DetailPostScreen({navigation,route}) {
             paddingHorizontal: 15,
             marginBottom: 10,
             fontWeight:"900",
+            marginTop: 2,
         },
         customRatingBarStyle:{
             flexDirection:"row",
