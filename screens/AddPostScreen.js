@@ -7,10 +7,16 @@ import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import { AuthContext } from '../navigation/AuthProvider';
 import { Picker } from '@react-native-picker/picker';
+import Popover from 'react-native-popover-view';
+
 export default AddPostScreen= function({navigation}) {
+    const {user} = useContext(AuthContext);
     const [image,setimage] = useState([]);
     const [followers, setFollowers] = useState([]);
     const [imageUrl,setimageUrl] = useState([]);
+    const [isPopoverVisible, setPopoverVisible] = useState(false);
+    const [popoverAnchor, setPopoverAnchor] = useState(null);
+
     const [FoodName, setFoodName] = useState("");
     const [Ingredient, setIngredient] = useState([]);
     const [Making, setMaking] = useState("");
@@ -28,13 +34,14 @@ export default AddPostScreen= function({navigation}) {
 
     const starImgFilled = "https://github.com/tranhonghan/images/blob/main/star_filled.png?raw=true";
     const starImgCorner = "https://raw.githubusercontent.com/tranhonghan/images/main/star_corner.png";
-    const {user} = useContext(AuthContext);
+
     const TextChangeFoodName = (Text)=>{setFoodName(Text)};
     const TextChangeIngredient = (text,index)=>{
       const i = Ingredient.findIndex(item => item.id === index);
       const newdata = [...Ingredient];
       newdata[i].name = text;
-      setIngredient(newdata)};
+      setIngredient(newdata)
+    };
     const TextChangeMaking = (Text)=>{setMaking(Text)};
     const TextChangeSummary= (Text)=>{setSummary(Text)};
     const TextChangetotal = (Text)=>{setTotal(Text)};
@@ -76,21 +83,35 @@ export default AddPostScreen= function({navigation}) {
      }, []);
     function allowPost()
     {
-      if(image!=null || text !='')
+      if(FoodName !== '' && Cal !== '') 
       {
         return true;
       }
       return false;
     }
     const pickImageAsync = async () => {
+      setPopoverVisible(false);
       ImagePicker.openPicker({
         width: 300,
-        height: 400,
+        height: 300,
         cropping: true,
       }).then(img => {
         let image2 = image.slice();
         image2.push(img);
         setimage(image2);
+      });
+    };
+    const takePhotoFromCamera = () => {
+      setPopoverVisible(false);
+      ImagePicker.openCamera({
+        compressImageMaxWidth: 300,
+        compressImageMaxHeight: 300,
+        cropping: true,
+        compressImageQuality: 0.7,
+      }).then((img) => {
+        let image2 = image.slice();
+        image2.push(img);
+        setimage(image2);  
       });
     };
     const submitPost = async() => {
@@ -257,9 +278,8 @@ export default AddPostScreen= function({navigation}) {
          
         }}>
             <Text style={styles.TextStyle}>{each.key}</Text>
-        </TouchableOpacity>
-        
-    )
+        </TouchableOpacity>     
+    );
     const [options, setOp] = useState( [
         { label: 'g', value: 'g' },
         { label: 'kg', value: 'kg' },
@@ -317,18 +337,17 @@ export default AddPostScreen= function({navigation}) {
       <View style={styles.container}>
         <View
           style={{
-            // marginTop: 50,
             height: 50,
             flexDirection: 'row',
             alignItems: 'center',
             backgroundColor: '#FFFF99',
           }}>
           <TouchableOpacity onPress={()=> navigation.navigate('feedsScreen')}>
-            <Icon name={'arrow-left'} style={{color: 'black', fontSize: 30, padding: 5}} />
+            <Icon name={'arrow-left'} style={{color: '#333', fontSize: 25, padding: 5}} />
           </TouchableOpacity>
 
-          <Text style={{fontSize: 20, flex: 1, marginLeft: 5}}>
-            Tạo bài viết
+          <Text style={{fontSize: 20, flex: 1, marginLeft: 5, fontWeight: '600', color: '#333'}}>
+            Create a new post
           </Text>
           {uploading ? (
             <View style={{justifyContent: 'center', alignItems: 'center'}}>
@@ -337,7 +356,7 @@ export default AddPostScreen= function({navigation}) {
             </View>
           ) : (
             <Button
-              title={'Đăng'}
+              title={'Post'}
               color={allowPost() == true ? '#FFCC00' : '#BBBBBB'}
               onPress={submitPost}
             />
@@ -387,7 +406,7 @@ export default AddPostScreen= function({navigation}) {
              value={Total}
              onChangeText={TextChangetotal}
            />
-            <Text>servings</Text>
+            <Text style={{fontSize: 16}}>servings</Text>
             </View>
             
             <View style={styles.InputBox}>
@@ -397,7 +416,7 @@ export default AddPostScreen= function({navigation}) {
              value={Cal}
              onChangeText={TextChangecal}
            />
-            <Text>cals/serving</Text>
+            <Text style={{fontSize: 16}}>cals/serving</Text>
             </View>
             <View style={styles.InputBox}>
             <Text style={[styles.TextStyle,{width: 120}]}>Prep time:</Text>
@@ -502,61 +521,61 @@ export default AddPostScreen= function({navigation}) {
         )}
         {(selectedTab==2)&&(
             <>
-           <View
-          style={{
-            height: 70,
-            flexDirection: 'row',
-          }}>
-          <Text
-            style={{
-              marginLeft: 10,
-              fontSize: 18,
-              fontWeight: '700',
-              alignSelf: 'center',
-            }}>
-            Step 3. Choose hashtags
-          </Text>
-        </View>
-           <View style={styles.TextBox}>
-            <ScrollView>
-            <Text style={[styles.TextStyle,{marginTop:20}]}>Meal Type</Text>
-            <FlatList
-        data={mealtype}
-        renderItem={({item})=><Hashtags each={item} />}
-        keyExtractor={(item, index) => index.toString()}
-        numColumns={3}
-      />
-            <Text style={[styles.TextStyle,{marginTop:20}]}>Cooking Style</Text>
-            <FlatList
-        data={cookingstyle}
-        renderItem={({item})=><Hashtags each={item} />}
-        keyExtractor={(item, index) => index.toString()}
-        numColumns={3}
-      />
-            <Text style={[styles.TextStyle,{marginTop:20}]}>Course</Text>
-            <FlatList
-        data={course}
-        renderItem={({item})=><Hashtags each={item} />}
-        keyExtractor={(item, index) => index.toString()}
-        numColumns={3}
-      />
-            <Text style={[styles.TextStyle,{marginTop:20}]}>Main Ingredient</Text>
-            <FlatList
-        data={mainingredient}
-        renderItem={({item})=><Hashtags each={item} />}
-        keyExtractor={(item, index) => index.toString()}
-        numColumns={3}
-      />
-            <Text style={[styles.TextStyle,{marginTop:20}]}>Diet Type</Text>
-            <FlatList
-        data={diettype}
-        renderItem={({item})=><Hashtags each={item} />}
-        keyExtractor={(item, index) => index.toString()}
-        numColumns={3}
-      />
-      <View style={{height:50, width:"100%"}}/>
-            </ScrollView>
+              <View
+                style={{
+                height: 70,
+                flexDirection: 'row',
+              }}>
+              <Text
+                style={{
+                  marginLeft: 10,
+                  fontSize: 18,
+                  fontWeight: '700',
+                  alignSelf: 'center',
+                }}>
+                Step 3. Choose hashtags
+              </Text>
             </View>
+              <View style={styles.TextBox}>
+                <ScrollView>
+                <Text style={[styles.TextStyle,{marginTop:20}]}>Meal Type</Text>
+                <FlatList
+                  data={mealtype}
+                  renderItem={({item})=><Hashtags each={item} />}
+                  keyExtractor={(item, index) => index.toString()}
+                  numColumns={3}
+                />
+                <Text style={[styles.TextStyle,{marginTop:20}]}>Cooking Style</Text>
+                <FlatList
+                  data={cookingstyle}
+                  renderItem={({item})=><Hashtags each={item} />}
+                  keyExtractor={(item, index) => index.toString()}
+                  numColumns={3}
+                />
+                <Text style={[styles.TextStyle,{marginTop:20}]}>Course</Text>
+                <FlatList
+                  data={course}
+                  renderItem={({item})=><Hashtags each={item} />}
+                  keyExtractor={(item, index) => index.toString()}
+                  numColumns={3}
+                />
+                <Text style={[styles.TextStyle,{marginTop:20}]}>Main Ingredient</Text>
+                <FlatList
+                  data={mainingredient}
+                  renderItem={({item})=><Hashtags each={item} />}
+                  keyExtractor={(item, index) => index.toString()}
+                  numColumns={3}
+                />
+                <Text style={[styles.TextStyle,{marginTop:20}]}>Diet Type</Text>
+                <FlatList
+                  data={diettype}
+                  renderItem={({item})=><Hashtags each={item} />}
+                  keyExtractor={(item, index) => index.toString()}
+                  numColumns={3}
+                />
+                <View style={{height:50, width:"100%"}}/>
+                </ScrollView>
+              </View>
             </>
         )}
         {(selectedTab==3)&&(
@@ -599,7 +618,10 @@ export default AddPostScreen= function({navigation}) {
             }
   
           </ScrollView>
-          <TouchableOpacity onPress={pickImageAsync}>
+          <TouchableOpacity onPress={(event) => {
+            setPopoverAnchor(event.nativeEvent.target);
+            setPopoverVisible(true);
+            }}>
           <Icon
               name={'images'}
               style={{
@@ -655,62 +677,93 @@ export default AddPostScreen= function({navigation}) {
             />
           </TouchableOpacity>
         </View>
+        <Popover
+            isVisible={isPopoverVisible}
+            onRequestClose={() => setPopoverVisible(false)}
+            fromView={popoverAnchor}>
+            <View style={styles.popover}>              
+                <TouchableOpacity onPress={takePhotoFromCamera}>
+                    <View style={styles.popoverItem}>
+                        <Icon name="camera" size={35} color="black" />
+                        <Text style={{ fontSize: 16, marginTop: 8, color: 'black' }}>Take photo</Text>
+                    </View>
+                </TouchableOpacity>           
+                <TouchableOpacity onPress={pickImageAsync}>
+                    <View style={styles.popoverItem}>
+                        <Icon name="photo-video" size={35} color="black" />
+                        <Text style={{ fontSize: 16, marginTop: 8, color: 'black' }}>Libraries</Text>
+                    </View>
+                </TouchableOpacity>
+            </View>
+      </Popover>
       </View>
     )
 }
 const styles = StyleSheet.create({
-    container:{
-      flex: 1,
-      backgroundColor: '#fff',
-    },
-    TextBox:{
-      height:490,
-      width:"95%", 
-      borderColor:"black", 
-      borderWidth:1, 
-      borderRadius:20, 
-      marginLeft:10,
-    },
-    TextStyle:
-    {
-      fontSize: 17, 
-      marginLeft: 6,
-      color:"black",
-      fontWeight:"600"
-    },
-    InputStyle:{
-        fontSize: 16, 
-        marginLeft: 3, 
-        borderBottomColor:'black', 
-        borderBottomWidth:1, 
-        width:"40%", 
-        textAlign:'center',
-        marginRight: 4,
-        paddingBottom: 0
-    },
-    InputBox:{
-        flexDirection:'row', 
-        marginTop:20, 
-        height:50, 
-        alignItems:'center'
-    },
-    Wrapper: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-    //   alignItems:'center',
-      width: '100%',
-      marginTop: 10,
-      backgroundColor: '#FFCC00'
-    },
-    customRatingBarStyle:{
-      flexDirection:"row",
-      marginLeft:6,
-      marginTop:5
-    },
-    starImgStyle:{
-      width:30,
-      height:30,
-      resizeMode:'cover'
-    }
-
-  })
+  container:{
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  TextBox:{
+    height:490,
+    width:"95%", 
+    borderColor:"black", 
+    borderWidth:1, 
+    borderRadius:20, 
+    marginLeft:10,
+  },
+  TextStyle:
+  {
+    fontSize: 17, 
+    marginLeft: 6,
+    color:"black",
+    fontWeight:"600"
+  },
+  InputStyle:{
+      fontSize: 16, 
+      marginLeft: 3, 
+      borderBottomColor:'black', 
+      borderBottomWidth:1, 
+      width:"35%", 
+      textAlign:'center',
+      marginRight: 4,
+      paddingBottom: 0,
+      paddingTop: 0,
+  },
+  InputBox:{
+      flexDirection:'row', 
+      marginTop:20, 
+      height:50, 
+      alignItems:'center',
+  },
+  Wrapper: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  //   alignItems:'center',
+    width: '100%',
+    marginTop: 10,
+    backgroundColor: '#FFCC00'
+  },
+  customRatingBarStyle:{
+    flexDirection:"row",
+    marginLeft:6,
+    marginTop:5
+  },
+  starImgStyle:{
+    width:30,
+    height:30,
+    resizeMode:'cover'
+  },
+  popover:{
+    backgroundColor: 'white', 
+    borderRadius: 10, 
+    padding: 16, 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    justifyContent: 'space-between'
+  },
+  popoverItem:{
+      alignItems: 'center',
+      margin: 20
+  },
+});

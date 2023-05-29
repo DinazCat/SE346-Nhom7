@@ -318,9 +318,9 @@ export default function FeedsScreen({navigation}) {
       <View style={{alignItems: 'center'}}>
         <Text style={styles.panelSubtitle}>Filter by</Text>
       </View>    
-      <View style={{height: 500, borderColor: '#DDD', borderBottomWidth: 1, borderTopWidth: 1}}>
+      <View style={{height: 510, borderColor: '#DDD', borderBottomWidth: 1, borderTopWidth: 1}}>
           <ScrollView>
-            <Text style={[styles.TextStyle,{marginTop:20}]}>Post</Text>
+            <Text style={[styles.TextStyle,{marginTop: 15}]}>Post</Text>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
             <TouchableOpacity
               style={styles.panelButton}
@@ -386,7 +386,7 @@ export default function FeedsScreen({navigation}) {
           <View style={{height:20, width:"100%"}}/>
         </ScrollView>
         </View>
-        <View style={{flexDirection: 'row', justifyContent: 'space-around', marginTop: 5}}>
+        <View style={{flexDirection: 'row', justifyContent: 'space-around', marginTop: 10}}>
           <TouchableOpacity
             style={[styles.panelButton, {width: 100}]}
             onPress={() => {sheetRef.current.snapTo(1); setrefreshing(true); filterPosts(6)}}>
@@ -416,7 +416,7 @@ export default function FeedsScreen({navigation}) {
     <View style={{backgroundColor: '#fff', flex: 1}}>
       <BottomSheet
           ref={sheetRef}
-          snapPoints={['92%', -100]}
+          snapPoints={['93%', -100]}
           renderContent={renderContent}
           renderHeader={renderHeader}
           initialSnap={1}
@@ -555,13 +555,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     marginLeft: 20
   },
-  panelTitle: {
-    fontSize: 27,
-    height: 35,
-    color: '#333'
-  },
   panelSubtitle: {
-    fontSize: 17,
+    fontSize: 18,
     color: '#555',
     height: 30,
     marginBottom: 10,

@@ -130,11 +130,10 @@ export default function DetailPostScreen({navigation,route}) {
                      <View style={styles.split}/>
                      <View style={{backgroundColor:'#F5F5F5'}}>
                      <Text style={[styles.PostTitle, {color: '#23D8A3'}]}>Tag</Text>
-                     {/* <Text style={styles.PostText}></Text> */}
                      {
                         postData?.hashtags.map((each,key)=>{
                             return(
-                                    <Text style={styles.PostText} key={key}>{"- "+each}</Text>
+                                <Text style={styles.PostText} key={key}>{"#"+each}</Text>
                             )
                         })
                      }
@@ -202,9 +201,9 @@ export default function DetailPostScreen({navigation,route}) {
             color: '#888',
         },
         PostText:{
-            fontSize: 18,
+            fontSize: 16.5,
             paddingHorizontal: 15,
-            marginBottom: 15,
+            marginBottom: 5,
             color:'black',
         },
         PostImgsContainer:{

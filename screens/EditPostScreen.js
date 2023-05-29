@@ -7,6 +7,8 @@ import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import { AuthContext } from '../navigation/AuthProvider';
 import { Picker } from '@react-native-picker/picker';
+import Popover from 'react-native-popover-view';
+
 export default EditPostScreen= function({navigation,route}) {
     const [image,setimage] = useState(route.params.item.postImg);
     const [imageUrl,setimageUrl] = useState([]);
@@ -25,9 +27,12 @@ export default EditPostScreen= function({navigation,route}) {
     const [Prep, setPrep] = useState(route.params.item.Prep);
     const [Cookingtime, setCookingtime] = useState(route.params.item.Cooking);
     const [loading, setload] = useState(false);
+    const [isPopoverVisible, setPopoverVisible] = useState(false);
+    const [popoverAnchor, setPopoverAnchor] = useState(null);
     const starImgFilled = "https://github.com/tranhonghan/images/blob/main/star_filled.png?raw=true";
     const starImgCorner = "https://raw.githubusercontent.com/tranhonghan/images/main/star_corner.png";
     const {user} = useContext(AuthContext);
+
     const TextChangeFoodName = (Text)=>{setFoodName(Text)};
     const TextChangeIngredient = (text,index)=>{
       const i = Ingredient.findIndex(item => item.id === index);
@@ -68,15 +73,29 @@ export default EditPostScreen= function({navigation,route}) {
       return false;
     }
     const pickImageAsync = async () => {
+      setPopoverVisible(false);
       ImagePicker.openPicker({
         width: 300,
-        height: 400,
+        height: 300,
         cropping: true,
       }).then(img => {
         let image2 = image.slice();
-        console.log(img.path);
+        //console.log(img.path);
         image2.push(img.path);
         setimage(image2);
+      });
+    };
+    const takePhotoFromCamera = () => {
+      setPopoverVisible(false);
+      ImagePicker.openCamera({
+        compressImageMaxWidth: 300,
+        compressImageMaxHeight: 300,
+        cropping: true,
+        compressImageQuality: 0.7,
+      }).then((img) => {
+        let image2 = image.slice();
+        image2.push(img.path);
+        setimage(image2);  
       });
     };
     const SavePost=async()=>{
@@ -329,11 +348,11 @@ const [editI, seteditI] = useState([...Ingredient]);
             backgroundColor: '#FFFF99',
           }}>
           <TouchableOpacity onPress={()=> navigation.navigate('feedsScreen')}>
-            <Icon name={'arrow-left'} style={{color: 'black', fontSize: 30, padding: 5}} />
+            <Icon name={'arrow-left'} style={{color: '#333', fontSize: 25, padding: 5}} />
           </TouchableOpacity>
 
-          <Text style={{fontSize: 20, flex: 1, marginLeft: 5}}>
-          Sửa bài viết
+          <Text style={{fontSize: 20, flex: 1, marginLeft: 5, fontWeight: '600', color: '#333'}}>
+            Edit post
           </Text>
           {uploading ? (
             <View style={{justifyContent: 'center', alignItems: 'center'}}>
@@ -342,7 +361,7 @@ const [editI, seteditI] = useState([...Ingredient]);
             </View>
           ) : (
             <Button
-              title={'Lưu'}
+              title={'Save'}
               color={allowPost() == true ? '#FFCC00' : '#BBBBBB'}
               onPress={editPost}
             />
@@ -392,7 +411,7 @@ const [editI, seteditI] = useState([...Ingredient]);
              value={Total}
              onChangeText={TextChangetotal}
            />
-            <Text>servings</Text>
+            <Text style={{fontSize: 16}}>servings</Text>
             </View>
             
             <View style={styles.InputBox}>
@@ -402,7 +421,7 @@ const [editI, seteditI] = useState([...Ingredient]);
              value={Cal}
              onChangeText={TextChangecal}
            />
-            <Text>cals/serving</Text>
+            <Text style={{fontSize: 16}}>cals/serving</Text>
             </View>
             <View style={styles.InputBox}>
             <Text style={[styles.TextStyle,{width: 120}]}>Prep time</Text>
@@ -605,7 +624,10 @@ const [editI, seteditI] = useState([...Ingredient]);
             }
   
           </ScrollView>
-          <TouchableOpacity onPress={pickImageAsync}>
+          <TouchableOpacity onPress={(event) => {
+            setPopoverAnchor(event.nativeEvent.target);
+            setPopoverVisible(true);
+            }}>
           <Icon
               name={'images'}
               style={{
@@ -661,6 +683,25 @@ const [editI, seteditI] = useState([...Ingredient]);
             />
           </TouchableOpacity>
         </View>
+        <Popover
+            isVisible={isPopoverVisible}
+            onRequestClose={() => setPopoverVisible(false)}
+            fromView={popoverAnchor}>
+            <View style={styles.popover}>              
+                <TouchableOpacity onPress={takePhotoFromCamera}>
+                    <View style={styles.popoverItem}>
+                        <Icon name="camera" size={35} color="black" />
+                        <Text style={{ fontSize: 16, marginTop: 8, color: 'black' }}>Take photo</Text>
+                    </View>
+                </TouchableOpacity>           
+                <TouchableOpacity onPress={pickImageAsync}>
+                    <View style={styles.popoverItem}>
+                        <Icon name="photo-video" size={35} color="black" />
+                        <Text style={{ fontSize: 16, marginTop: 8, color: 'black' }}>Libraries</Text>
+                    </View>
+                </TouchableOpacity>
+            </View>
+      </Popover>
       </View>
     )
 }
@@ -692,7 +733,8 @@ const styles = StyleSheet.create({
         width:"40%", 
         textAlign:'center',
         marginRight: 4,
-        paddingBottom: 0
+        paddingBottom: 0,
+        paddingTop: 0,
     },
     InputBox:{
         flexDirection:'row', 
@@ -717,6 +759,18 @@ const styles = StyleSheet.create({
       width:30,
       height:30,
       resizeMode:'cover'
-    }
+    },
+    popover:{
+      backgroundColor: 'white', 
+      borderRadius: 10, 
+      padding: 16, 
+      flexDirection: 'row', 
+      alignItems: 'center', 
+      justifyContent: 'space-between'
+    },
+    popoverItem:{
+        alignItems: 'center',
+        margin: 20
+    },
 
   })
