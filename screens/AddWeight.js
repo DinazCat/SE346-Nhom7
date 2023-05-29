@@ -1,30 +1,29 @@
-import React from "react";
-import {View, Text, StyleSheet, TextInput, Image,
-   TouchableOpacity} from "react-native";
+import {StyleSheet, Text, View, Image, TextInput, TouchableOpacity} from 'react-native';
+import React from 'react';
 
-const AddWater = ({navigation}) => {
+export default AddWeight = ({navigation}) => {
     return (
         <View style = {{flex:1}}>
             <View style = {styles.container1}>
-                <Image style={styles.img} source={require( '../assets/water_.png')}/>
+                <Image style={styles.img} source={require( '../assets/weight.png')}/>
             </View>
             <View style={styles.container}>
                 <Text style= {styles.text}>
-                    Add Water - ml
+                    Add Weight - kg
                 </Text>
                 <TextInput style = {styles.textInput}/>
                 
             </View>
-            <TouchableOpacity style = {styles.button}
-            onPress={() => navigation.navigate('AddScreen')}>
+            <TouchableOpacity style = {styles.button} 
+            onPress={() => navigation.navigate('LineChartWeightScreen')} >
                 <Text style={{flexDirection: 'row', padding: 15, alignItems: 'center', textAlign: 'center', fontSize: 22}}>
-                    Add
+                    Save
                 </Text>
             </TouchableOpacity>
         </View>
     )
 }
-export default AddWater;
+
 
 const styles = StyleSheet.create({
     container1: {

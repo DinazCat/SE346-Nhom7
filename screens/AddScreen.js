@@ -112,12 +112,13 @@ const CONTENT = [
   
                   <View style = {styles.buttonAdd}>
                       <TouchableOpacity style = {styles.button} 
-                      onPress={() => navigation.navigate('AddSearchFood')} >
+                      onPress={() => navigation.navigate('AddWater')} >
                           <Text>
                               Add Water
                           </Text>
                       </TouchableOpacity>
-                      <TouchableOpacity style = {styles.button} >
+                      <TouchableOpacity style = {styles.button} 
+                       onPress={() => navigation.navigate('AddSearchFood')}>
                           <Text>
                               Add Food
                           </Text>

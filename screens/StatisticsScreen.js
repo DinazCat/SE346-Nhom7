@@ -1,14 +1,12 @@
 import React from "react";
 import {View, Text, StyleSheet} from "react-native";
-
+import StatisticsStack from "../navigation/StatisticsStack";
 import TabContainer from "../components/TabContainer";
 
 const StatisticsScreen = () => {
   return (
     <TabContainer>
-      <View style={styles.container}>
-        <Text style={styles.text}>Statistics Screen</Text>
-      </View>
+      <StatisticsStack/>
     </TabContainer>
   );
 };
