@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import {View, Text, StyleSheet, ScrollView, Image, TouchableOpacity} from "react-native";
 import ProgressCircle from 'react-native-progress-circle'
 import DateTimePicker from '@react-native-community/datetimepicker';
+import moment from 'moment';
 const HomeScreen = () => {
   const [baseGoal, setBaseGoal] = useState(0);
   const [exercise, setExercise] = useState(0);
@@ -25,11 +26,9 @@ const HomeScreen = () => {
      setDate(currentDate);
      let tempDate = new Date(currentDate);
      let newDate = new Date();
-     let today = newDate.getDate() + '/' + (newDate.getMonth() + 1) + '/' + newDate.getFullYear();
-     let fDate = tempDate.getDate() + '/' + (tempDate.getMonth() + 1) + '/' + tempDate.getFullYear();
-     if (today != fDate)
-      setTime(fDate);
-    else setTime('Today');
+     if (newDate.getDate() == tempDate.getDate() && newDate.getMonth() == tempDate.getMonth() && tempDate.getFullYear() == newDate.getFullYear())
+     setTime('Today');
+    else setTime(moment(new Date(currentDate)).format('DD/MM/YYYY'));
  }
  
   return (

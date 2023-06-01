@@ -118,12 +118,12 @@ const CONTENT = [
                           </Text>
                       </TouchableOpacity>
                       <TouchableOpacity style = {styles.button} 
-                       onPress={() => navigation.navigate('AddSearchFood')}>
+                       onPress={() => navigation.navigate('AddFood')}>
                           <Text>
                               Add Food
                           </Text>
                       </TouchableOpacity>
-                      <TouchableOpacity style = {styles.button} >
+                      <TouchableOpacity style = {styles.button} onPress={()=>navigation.navigate('AddExercise')}>
                           <Text>
                               Add Exercise
                           </Text>

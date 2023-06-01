@@ -19,17 +19,20 @@ const getIconColor = focused => ({
 const TabsNavigator = () => {
   const {opened, toggleOpened} = useTabMenu();
   return (
-    <Tab.Navigator
+    <Tab.Navigator 
       initialRouteName="Home"
       screenOptions={{
         headerShown: false,
         tabBarShowLabel: false,
         tabBarStyle: styles.tabBar,
-      }}>
+        
+      }}
+      >
       <Tab.Screen
         name="Home"
         component={HomeScreen}
         options={{
+          
           tabBarItemStyle: {
             height: 0,
           },
@@ -72,6 +75,7 @@ const TabsNavigator = () => {
         name="Add"
         component={AddScreenHome}
         options={{
+          unmountOnBlur: true,
           tabBarItemStyle: {
             height: 0,
           },

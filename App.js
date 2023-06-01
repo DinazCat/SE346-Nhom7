@@ -3,9 +3,17 @@ import Providers from './navigation';
 import { createContext, useState,useEffect } from 'react';
 import messaging from '@react-native-firebase/messaging';
 import Notifee from '@notifee/react-native';
+import { store } from './store/store';
+import { Provider } from "react-redux";
+export default () => {
+  return (
+    <Provider store={store}>
+      <App/>
+    </Provider>
+  );
+};
 
-
-export default function App() {
+const App = () => {
   const requestUserPermission = async () => {
     const authorizationStatus = await messaging().requestPermission();
     if (authorizationStatus === messaging.AuthorizationStatus.AUTHORIZED) {

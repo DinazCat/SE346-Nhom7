@@ -9,7 +9,12 @@ import { AuthContext } from '../navigation/AuthProvider';
 import { Picker } from '@react-native-picker/picker';
 import Popover from 'react-native-popover-view';
 
+import { useRoute } from '@react-navigation/native';
+
+
 export default AddPostScreen= function({navigation}) {
+    const route = useRoute();
+
     const {user} = useContext(AuthContext);
     const [image,setimage] = useState([]);
     const [followers, setFollowers] = useState([]);
@@ -17,7 +22,7 @@ export default AddPostScreen= function({navigation}) {
     const [isPopoverVisible, setPopoverVisible] = useState(false);
     const [popoverAnchor, setPopoverAnchor] = useState(null);
 
-    const [FoodName, setFoodName] = useState("");
+    const [FoodName, setFoodName] = useState(route.params?.name);
     const [Ingredient, setIngredient] = useState([]);
     const [Making, setMaking] = useState("");
     const [Summary, setSummary] = useState("");
@@ -28,7 +33,7 @@ export default AddPostScreen= function({navigation}) {
     const [maxRating, setmaxRating] = useState([1,2,3,4,5])
     const [hashtag, sethashtag] = useState([]);
     const [Total, setTotal] = useState("");
-    const [Cal, setCal] = useState("");
+    const [Cal, setCal] = useState(route.params?.calories);
     const [Prep, setPrep] = useState("");
     const [Cookingtime, setCookingtime] = useState("");
 
@@ -342,7 +347,7 @@ export default AddPostScreen= function({navigation}) {
             alignItems: 'center',
             backgroundColor: '#FFFF99',
           }}>
-          <TouchableOpacity onPress={()=> navigation.navigate('feedsScreen')}>
+          <TouchableOpacity onPress={()=> {route.params? navigation.navigate('AddFood') : navigation.navigate('feedsScreen')}}>
             <Icon name={'arrow-left'} style={{color: '#333', fontSize: 25, padding: 5}} />
           </TouchableOpacity>
 

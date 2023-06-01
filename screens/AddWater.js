@@ -1,8 +1,29 @@
-import React from "react";
-import {View, Text, StyleSheet, TextInput, Image,
-   TouchableOpacity} from "react-native";
+import React, {useState, useContext} from "react";
+import {View, Text, StyleSheet, TextInput, Image,TouchableOpacity} from "react-native";
+import firestore from '@react-native-firebase/firestore';
+import moment from "moment";
+import { AuthContext } from '../navigation/AuthProvider';
 
 const AddWater = ({navigation}) => {
+    const{user} = useContext(AuthContext);
+    const[water, setWater] = useState();
+    const saveWater = () => {
+        if (water==""){
+            //just space
+            
+        }
+        else{
+            
+        
+            firestore().collection('water').add({
+                userId: user.uid,
+                time: moment(new Date()).format('DD/MM/yyyy'),
+                amount: water,
+                isDeleted: false
+              })
+              navigation.navigate('AddScreen')
+        }
+    }
     return (
         <View style = {{flex:1}}>
             <View style = {styles.container1}>
@@ -12,11 +33,11 @@ const AddWater = ({navigation}) => {
                 <Text style= {styles.text}>
                     Add Water - ml
                 </Text>
-                <TextInput style = {styles.textInput}/>
+                <TextInput style = {styles.textInput} value={water} onChangeText={water=> setWater(water)}/>
                 
             </View>
             <TouchableOpacity style = {styles.button}
-            onPress={() => navigation.navigate('AddScreen')}>
+            onPress={saveWater}>
                 <Text style={{flexDirection: 'row', padding: 15, alignItems: 'center', textAlign: 'center', fontSize: 22}}>
                     Add
                 </Text>
