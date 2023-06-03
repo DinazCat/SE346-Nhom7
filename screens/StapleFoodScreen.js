@@ -52,7 +52,7 @@ const StapleFoodScreen = ({route}) => {
   const [calories, setCalories] = useState('');
   const [image, setImage] = useState('');
   const [name, setName] = useState();
-  const [selectedItem, setSelectedItem] = useState(null);
+  const [selectedItem, setSelectedItem] = useState(null);//can edit
 
   const dispatch = useDispatch();
   const isCustomFood = useSelector((state) => state.IngredientList.isCustomFood);
@@ -81,16 +81,12 @@ const StapleFoodScreen = ({route}) => {
         amount: textSearch,
         calories: (parseInt(textSearch) * parseInt(calories) / parseInt(baseAmount)).toFixed(),
         image: image,
-        prepTime: '',
-        cookingTime: '',
-        receipt: '',
-        isCustom: false,
-        ingredients: [],
+        isCustom: false
       })
     }
     else{
       const resultCalories = (parseInt(textSearch) * parseInt(calories) / parseInt(baseAmount)).toFixed();
-      dispatch(Add(image, name, calories, unit, baseAmount, resultCalories));
+      dispatch(Add(image, name, calories, unit, baseAmount, resultCalories, textSearch));
       navigation.navigate('AddCustomFood')
     }
       

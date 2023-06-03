@@ -1,12 +1,13 @@
 import React, {useContext, useEffect, useState} from "react";
-import {View, Text, StyleSheet, TextInput, Image, TouchableOpacity, FlatList, ScrollView} from "react-native";
+import {View, Text, StyleSheet, TextInput, Image, TouchableOpacity, FlatList, ScrollView, Alert} from "react-native";
 import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
-import {isAdd, createNew} from "../store/CustomFoodSlice";
+import {isAdd, Delete} from "../store/CustomFoodSlice";
 import firestore from '@react-native-firebase/firestore';
 import moment from "moment";
 import { AuthContext } from '../navigation/AuthProvider';
+
 
 const AddCustomFood = () => {
   const {user} = useContext(AuthContext)
@@ -14,7 +15,7 @@ const AddCustomFood = () => {
   const IngredientList= useSelector((state) => state.IngredientList.value);
   const totalCalories = useSelector((state) => state.IngredientList.totalCalories)
   const image = 'https://cdn.imgbin.com/0/14/19/imgbin-gelatin-dessert-jelly-bean-computer-icons-black-beans-jasuSuvVV7TcZpYr54xPKtngR.jpg'
-
+  
   const navigation = useNavigation();
   //thông tin textinput của customFood
   const [name, setName] = useState('')
@@ -27,23 +28,37 @@ const AddCustomFood = () => {
  
   
   const addIngredient = () => {
+    dispatch(isAdd(true));
     navigation.navigate('StapleFood')
   }
+
+  const DeleteIngredient = (index) => {
+
+    Alert.alert('Delete', 'Do you want to remove ingredient?', [
+      {
+        text: 'Cancel',
+        
+        style: 'cancel',
+      },
+      {text: 'OK', onPress: () => {
+        dispatch(Delete(index))
+      }},
+    ]);
+  }
+
   const saveFood = () => {
     if (IngredientList.length == 0){
       
     }
     else{
     navigation.navigate('AddFood')
-    dispatch(isAdd(false));
-    dispatch(createNew());
 
     firestore().collection('customFoods').add({
       userId: user.uid,
       time: moment(new Date()).format('DD/MM/YYYY'),
       name: name,
       calories: totalCalories,
-      image: image,
+      image: 'https://cdn.imgbin.com/0/14/19/imgbin-gelatin-dessert-jelly-bean-computer-icons-black-beans-jasuSuvVV7TcZpYr54xPKtngR.jpg',
       prepTime: '',
       cookingTime: '',
       receipt: '',
@@ -96,23 +111,25 @@ const AddCustomFood = () => {
                      </TouchableOpacity>
                      <FlatList 
                       data={IngredientList}
-                      renderItem={({item}) => (
+                      renderItem={({item, index}) => (
                         <View>
+                          <TouchableOpacity onPress={()=> DeleteIngredient(index)}>
                             <Image source={{uri: item.image}} style={styles.tabIcon}/>
                             <Text>{item.name}</Text>
-                            <Text>{item.calories}/{item.baseAmount}{item.unit}</Text>
                             <Text>{item.resultCalories}</Text>
+                            <Text>{item.amount}</Text>
+                            </TouchableOpacity>
                         </View>
                       )}
                       keyExtractor={(item, index) => index.toString()}
                       />
                       {(IngredientList.length > 0)?<Text>Total: {totalCalories}</Text>:null}
-                     
                      </View>
                 </>
                               
             </ScrollView>
-        </View>      
+        </View>   
+        
     </View>
   )
 }

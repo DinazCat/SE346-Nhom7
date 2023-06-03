@@ -1,23 +1,74 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useContext} from "react";
 import {View, Text, StyleSheet, TextInput, Image, TouchableOpacity, FlatList} from "react-native";
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
-import { isAdd } from "../store/CustomFoodSlice";
+import { isEdit, isAdd, createNew } from "../store/CustomFoodSlice";
+import PopFoodAmount from "./PopFoodAmount";
 import firestore from '@react-native-firebase/firestore';
+import { AuthContext } from "../navigation/AuthProvider";
+
+
+
 const CustomFoodScreen = () => {
+  const {user} = useContext(AuthContext);
+  const [textSearch, onChangeTextSearch] = useState('');
+  const [visible, setVisible] = React.useState(false);//pop to add amount
+  const [calories, setCalories] = useState('');
+  const [image, setImage] = useState('');
+  const [name, setName] = useState('D');
   
+  const [selectedItem, setSelectedItem] = useState(null);
   const dispatch = useDispatch();
-  const [datas, setDatas] = useState();
+  const [datas, setDatas] = useState([{name: 'A'}]);
   const addIngredient = () => {
-    dispatch(isAdd(true));
-    navigation.navigate("AddCustomFood", {});
+    
+    dispatch(createNew())
+    navigation.navigate("AddCustomFood");
   }
-  const shareCustomFood = (item) => {
-    navigation.navigate('AddPostScreen', {name: item.name, image: item.image, calories: item.calories.toString()})
+  const choosePopup = (item) => {
+    setVisible(true);//tí bỏ vô edit, new, choose
+    setImage(item.image);
+    
+    setName(item.name);
+    setCalories(item.calories)
+  }
+  const Add = () => {
+    setVisible(true);
+    
+  }
+  const Delete = (item) => {
+    firestore().collection('customFoods').doc(item.id).delete().then(() => { });
+  }
+  const is_edit = (item) =>{
+    
+    
+    dispatch(isEdit(true, item.ingredients, item.calories));
+    navigation.navigate('AddCustomFood');
+   
+    
+  }
+  const finishAdd = () => {
+    setVisible(false)
+    if (textSearch == ''){
+      
+    }
+    else{
+      firestore().collection('foodsDiary').add({
+        userId: user.uid,
+        name: name,
+        mealType: 'Lunch',
+        amount: textSearch,
+        calories: (parseInt(textSearch) * parseInt(calories)).toFixed(),
+        image: image,
+        isCustom: true,
+      })
+    }
+    
   }
   useEffect(() => {
     fetchCustomFoods();
+    
    }, []);
   const fetchCustomFoods = async()=>{
     try{
@@ -26,13 +77,16 @@ const CustomFoodScreen = () => {
       .onSnapshot((querySnapshot)=>{
         const list = [];
         querySnapshot.forEach(doc =>{
-          const {image, name, calories, cookingTime, ingredient, prepTime, receipt} = doc.data();
+          const {image, name, calories, cookingTime, ingredients, prepTime, receipt} = doc.data();
           list.push({          
             id: doc.id,
             name: name,
             image: image,
             calories: calories,
-            
+            cookingTime: cookingTime,
+            prepTime: prepTime,
+            receipt: receipt,
+            ingredients: ingredients,
           });
         })
         setDatas(list);
@@ -63,19 +117,50 @@ const CustomFoodScreen = () => {
           <FlatList 
               data={datas}
               renderItem={({item}) => (
-                <TouchableOpacity onPress={()=>shareCustomFood(item)}>
-                  <View >
+                <View>
+                <TouchableOpacity onPress={()=>choosePopup(item)}>
+                  
                       <Image source={{uri: item.image}} style={styles.tabIcon}/>
                       <Text > {item.name} </Text>
-                      <Text > {item.calories}cals/servings  </Text>
-                     
-                  </View>
+                      <Text > {item.calories}cals/serving  </Text>
+                      
 
                 </TouchableOpacity>
+              </View>
               )}
           
               keyExtractor={(item, index) => index.toString()}
+              extraData={datas}
           />
+
+          <PopFoodAmount visible={visible}>
+        <View style={{alignItems: 'center'}}>
+          <View style={styles.header}>
+            <TouchableOpacity onPress={() => setVisible(false)}>
+              <Image
+                source={require('../assets/food.png')}
+                style={{height: 30, width: 30}}
+              />
+            </TouchableOpacity>
+          </View>
+        </View>
+        <View style={{alignItems: 'center'}}>
+          <Image
+            source={{uri: image}}
+            style={{height: 100, width: 100, marginVertical: 10}}
+          />
+        </View>
+        <View >
+        <TextInput style={{marginVertical: 30, fontSize: 20}} value={textSearch} onChangeText={textSearch  =>onChangeTextSearch(textSearch)}/>
+        <Text>{calories}cals/serving</Text>
+        </View>
+        <TouchableOpacity style={{marginVertical: 30, fontSize: 20, textAlign: 'center'}} onPress={()=>finishAdd()}>
+          <Text>Add</Text>
+        </TouchableOpacity>
+      </PopFoodAmount>
+
+    
+          
       </View>
                 
 
@@ -100,5 +185,17 @@ const styles = StyleSheet.create({
       alignItems: "center",
       justifyContent: "center",
     },
+    popover:{
+      backgroundColor: 'white', 
+      borderRadius: 10, 
+      padding: 16, 
+      flexDirection: 'row', 
+      alignItems: 'center', 
+      justifyContent: 'space-between'
+    },
+    popoverItem:{
+      alignItems: 'center',
+      margin: 20
+  },
   });
 export default CustomFoodScreen;

@@ -7,7 +7,7 @@ import moment from "moment";
 import PopFoodAmount from "./PopFoodAmount";
 import StapleFoodScreen from "./StapleFoodScreen";
 import CustomFoodScreen from "./CustomFoodScreen";
-
+//để isAdd trong redux = false khi nhấn vào staple
 
 const AddFood = ({route}) => {
   const[isCustom, setIsCustom] = useState(false);

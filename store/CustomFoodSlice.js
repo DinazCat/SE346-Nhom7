@@ -5,7 +5,8 @@ const initialState = {
     
   ],
   isCustomFood: false,
-  totalCalories: ''
+  totalCalories: '',
+  isEdit: false,
 };
 
 export const CustomFoodSlice = createSlice({
@@ -37,20 +38,43 @@ export const CustomFoodSlice = createSlice({
         state.totalCalories = total
           
       },
-      prepare: (image, name, calories, unit, baseAmount, resultCalories) => {
-        return { payload: {image: image, name: name, calories: calories, unit: unit, baseAmount:baseAmount, resultCalories: resultCalories} }
+      prepare: (image, name, calories, unit, baseAmount, resultCalories, amount) => {
+        return { payload: {image: image, name: name, calories: calories, unit: unit, baseAmount:baseAmount, resultCalories: resultCalories, amount: amount} }
       }
     },
     
     Delete: {
       reducer: (state, action) => {
         let arr = [];
+        let total = 0;
         for(let i = 0; i < state.value.length; i++){
             if (i != action.payload.index){
               arr.push(state.value[i]);
+              total += parseInt(state.value[i].resultCalories);
             }
         }
         state.value = arr;
+        state.totalCalories = total
+      },
+      prepare: (index) => {
+        return { payload: {index} }
+      }
+    },
+    isEdit: {
+      reducer: (state, action) => {
+        const {name, image, resultCalories, amount} = action.payload.ingredienList;
+        state.isEdit = action.payload.isEdit;
+        state.totalCalories = action.payload.totalCalories;
+        state.value = [];
+        state.value = state.value.concat(action.payload.ingredienList);
+      },
+      prepare: (isEdit, ingredienList, totalCalories) => {
+        return {payload:{isEdit, ingredienList, totalCalories}}
+      }
+    },
+    Edit:{
+      reducer: (state, action) => {
+
       },
       prepare: (index) => {
         return { payload: {index} }
@@ -60,6 +84,6 @@ export const CustomFoodSlice = createSlice({
   },
 });
 
-export const { isAdd, createNew, Add} = CustomFoodSlice.actions;
+export const { isAdd, createNew, Add, isEdit, Delete} = CustomFoodSlice.actions;
 
 export default CustomFoodSlice.reducer;
