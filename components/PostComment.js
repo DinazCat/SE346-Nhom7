@@ -1,13 +1,14 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native'
-import React, {useState, useRef} from 'react'
+import React, {useState, useRef, useContext} from 'react'
 import Popover from 'react-native-popover-view';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import auth from '@react-native-firebase/auth';
+import LanguageContext from "../context/LanguageContext";
 
 const PostComment = ({item, onUserPress, onEdit, onDelete}) => {
   const [isPopoverVisible, setPopoverVisible] = useState(false);
   const [popoverAnchor, setPopoverAnchor] = useState(null);
-
+  const language = useContext(LanguageContext);
 
   const handleLongPress = (event) => {
     if(item.userId == auth().currentUser.uid)
@@ -51,13 +52,13 @@ const PostComment = ({item, onUserPress, onEdit, onDelete}) => {
                 <TouchableOpacity onPress={handleEditComment}>
                     <View style={styles.popoverItem}>
                         <Icon name="edit" size={35} color="black" />
-                        <Text style={{ fontSize: 16, marginTop: 8, color: 'black' }}>Sửa bình luận</Text>
+                        <Text style={{ fontSize: 16, marginTop: 8, color: 'black' }}>{language === 'vn' ? 'Sửa bình luận' : 'Edit comment'}</Text>
                     </View>
                 </TouchableOpacity>           
                 <TouchableOpacity onPress={handleDeleteComment}>
                     <View style={styles.popoverItem}>
                         <Icon name="trash-alt" size={35} color="black" />
-                        <Text style={{ fontSize: 16, marginTop: 8, color: 'black' }}>Xóa bình luận</Text>
+                        <Text style={{ fontSize: 16, marginTop: 8, color: 'black' }}>{language === 'vn' ? 'Xóa bình luận' : 'Delete comment'}</Text>
                     </View>
                 </TouchableOpacity>
             </View>

@@ -7,16 +7,17 @@ import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import { isCheck } from '../store/isQuestionNullSlice';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import LanguageContext from '../context/LanguageContext';
 
 import MainStack from './MainStack';
-import QuestionStack from './QuestionStack';
 
 export default function Routes() {
     const { user, setUser } = useContext(AuthContext);
     const dispatch = useDispatch();
     //const [loading, setLoading] = useState(true);
     const [initializing, setInitializing] = useState(true);
-   
+    const [language, setLanguage] = useState('');
 
     function onAuthStateChanged(user) {
       setUser(user);
@@ -27,6 +28,17 @@ export default function Routes() {
     useEffect(() => {
       const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
       //dispatch(isCheck());
+      AsyncStorage.getItem('language')
+        .then((value) => {
+          if (value) {
+            setLanguage(value);
+          } else {
+            setLanguage('en');
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
       return subscriber;
     }, []);
 
@@ -34,7 +46,9 @@ export default function Routes() {
 
     return (
       <NavigationContainer>
-        {user ? <MainStack/> : <AuthStack />}
+        <LanguageContext.Provider value={language}>
+          {user ? <MainStack/> : <AuthStack />}
+        </LanguageContext.Provider>      
       </NavigationContainer>
     );
   }

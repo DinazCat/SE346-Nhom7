@@ -7,6 +7,8 @@ import AvatarComponent from '../components/AvatarComponent';
 import storage from '@react-native-firebase/storage';
 import auth from '@react-native-firebase/auth';
 import SendNoti from '../components/SendNoti';
+import LanguageContext from "../context/LanguageContext";
+
 const ProfileScreen = ({navigation, route}) => {
   const {user} = useContext(AuthContext);
   const {userId} = route.params;
@@ -16,6 +18,7 @@ const ProfileScreen = ({navigation, route}) => {
   const [loading, setLoading] = useState(true);
   const [profileData, setProfileData] = useState(null);
   const [selectedTab, setSelectedTab] = useState(0);
+  const language = useContext(LanguageContext);
 
   const fetchPosts = async()=>{
     try{
@@ -272,13 +275,15 @@ const ProfileScreen = ({navigation, route}) => {
         />
         <Text style={styles.userName}>{profileData ? profileData.name : ''}</Text>
         <Text multiline style={styles.aboutUser}>
-        {profileData ? profileData.about || 'No details added.' : ''}
+        {profileData ? profileData.about || (language === 'vn' ? 'Không có thông tin khác.' : 'No details added.') : ''}
         </Text>
         <View style={styles.userBtnWrapper}>
           {(userId != user.uid) ? (
             <>
               <TouchableOpacity style={styles.userBtn} onPress={() => onFollow(profileData)}>
-                <Text style={styles.userBtnTxt}>{getFollowStatus(profileData ? profileData.followers : null) ? 'Unfollow' : 'Follow'}</Text>
+                <Text style={styles.userBtnTxt}>{getFollowStatus(profileData ? profileData.followers : null) ? 
+                  (language === 'vn' ? 'Hủy theo dõi' : 'Unfollow') :
+                  (language === 'vn' ? 'Theo dõi' : 'Follow')}</Text>
               </TouchableOpacity>
             </>
           ) : (
@@ -288,7 +293,7 @@ const ProfileScreen = ({navigation, route}) => {
                 onPress={() => {
                   navigation.navigate('editProfileScreen');
                 }}>
-                <Text style={styles.userBtnTxt}>Edit Profile</Text>
+                <Text style={styles.userBtnTxt}>{language === 'vn' ? 'Chỉnh sửa hồ sơ' : 'Edit Profile'}</Text>
               </TouchableOpacity>
             </>
           )}
@@ -298,19 +303,19 @@ const ProfileScreen = ({navigation, route}) => {
           <TouchableOpacity onPress={() => {setSelectedTab(0)}}>
             <View style={[styles.userInfoItem, {backgroundColor: selectedTab == 0 ? '#D3FBB8' : '#fff'}]}>
               <Text style={styles.userInfoTitle}>{posts.length}</Text>
-              <Text style={styles.userInfoSubTitle}>Posts</Text>
+              <Text style={styles.userInfoSubTitle}>{language === 'vn' ? 'Bài viết' : 'Posts'}</Text>
             </View>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => {setSelectedTab(1)}}>
             <View style={[styles.userInfoItem, {backgroundColor: selectedTab == 1 ? '#FAF7A8' : '#fff'}]}>
               <Text style={styles.userInfoTitle}>{profileData ? profileData.followers.length : 0}</Text>
-              <Text style={styles.userInfoSubTitle}>Followers</Text>
+              <Text style={styles.userInfoSubTitle}>{language === 'vn' ? 'Người theo dõi' : 'Followers'}</Text>
             </View>
           </TouchableOpacity>  
           <TouchableOpacity onPress={() => {setSelectedTab(2)}}>
             <View style={[styles.userInfoItem, {backgroundColor: selectedTab == 2 ? '#f545' : '#fff'}]}>
               <Text style={styles.userInfoTitle}>{profileData ? profileData.following.length : 0}</Text>
-              <Text style={styles.userInfoSubTitle}>Following</Text>
+              <Text style={styles.userInfoSubTitle}>{language === 'vn' ? 'Đang theo dõi' : 'Following'}</Text>
             </View>
           </TouchableOpacity>                
         </View>

@@ -2,13 +2,16 @@ import { StyleSheet, Text, TouchableOpacity, View, TextInput, Image } from 'reac
 import React, {useEffect, useContext, useState, useRef} from 'react';
 import firestore from '@react-native-firebase/firestore';
 import {useRoute} from '@react-navigation/native';
-import FeedsScreen from './FeedsScreen';
+import LanguageContext from "../context/LanguageContext";
+
 const EditComment = ({navigation}) => {
     const route = useRoute();
     const item =  route.params.item;
     const cmtId = route.params.cmtId;
     const onCommentUpdated = route.params?.onCommentUpdated;
     const [comment, setComment] = useState(item.comment);
+    const language = useContext(LanguageContext);
+    
     handleSave = () => {
       let temComment = {
         userId: item.userId,
@@ -64,11 +67,11 @@ const EditComment = ({navigation}) => {
         <View style={styles.cmtContainer}>
             <TouchableOpacity onPress={() => handleSave()}
                 style={[styles.buttonContainer, {backgroundColor: '#777'}]}>
-                <Text style={[styles.buttontext, {color: '#fff'}]}>Lưu</Text>
+                <Text style={[styles.buttontext, {color: '#fff'}]}>{language === 'vn' ? 'Lưu' : 'Save'}</Text>
             </TouchableOpacity>  
             <TouchableOpacity onPress={() => navigation.goBack()}
                 style={styles.buttonContainer}>
-                <Text style={styles.buttontext}>Hủy</Text>
+                <Text style={styles.buttontext}>{language === 'vn' ? 'Hủy' : 'Cancel'}</Text>
             </TouchableOpacity>  
         </View>         
     </View>

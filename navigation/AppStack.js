@@ -65,7 +65,7 @@ export default function AppStack() {
         name="editProfileScreen"
         component={EditProfileScreen}
         options={{
-          headerTitle: 'Edit Profile',
+          headerTitle: '',
           headerBackTitleVisible: false,
           headerTitleAlign: 'center',
           headerStyle: {

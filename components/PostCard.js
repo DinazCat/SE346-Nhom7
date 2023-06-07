@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity, useContext, Modal,alert } from 'react-native'
-import React, { useEffect, useRef, useState } from 'react'
+import { StyleSheet, Text, View, Image, TouchableOpacity, Modal,alert } from 'react-native'
+import React, { useEffect, useRef, useState, useContext } from 'react'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
@@ -9,6 +9,7 @@ import { AuthContext } from '../navigation/AuthProvider';
 import Animated, { Easing } from 'react-native-reanimated';
 import Share from 'react-native-share';
 import SendNoti from './SendNoti';
+import LanguageContext from "../context/LanguageContext";
 
 const PostCard = ({item, onUserPress, onCommentPress,onImagePress,deletePost,editright,editPost}) => {
 
@@ -18,6 +19,7 @@ const PostCard = ({item, onUserPress, onCommentPress,onImagePress,deletePost,edi
     const [maxRating, setmaxRating] = useState([1,2,3,4,5])
     const starImgFilled = "https://github.com/tranhonghan/images/blob/main/star_filled.png?raw=true";
     const starImgCorner = "https://raw.githubusercontent.com/tranhonghan/images/main/star_corner.png";
+    const language = useContext(LanguageContext);
 
     useEffect(() => {
         getLikeStatus(item.likes);
@@ -283,11 +285,11 @@ const PostCard = ({item, onUserPress, onCommentPress,onImagePress,deletePost,edi
            
         </View>
         <View style={{flexDirection:"row"}}>
-        <Text style={styles.PostTitle}>Tên món ăn:</Text>
+        <Text style={styles.PostTitle}>{language === 'vn' ? 'Tên món ăn: ' : 'Food name:'}</Text>
         <Text style={styles.PostText}>{item.postFoodName}</Text>
-        </View>
+        </View> 
         <View style={{flexDirection:"row"}}>
-        <Text style={styles.PostTitle}>Độ khó:</Text>
+        <Text style={styles.PostTitle}>{language === 'vn' ? 'Độ khó' : 'Difficulty Level'}</Text>
         <CustomRatingBar/>
         </View>
         <View style={{flexDirection:"row"}}>
@@ -296,7 +298,7 @@ const PostCard = ({item, onUserPress, onCommentPress,onImagePress,deletePost,edi
         </View>
         <TouchableOpacity onPress={onImagePress}>
           <Text style={{textDecorationLine:'underline', color:'blue',paddingHorizontal: 15,
-        marginBottom: 10,}}>See Detail</Text>
+        marginBottom: 10,}}>{language === 'vn' ? 'Xem chi tiết' : 'See Detail'}</Text>
         </TouchableOpacity>
         
         {/* <Text style={styles.PostTitle}>Nguyên liệu:</Text>
@@ -317,9 +319,10 @@ const PostCard = ({item, onUserPress, onCommentPress,onImagePress,deletePost,edi
                 <View style={styles.Interaction}>
                     <Ionicons name={liked ? 'heart' : 'heart-outline'} size={25} color={liked ? '#E61717' : '#333'} />
                     <Text style={[styles.InteractionText, {color: liked ? '#E61717' : '#666'}]}>
-                        {item.likes.length === 1 ? '1 Like' :
+                      {language === 'vn' ? 'Thích' : (item.likes.length === 1 ? '1 Like' :
                         item.likes.length > 1 ? item.likes.length + ' Likes' :
-                        'Like'}</Text>
+                        'Like')}
+                    </Text>
                 </View>
             </TouchableOpacity>
             
@@ -327,15 +330,17 @@ const PostCard = ({item, onUserPress, onCommentPress,onImagePress,deletePost,edi
                 <View style={styles.Interaction}>
                     <Ionicons name="md-chatbubble-outline" size={25}/>
                     <Text style={styles.InteractionText}>
-                        {item.comments.length === 1 ? '1 Comment' :
-                        item.comments.length > 1 ? item.comments.length + ' Comments' :
-                        'Comment'}</Text>
+                      {language === 'vn' ? 'Bình luận'  :
+                          (item.comments.length === 1 ? '1 Comment' :
+                          item.comments.length > 1 ? item.comments.length + ' Comments' :
+                          'Comment')}
+                    </Text>
                 </View>
             </TouchableOpacity>
             <TouchableOpacity onPress={onSharePost}>
                 <View style={styles.Interaction}>
                     <Ionicons name="arrow-redo-outline"size={25}/>
-                    <Text style={styles.InteractionText}>Share</Text>
+                    <Text style={styles.InteractionText}>{language === 'vn' ? 'Chia sẻ' : 'Share'}</Text>
                 </View>
             </TouchableOpacity>
         </View>

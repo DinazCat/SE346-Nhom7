@@ -10,6 +10,7 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import Popover from 'react-native-popover-view';
 import ImagePicker from 'react-native-image-crop-picker';
 import storage from '@react-native-firebase/storage';
+import LanguageContext from "../context/LanguageContext";
 
 
 const AddCustomFood = ({route}) => {
@@ -19,7 +20,7 @@ const AddCustomFood = ({route}) => {
   const totalCalories = useSelector((state) => state.IngredientList.totalCalories);
   const isEdit = useSelector((state) => state.IngredientList.isEdit);
   const imageTemp = (route.params)? route.params?.item.image :'https://cdn.imgbin.com/0/14/19/imgbin-gelatin-dessert-jelly-bean-computer-icons-black-beans-jasuSuvVV7TcZpYr54xPKtngR.jpg'
-  
+  const language = useContext(LanguageContext);
   
   const navigation = useNavigation();
   //thông tin textinput của customFood
@@ -162,10 +163,10 @@ const AddCustomFood = ({route}) => {
     <View style={styles.Container}>
     
      {isEdit?<TouchableOpacity onPress={(IngredientList.length == 0)?checkNameAndIngredient:updateFood}>
-      <Text>Update</Text>
+      <Text>{language === 'vn' ? 'Cập nhật' : 'Update'}</Text>
      </TouchableOpacity> :
      <TouchableOpacity onPress={(IngredientList.length == 0)?checkNameAndIngredient:saveFood}>
-        <Text>Save</Text>
+        <Text>{language === 'vn' ? 'Lưu' : 'Save'}</Text>
      </TouchableOpacity> }
             <View style={styles.headerContainer}>
             <TextInput style={styles.foodname} value={name} onChangeText={name=>setName(name)}></TextInput>
@@ -200,7 +201,7 @@ const AddCustomFood = ({route}) => {
                      <View style={{backgroundColor:'#F5F5F5'}}>
                      <Text style={[styles.PostTitle, {color: '#5AC30D'}]}>Ingredients</Text>
                      <TouchableOpacity onPress={()=>addIngredient()}>
-                      <Text>Add</Text>
+                      <Text>{language === 'vn' ? 'Thêm' : 'Add'}</Text>
                      {/* Bỏ flatlist ra ngoài scrollView */}
                      </TouchableOpacity>
                      <FlatList 
@@ -218,7 +219,7 @@ const AddCustomFood = ({route}) => {
                       keyExtractor={(item, index) => index.toString()}
                       />
                       {(image!=null)?<TouchableOpacity onPress={()=> setImage(null)}>
-                        <Text>Delete</Text> //thay thành hình dấu trừ
+                        <Text>{language === 'vn' ? 'Xóa' : 'Delete'}</Text> //thay thành hình dấu trừ
                       </TouchableOpacity>:null}
                       {(image == null)?<Image source={{uri: imageTemp}} style={styles.tabIcon}/> : <Image source={{uri: image.path}} style={styles.tabIcon}/>}
                       <TouchableOpacity onPress={(event) => {

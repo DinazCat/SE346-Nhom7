@@ -11,7 +11,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Animated from 'react-native-reanimated';
 import BottomSheet from 'reanimated-bottom-sheet';
 import { Linking } from 'react-native';
-
+import LanguageContext from "../context/LanguageContext";
 
 export default function FeedsScreen({navigation}) {
   const {user} = useContext(AuthContext);
@@ -21,6 +21,8 @@ export default function FeedsScreen({navigation}) {
   const [mark, setmark] = useState(false);
   const [userimg, setUserImg] = useState();
   const [hashtag, sethashtag] = useState([]);
+  const language = useContext(LanguageContext);
+
   const fetchPosts = async()=>{
     try{
       firestore()
@@ -316,7 +318,7 @@ export default function FeedsScreen({navigation}) {
   renderContent = () => (
     <View style={styles.panel}>
       <View style={{alignItems: 'center'}}>
-        <Text style={styles.panelSubtitle}>Filter by</Text>
+        <Text style={styles.panelSubtitle}>{language === 'vn' ? 'Lọc bằng' : 'Filter by'}</Text>
       </View>    
       <View style={{height: 510, borderColor: '#DDD', borderBottomWidth: 1, borderTopWidth: 1}}>
           <ScrollView>
@@ -451,7 +453,9 @@ export default function FeedsScreen({navigation}) {
           </TouchableOpacity>
           <TouchableOpacity onPress={() => navigation.push('addPostScreen')}>
             <View style={styles.addPostTextContainer}>
-              <Text>What did you eat today? Share with everyone</Text>
+              <Text>
+              {language === 'vn' ? 'Hôm nay bạn ăn gì? Chia sẻ với mọi người...' : 'What did you eat today? Share with everyone...'}
+              </Text>
             </View>          
           </TouchableOpacity>
         </View>

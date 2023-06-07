@@ -1,17 +1,20 @@
 import {StyleSheet, Text, View, TouchableOpacity, Dimensions} from 'react-native';
-import React from 'react';
+import React, {useContext} from 'react';
 import { LineChart } from 'react-native-chart-kit';
+import LanguageContext from "../context/LanguageContext";
 
 export default LineChartWeightScreen = ({navigation}) => {
     const listDays = ['14/6','9/7','11/7','14/7','19/7','11/8','13/8','9/9','11/9']
     const listWeights = [60,61,62,64,65,61,59,56,55]
+    const language = useContext(LanguageContext);
+
     return (
         <View style = {{flex: 1}}>
-        <Text style={styles.text}>Weight Tracker</Text>
+        <Text style={styles.text}>{language === 'vn' ? 'Theo dõi cân nặng' : 'Weight Tracker'}</Text>
         <TouchableOpacity style= {styles.button}
         onPress={() => navigation.navigate('AddWeight')} > 
           <Text>
-            Add Weight
+          {language === 'vn' ? 'Thêm cân nặng' : 'Add Weight'}
           </Text>
         </TouchableOpacity>
         <LineChart 

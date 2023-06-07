@@ -7,6 +7,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 import Animated from 'react-native-reanimated';
 import BottomSheet from 'reanimated-bottom-sheet';
 import { AuthContext } from '../navigation/AuthProvider';
+import LanguageContext from "../context/LanguageContext";
 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -21,6 +22,7 @@ const EditProfileScreen = () => {
   const [uploading, setUploading] = useState(false);
   const [transferred, setTransferred] = useState(0);
   const [userData, setUserData] = useState(null);
+  const language = useContext(LanguageContext);
 
   useEffect(() => {
     getUserData();
@@ -266,7 +268,7 @@ const EditProfileScreen = () => {
         <View style={styles.action}>
           <FontAwesome name="user-o" color="#333333" size={20} />
           <TextInput
-            placeholder="Name"
+            placeholder={language === 'vn' ? 'Tên' : 'Name'}
             placeholderTextColor="#666666"
             value={userData ? userData.name : ''}
             onChangeText={(txt) => setUserData({...userData, name: txt})}
@@ -279,7 +281,7 @@ const EditProfileScreen = () => {
           <TextInput
             multiline
             numberOfLines={3}
-            placeholder="About Me"
+            placeholder={language === 'vn' ? 'Tiểu sử' : 'About Me'}
             placeholderTextColor="#666666"
             value={userData ? userData.about : ''}
             onChangeText={(txt) => setUserData({...userData, about: txt})}
@@ -338,7 +340,7 @@ const EditProfileScreen = () => {
             style={styles.textInput}
           />
         </View>
-        <FormButton title="Update" onPress={handleUpdate}/>
+        <FormButton title={language === 'vn' ? 'Cập nhật' : 'Update'} onPress={handleUpdate}/>
       </Animated.View>
     </View>
   )

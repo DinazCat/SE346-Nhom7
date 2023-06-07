@@ -5,6 +5,7 @@ import React, {useState, useContext} from "react";
 import { useNavigation } from "@react-navigation/native";
 import moment from "moment";
 import { AuthContext } from '../navigation/AuthProvider';
+import LanguageContext from "../context/LanguageContext";
 
 import PopFoodAmount from "./PopFoodAmount";
 const exercises = [
@@ -36,6 +37,8 @@ const AddExerciseScreen = () => {
   
   //modal
   const [visible, setVisible] = React.useState(false);
+
+  const language = useContext(LanguageContext);
   //add ingredient
   const addExercise = () => {
     
@@ -78,7 +81,7 @@ const AddExerciseScreen = () => {
         <TextInput
         value={textSearch}
         onChangeText={onChangeTextSearch}
-        placeholder="Search exercise"
+        placeholder={language === 'vn' ? 'Tìm kiếm bài tập' : 'Search excercise'}
         placeholderTextColor={'rgba(0,0,0,0.8)'}
         />
         </View>
@@ -104,7 +107,7 @@ const AddExerciseScreen = () => {
         <Text>{calories}cals/h</Text>
         </View>
         <TouchableOpacity style={{marginVertical: 30, fontSize: 20, textAlign: 'center'}} onPress={()=>addExercise()}>
-          <Text>Add</Text>
+          <Text>{language === 'vn' ? 'Thêm' : 'Add'}</Text>
         </TouchableOpacity>
       </PopFoodAmount>
         <View >

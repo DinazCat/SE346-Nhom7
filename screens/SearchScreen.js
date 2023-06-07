@@ -6,6 +6,8 @@ import { AuthContext } from '../navigation/AuthProvider';
 import AvatarComponent from '../components/AvatarComponent';
 import PostCard from '../components/PostCard';
 import firestore from '@react-native-firebase/firestore';
+import LanguageContext from "../context/LanguageContext";
+
 const SearchScreen = ({navigation}) => {
     const {user} = useContext(AuthContext);
     const [followers, setFollowers] = useState([]);
@@ -19,6 +21,8 @@ const SearchScreen = ({navigation}) => {
     const [posts, setPosts]= useState(null);
     const [postfilter, setPostFilter] = useState(null);
     const [peoplefilter, setPeopleFilter] = useState(null);
+    const language = useContext(LanguageContext);
+
     const getProfile = async() => {
         await firestore()
         .collection('users')
@@ -144,12 +148,12 @@ const SearchScreen = ({navigation}) => {
       <View style={styles.part1}>
         <TextInput
           style={styles.textinput}
-          placeholder="Tìm bài viết, bạn bè..."
+          placeholder={language === 'vn' ? 'Tìm bài viết, bạn bè...' : 'Search posts, friends...'}
           placeholderTextColor={'rgba(0,0,0,0.8)'}
           onChangeText={text => {filterPost(text), filterPeople(text)}}
         />
         <TouchableOpacity
-          style={{marginTop: 27}}
+          style={{marginTop: 30, marginLeft: 10}}
           >
           <Icon name={'search'} style={styles.ButtonSearch} />
         </TouchableOpacity>
@@ -157,7 +161,7 @@ const SearchScreen = ({navigation}) => {
       {checkSearch == false ? (
         <>
           <Text style={{marginTop: 50, marginLeft: 15}}>
-            Những người bạn có thể biết
+          {language === 'vn' ? 'Những người bạn có thể biết' : 'People you may know'}
           </Text>
           <ScrollView>
             {FriendUknow().map((item, index) => (
@@ -228,6 +232,7 @@ const SearchScreen = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#fff'
   },
   part1: {
     flexDirection:'row',

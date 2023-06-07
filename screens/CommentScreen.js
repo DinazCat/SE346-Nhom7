@@ -7,6 +7,8 @@ import auth from '@react-native-firebase/auth';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import PostComment from '../components/PostComment';
 import SendNoti from '../components/SendNoti';
+import LanguageContext from "../context/LanguageContext";
+
 const CommentScreen = ({navigation}) => {
   const route = useRoute();
   const [comment, setComment] = useState('');
@@ -14,6 +16,7 @@ const CommentScreen = ({navigation}) => {
   const inputRef = useRef();
   const {user} = useContext(AuthContext);
   const onCommentChanged = route.params.onCommentChanged
+  const language = useContext(LanguageContext);
 
   useEffect(() => {
     postId = route.params?.postId;  
@@ -123,7 +126,7 @@ const CommentScreen = ({navigation}) => {
                 color="#333"                            
                 />
         </TouchableOpacity>
-        <Text style={styles.headerText}>Comments</Text>       
+        <Text style={styles.headerText}>{language === 'vn' ? 'Bình luận' : 'Comments'}</Text>       
       </View>
       <FlatList
         data={commentList}
@@ -147,14 +150,14 @@ const CommentScreen = ({navigation}) => {
           onChangeText={txt => {
             setComment(txt);
           }}
-          placeholder="Type comment here..."
+          placeholder={language === 'vn' ? 'Viết bình luận...' : 'Type comment here...'}
           multiline={true}
           style={styles.commentInput}
         />
         <Text
           style={{marginRight: 10, fontSize: 18, fontWeight: '600'}}
           onPress={() => {handlePostComment()}}>
-          Send
+          {language === 'vn' ? 'Gửi' : 'Send'}
         </Text>
       </View>
     </View>

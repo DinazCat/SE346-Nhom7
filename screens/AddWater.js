@@ -3,10 +3,13 @@ import {View, Text, StyleSheet, TextInput, Image,TouchableOpacity} from "react-n
 import firestore from '@react-native-firebase/firestore';
 import moment from "moment";
 import { AuthContext } from '../navigation/AuthProvider';
+import LanguageContext from "../context/LanguageContext";
 
 const AddWater = ({navigation}) => {
     const{user} = useContext(AuthContext);
     const[water, setWater] = useState();
+    const language = useContext(LanguageContext);
+
     const saveWater = () => {
         if (water==""){
             //just space
@@ -31,7 +34,7 @@ const AddWater = ({navigation}) => {
             </View>
             <View style={styles.container}>
                 <Text style= {styles.text}>
-                    Add Water - ml
+                {language === 'vn' ? 'Thêm nước - ml' : 'Add water - ml'}
                 </Text>
                 <TextInput style = {styles.textInput} value={water} onChangeText={water=> setWater(water)}/>
                 
@@ -39,7 +42,7 @@ const AddWater = ({navigation}) => {
             <TouchableOpacity style = {styles.button}
             onPress={saveWater}>
                 <Text style={{flexDirection: 'row', padding: 15, alignItems: 'center', textAlign: 'center', fontSize: 22}}>
-                    Add
+                    {language === 'vn' ? 'Thêm' : 'Add'}
                 </Text>
             </TouchableOpacity>
         </View>

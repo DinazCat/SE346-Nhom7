@@ -6,11 +6,14 @@ import { AuthContext } from '../navigation/AuthProvider';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import auth from '@react-native-firebase/auth';
 import NotificationForm from '../components/NotificationForm';
+import LanguageContext from "../context/LanguageContext";
+
 const NotificationScreen = ({navigation}) => {
   const [noread, setnoread] = useState([]);
   const [read, setread] = useState([]);
-  const getNotification = async () => {
-  
+  const language = useContext(LanguageContext);
+
+  const getNotification = async () => {  
    firestore()
     .collection('Notification')
     .orderBy('time', 'desc')
@@ -104,7 +107,7 @@ const NotificationScreen = ({navigation}) => {
             <ScrollView>
             {(noread.length != 0)?
             <> 
-            <Text style={styles.headertext}>Thông báo mới:</Text>
+            <Text style={styles.headertext}>{language === 'vn' ? 'Thông báo mới: ' : 'New Notifications'}</Text>
             <FlatList
               data={noread}
               renderItem={({item, index}) => (
@@ -123,7 +126,7 @@ const NotificationScreen = ({navigation}) => {
             </> : null}
             {(read.length != 0)?
             <> 
-            <Text style={styles.headertext}>Thông báo đã đọc:</Text>
+            <Text style={styles.headertext}>{language === 'vn' ? 'Thông báo đã đọc: ' : 'Read Notifications'}</Text>
             <FlatList
               data={read}
               renderItem={({item, index}) => (
@@ -153,7 +156,7 @@ const styles = StyleSheet.create({
     container: {
       flex: 1,
       flexDirection:'column',
-      backgroundColor:'#D3D3D3'
+      backgroundColor:'#fff'
     },
     headertext:{
       fontSize:16, 

@@ -1,6 +1,7 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useContext} from "react";
 import {View, Text, StyleSheet, SafeAreaView,
   LayoutAnimation, ScrollView, TouchableOpacity} from "react-native";
+import LanguageContext from "../context/LanguageContext";
 
 const CONTENT = [
   {
@@ -91,6 +92,7 @@ const CONTENT = [
   
   const AddScreen = ({navigation}) => {
       const [listDataSource, setlistDataSource] = useState(CONTENT);
+      const language = useContext(LanguageContext);
   
       const updateLayout = (index) => {
           LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -103,7 +105,7 @@ const CONTENT = [
               <View style ={styles.container} >
                   <View style = {styles.header}>
                           <Text style={styles.title}>
-                              Remaining Calories:
+                          {language === 'vn' ? 'Lượng calories còn lại: ' : 'Remaining Calories: '}
                           </Text>
                           <Text style={styles.title2}>
                               1200
@@ -114,18 +116,18 @@ const CONTENT = [
                       <TouchableOpacity style = {styles.button} 
                       onPress={() => navigation.navigate('AddWater')} >
                           <Text>
-                              Add Water
+                          {language === 'vn' ? 'Thêm nước' : 'Add Water'}
                           </Text>
                       </TouchableOpacity>
                       <TouchableOpacity style = {styles.button} 
                        onPress={() => navigation.navigate('AddFood')}>
                           <Text>
-                              Add Food
+                          {language === 'vn' ? 'Thêm đồ ăn' : 'Add food'}
                           </Text>
                       </TouchableOpacity>
                       <TouchableOpacity style = {styles.button} onPress={()=>navigation.navigate('AddExercise')}>
                           <Text>
-                              Add Exercise
+                          {language === 'vn' ? 'Thêm bài tập thể dục' : 'Add Excercise'}
                           </Text>
                       </TouchableOpacity>
                   </View>

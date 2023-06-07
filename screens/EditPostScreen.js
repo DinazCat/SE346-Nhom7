@@ -8,6 +8,7 @@ import storage from '@react-native-firebase/storage';
 import { AuthContext } from '../navigation/AuthProvider';
 import { Picker } from '@react-native-picker/picker';
 import Popover from 'react-native-popover-view';
+import LanguageContext from "../context/LanguageContext";
 
 export default EditPostScreen= function({navigation,route}) {
     const [image,setimage] = useState(route.params.item.postImg);
@@ -32,6 +33,7 @@ export default EditPostScreen= function({navigation,route}) {
     const starImgFilled = "https://github.com/tranhonghan/images/blob/main/star_filled.png?raw=true";
     const starImgCorner = "https://raw.githubusercontent.com/tranhonghan/images/main/star_corner.png";
     const {user} = useContext(AuthContext);
+    const language = useContext(LanguageContext);
 
     const TextChangeFoodName = (Text)=>{setFoodName(Text)};
     const TextChangeIngredient = (text,index)=>{
@@ -352,7 +354,7 @@ const [editI, seteditI] = useState([...Ingredient]);
           </TouchableOpacity>
 
           <Text style={{fontSize: 20, flex: 1, marginLeft: 5, fontWeight: '600', color: '#333'}}>
-            Edit post
+          {language === 'vn' ? 'Chỉnh sửa bài viết' : 'Edit post'}
           </Text>
           {uploading ? (
             <View style={{justifyContent: 'center', alignItems: 'center'}}>
@@ -361,7 +363,7 @@ const [editI, seteditI] = useState([...Ingredient]);
             </View>
           ) : (
             <Button
-              title={'Save'}
+              title={language === 'vn' ? 'Lưu' : 'Save'}
               color={allowPost() == true ? '#FFCC00' : '#BBBBBB'}
               onPress={editPost}
             />
@@ -385,13 +387,13 @@ const [editI, seteditI] = useState([...Ingredient]);
               fontWeight: '700',
               alignSelf: 'center',
             }}>
-            Step 1. Something about food
+            {language === 'vn' ? '1. Thông tin cơ bản về món ăn' : 'Step 1. Something about food'}
           </Text>
         </View>
            <View style={styles.TextBox}>
            <Icon name={"pencil-alt"} style={{ color: "#FFCC00", fontSize: 30, marginLeft:340,position:"absolute" }} />
            <ScrollView>
-             <Text style={[styles.TextStyle,{marginTop:20}]}>Food name</Text>
+             <Text style={[styles.TextStyle,{marginTop:20}]}>{language === 'vn' ? 'Tên món ăn: ' : 'Food name: '}</Text>
            <TextInput
              style={{fontSize: 16, 
                 marginLeft: 3, 
@@ -402,10 +404,10 @@ const [editI, seteditI] = useState([...Ingredient]);
              value={FoodName}
              onChangeText={TextChangeFoodName}
            />
-            <Text style={[styles.TextStyle,{marginTop:20, width: 150}]}>Level of difficulty</Text>
+            <Text style={[styles.TextStyle,{marginTop:20, width: 150}]}>{language === 'vn' ? 'Độ khó' : 'Difficulty level'}</Text>
             <CustomRatingBar/>
             <View style={styles.InputBox}>
-            <Text  style={[styles.TextStyle,{width: 120}]}>Total</Text>
+            <Text  style={[styles.TextStyle,{width: 120}]}>{language === 'vn' ? 'Tổng phần: ' : 'Total: '}</Text>
             <TextInput
              style={styles.InputStyle}
              value={Total}
@@ -424,7 +426,7 @@ const [editI, seteditI] = useState([...Ingredient]);
             <Text style={{fontSize: 16}}>cals/serving</Text>
             </View>
             <View style={styles.InputBox}>
-            <Text style={[styles.TextStyle,{width: 120}]}>Prep time</Text>
+            <Text style={[styles.TextStyle,{width: 120}]}>{language === 'vn' ? 'Thời gian chuẩn bị: ' : 'Prep time: '}</Text>
            <TextInput
              style={styles.InputStyle}
              value={Prep}
@@ -432,7 +434,7 @@ const [editI, seteditI] = useState([...Ingredient]);
            />
             </View>
             <View style={styles.InputBox}>
-            <Text style={[styles.TextStyle,{width: 120}]}>Cooking time</Text>
+            <Text style={[styles.TextStyle,{width: 120}]}>{language === 'vn' ? 'Thời gian nấu: ' : 'Cooking time: '}</Text>
            <TextInput
              style={styles.InputStyle}
              value={Cookingtime}
@@ -462,13 +464,13 @@ const [editI, seteditI] = useState([...Ingredient]);
               fontWeight: '700',
               alignSelf: 'center',
             }}>
-            Step 2. How to make food?
+            {language === 'vn' ? '2. Cách làm' : 'Step 2. How to make food?'}
           </Text>
         </View>
            <View style={styles.TextBox}>
             <ScrollView>
             <View style={{flexDirection:'row'}}>
-            <Text style={[styles.TextStyle,{marginTop:20}]}>What ingredients are there?</Text>
+            <Text style={[styles.TextStyle,{marginTop:20}]}>{language === 'vn' ? 'Các nguyên liệu cần có?' : 'What ingredients are there?'}</Text>
            <TouchableOpacity onPress={()=>{
              const newData = [
                 ...Ingredient,
@@ -493,7 +495,7 @@ const [editI, seteditI] = useState([...Ingredient]);
         renderItem={({item})=><Item itemI={item} />}
         keyExtractor={(item, index) => index.toString()}
       />
-       <Text style={[styles.TextStyle,{marginTop:20}]}>Give me the recipe of your food</Text>
+       <Text style={[styles.TextStyle,{marginTop:20}]}>{language === 'vn' ? 'Công thức làm món ăn này là gì?' : 'Give me the recipe of your food'}</Text>
            <TextInput
            multiline={true}
              style={{fontSize: 16, 
@@ -505,7 +507,7 @@ const [editI, seteditI] = useState([...Ingredient]);
                 value={Making}
              onChangeText={TextChangeMaking}
            />
-           <Text style={[styles.TextStyle,{marginTop:20}]}>Do you want to say something?</Text>
+           <Text style={[styles.TextStyle,{marginTop:20}]}>{language === 'vn' ? 'Đôi lời muốn nói?' : 'Do you want to say something?'}</Text>
            <TextInput
            multiline={true}
              style={{fontSize: 16, 
@@ -538,7 +540,7 @@ const [editI, seteditI] = useState([...Ingredient]);
               fontWeight: '700',
               alignSelf: 'center',
             }}>
-            Step 3. Choose hashtags
+            {language === 'vn' ? '3. Chọn hashtag cho bài viết' : 'Step 3.Choose hashtags'}
           </Text>
         </View>
            <View style={styles.TextBox}>
@@ -599,7 +601,7 @@ const [editI, seteditI] = useState([...Ingredient]);
                 }}
               />
               <Text style={{alignSelf: 'center'}}>
-                Thêm hình ảnh mà bạn thích
+              {language === 'vn' ? 'Thêm hình ảnh' : 'Add images'}
               </Text>
             </View>
           ) : null}

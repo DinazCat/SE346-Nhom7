@@ -5,6 +5,7 @@ import { AuthContext } from '../navigation/AuthProvider';
 import PostCard from '../components/PostCard';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import firestore from '@react-native-firebase/firestore';
+import LanguageContext from "../context/LanguageContext";
 
 export default function DetailPostScreen({navigation,route}) {
     const [postData, setPost] = useState(null);
@@ -14,6 +15,8 @@ export default function DetailPostScreen({navigation,route}) {
     const starImgFilled = "https://github.com/tranhonghan/images/blob/main/star_filled.png?raw=true";
     const starImgCorner = "https://raw.githubusercontent.com/tranhonghan/images/main/star_corner.png";
     const {postId} = route.params;
+    const language = useContext(LanguageContext);
+
     onUserPress=() => navigation.navigate('profileScreen', {userId: postData.userId})
     const Item = ({each}) => (
         <Image style={[styles.PostImgsContainer, {height: each ? 250 : 0}]} 
@@ -107,7 +110,7 @@ export default function DetailPostScreen({navigation,route}) {
                     </View>              
                      <View style={styles.split}/>
                      <View style={{backgroundColor:'#F5F5F5'}}>
-                     <Text style={[styles.PostTitle, {color: '#5AC30D'}]}>Ingredients</Text>
+                     <Text style={[styles.PostTitle, {color: '#5AC30D'}]}>{language === 'vn' ? 'Nguyên liệu' : 'Ingredients'}</Text>
                      {/* <Text style={styles.PostText}>{postData?postData.postFoodIngredient:""}</Text> */}
                      {
                         postData?.postFoodIngredient.map((each,key)=>{
@@ -119,12 +122,12 @@ export default function DetailPostScreen({navigation,route}) {
                      </View>
                      <View style={styles.split}/>
                      <View style={{backgroundColor:'#F5F5F5'}}>
-                     <Text style={[styles.PostTitle, {color: '#CE3E3E'}]}>Steps</Text>
+                     <Text style={[styles.PostTitle, {color: '#CE3E3E'}]}>{language === 'vn' ? 'Cách làm' : 'Steps'}</Text>
                      <Text style={styles.PostText}>{postData?postData.postFoodMaking:""}</Text>
                      </View>
                      <View style={styles.split}/>
                      <View style={{backgroundColor:'#F5F5F5'}}>
-                     <Text style={[styles.PostTitle, {color: '#546ED5'}]}>Summary</Text>
+                     <Text style={[styles.PostTitle, {color: '#546ED5'}]}>{language === 'vn' ? 'Tổng kết' : 'Summary'}</Text>
                      <Text style={styles.PostText}>{postData?postData.postFoodSummary:""}</Text>
                      </View>
                      <View style={styles.split}/>

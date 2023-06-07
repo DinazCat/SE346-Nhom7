@@ -1,23 +1,26 @@
 import {View, Text, StyleSheet, TextInput, Image, TouchableOpacity, FlatList, Alert} from "react-native";
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import firestore from '@react-native-firebase/firestore';
-import React, {useState} from "react";
+import React, {useState, useContext} from "react";
 import { useNavigation } from "@react-navigation/native";
 import moment from "moment";
 import PopFoodAmount from "./PopFoodAmount";
 import StapleFoodScreen from "./StapleFoodScreen";
 import CustomFoodScreen from "./CustomFoodScreen";
+import LanguageContext from "../context/LanguageContext";
 //để isAdd trong redux = false khi nhấn vào staple
 
 const AddFood = ({route}) => {
   const[isCustom, setIsCustom] = useState(false);
+  const language = useContext(LanguageContext);
+
     return(
         <View>
             <TouchableOpacity onPress={()=>setIsCustom(false)}>
-                <Text> Staple </Text>
+                <Text>{language === 'vn' ? 'Có sẵn' : 'Staple'}</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={()=>setIsCustom(true)}>
-                <Text>Custom</Text>
+                <Text>{language === 'vn' ? 'Tùy chỉnh' : 'Custom'}</Text>
             </TouchableOpacity>
             {(isCustom==false)? <StapleFoodScreen/>:<CustomFoodScreen/>}
         </View>

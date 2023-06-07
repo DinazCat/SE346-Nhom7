@@ -1,8 +1,10 @@
-import React, {useState} from "react";
+import React, {useState, useContext} from "react";
 import {View, Text, StyleSheet, ScrollView, Image, TouchableOpacity} from "react-native";
 import ProgressCircle from 'react-native-progress-circle'
 import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
+import LanguageContext from "../context/LanguageContext";
+
 const HomeScreen = () => {
   const [baseGoal, setBaseGoal] = useState(0);
   const [exercise, setExercise] = useState(0);
@@ -16,7 +18,7 @@ const HomeScreen = () => {
   const [date, setDate] = useState(new Date());
   const [show, setShow] = useState(false);
   const [time, setTime] = useState('Today');
-
+  const language = useContext(LanguageContext);
 
 
   
@@ -54,19 +56,27 @@ const HomeScreen = () => {
           </TouchableOpacity>
         </View>
         <View style={[styles.container, { alignItems: "center", justifyContent: "center"}]}>
-            <Text style={[styles.text, {color: '#444444'}]}>Remaining = Goal - Food + Exercire</Text>
+            <Text style={[styles.text, {color: '#444444'}]}>
+              {language === 'vn' ? 'Còn lại = Mục tiêu - Thức ăn + Thể dục' : 'Remaining = Goal - Food + Exercire'}
+            </Text>
             <View style={{flexDirection: 'row', alignItems: "center"}}>
                 <View style={{justifyContent: "center", alignItems: "center"}}>
                   <TouchableOpacity style={{justifyContent: "center", alignItems: "center"}} >
-                    <Text style={[styles.text, {color: '#FFFFFF', marginTop: 5}]}> Exercise </Text>
+                    <Text style={[styles.text, {color: '#FFFFFF', marginTop: 5}]}> 
+                    {language === 'vn' ? 'Thể dục' : 'Excercise'}
+                    </Text>
                     <Text style={[styles.text, {color: '#FFFFFF', fontWeight: "bold"}]}> {exercise} </Text>
                   </TouchableOpacity>
                   <TouchableOpacity style={{justifyContent: "center", alignItems: "center"}}>
-                    <Text style={[styles.text, {color: '#FFFFFF', marginTop: 5}]}> Water </Text>
+                    <Text style={[styles.text, {color: '#FFFFFF', marginTop: 5}]}> 
+                    {language === 'vn' ? 'Nước' : 'Water'}
+                    </Text>
                     <Text style={[styles.text, {color: '#FFFFFF', fontWeight: "bold"}]}> {water} </Text>
                   </TouchableOpacity>
                   <TouchableOpacity style={{justifyContent: "center", alignItems: "center"}}>
-                  <Text style={[styles.text, {color: '#FFFFFF', marginTop: 5}]}> Note </Text>
+                  <Text style={[styles.text, {color: '#FFFFFF', marginTop: 5}]}> 
+                  {language === 'vn' ? 'Ghi chú' : 'Note'}
+                  </Text>
                   <Image
                     source={require("../assets/paperclip.png")}
                     resizeMode="contain"
@@ -75,7 +85,9 @@ const HomeScreen = () => {
                   </TouchableOpacity>
                 </View>
                 <View style={{justifyContent: "center", alignItems: "center"}}>
-                  <Text style={[styles.text, {color: '#FFFFFF'}]}> Base goal </Text>
+                  <Text style={[styles.text, {color: '#FFFFFF'}]}> 
+                  {language === 'vn' ? 'Mục tiêu cơ bản' : 'Base Goal'}
+                  </Text>
                   <Text style={[styles.text, {color: '#FFFFFF', fontWeight: "bold", marginBottom: 10}]}> {baseGoal} </Text>
                   <ProgressCircle
                     percent={30}
@@ -90,25 +102,35 @@ const HomeScreen = () => {
                  </ProgressCircle>
   
                   <TouchableOpacity style={[styles.text, {color: '#FFFFFF', marginTop: 5}]}> 
-                  <Text style={[styles.text, {color: '#FFFFFF', fontWeight: "bold", margin: 5}]}> View all </Text>
+                  <Text style={[styles.text, {color: '#FFFFFF', fontWeight: "bold", margin: 5}]}> 
+                  {language === 'vn' ? 'Xem tất cả' : 'View All'}
+                  </Text>
                    </TouchableOpacity>
                   
                 </View>
                 <View style={{justifyContent: "center", alignItems: "center"}}>
                   <TouchableOpacity style={{justifyContent: "center", alignItems: "center"}}>
-                    <Text style={[styles.text, {color: '#FFFFFF', marginTop: 5}]}> Breakfast </Text>
+                    <Text style={[styles.text, {color: '#FFFFFF', marginTop: 5}]}> 
+                    {language === 'vn' ? 'Bữa sáng' : 'Breakfast'}
+                    </Text>
                     <Text style={[styles.text, {color: '#FFFFFF', fontWeight: "bold"}]}> {breakfast} </Text>
                   </TouchableOpacity>
                   <TouchableOpacity style={{justifyContent: "center", alignItems: "center"}}>
-                    <Text style={[styles.text, {color: '#FFFFFF', marginTop: 5}]}> Lunch </Text>
+                    <Text style={[styles.text, {color: '#FFFFFF', marginTop: 5}]}>
+                    {language === 'vn' ? 'Bữa trưa' : 'Lunch'}
+                    </Text>
                     <Text style={[styles.text, {color: '#FFFFFF', fontWeight: "bold"}]}> {lunch} </Text>
                   </TouchableOpacity>
                   <TouchableOpacity style={{justifyContent: "center", alignItems: "center"}}>
-                    <Text style={[styles.text, {color: '#FFFFFF', marginTop: 5}]}> Dinner </Text>
+                    <Text style={[styles.text, {color: '#FFFFFF', marginTop: 5}]}>
+                    {language === 'vn' ? 'Bữa tối' : 'Dinner'}
+                    </Text>
                     <Text style={[styles.text, {color: '#FFFFFF', fontWeight: "bold"}]}> {dinner} </Text>
                   </TouchableOpacity>
                   <TouchableOpacity style={{justifyContent: "center", alignItems: "center"}}>
-                    <Text style={[styles.text, {color: '#FFFFFF', marginTop: 5}]}> Snacks </Text>
+                    <Text style={[styles.text, {color: '#FFFFFF', marginTop: 5}]}>
+                    {language === 'vn' ? 'Ăn vặt' : 'Snacks'}
+                    </Text>
                     <Text style={[styles.text, {color: '#FFFFFF', fontWeight: "bold"}]}> {snacks} </Text>
                   </TouchableOpacity>
                 </View>
@@ -121,8 +143,12 @@ const HomeScreen = () => {
                 resizeMode="contain"
                 style={[styles.tabIcon, {marginLeft: 20, marginRight: 5}]}
             />
-            <Text style={[styles.text, {fontWeight: "bold", color: '#FFFFFF', margin: 5}]}>My analysis: </Text>
-            <Text style={[styles.text, {color: '#FFFFFF'}]}>Decifit</Text>
+            <Text style={[styles.text, {fontWeight: "bold", color: '#FFFFFF', margin: 5}]}>
+            {language === 'vn' ? 'Phân tích của tôi: ' : 'My analysis: '}
+            </Text>
+            <Text style={[styles.text, {color: '#FFFFFF'}]}>
+            {language === 'vn' ? 'Thiếu hụt' : 'Decifit'}
+            </Text>
           </View>
         </View>
     </ScrollView>

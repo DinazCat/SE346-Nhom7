@@ -8,6 +8,7 @@ import { AuthContext } from '../navigation/AuthProvider';
 import { useDispatch } from "react-redux";
 import { Add } from "../store/CustomFoodSlice";
 import { useSelector } from "react-redux";
+import LanguageContext from "../context/LanguageContext";
 
 import PopFoodAmount from "./PopFoodAmount";
 const stapleFood = [
@@ -63,6 +64,8 @@ const StapleFoodScreen = ({route}) => {
   
   //modal
   const [visible, setVisible] = React.useState(false);
+  const language = useContext(LanguageContext);
+  
   //add ingredient
   const isAddIngredient = () => {
     
@@ -117,7 +120,7 @@ const StapleFoodScreen = ({route}) => {
         <TextInput
         value={textInput}
         onChangeText={onChangeTextInput}
-        placeholder="Search food"
+        placeholder={language === 'vn' ? 'Tìm kiếm món ăn' : 'Search food'}
         placeholderTextColor={'rgba(0,0,0,0.8)'}
         />
         </View>
@@ -143,7 +146,7 @@ const StapleFoodScreen = ({route}) => {
         <Text>{calories}cals/{baseAmount}{unit}</Text>
         </View>
         <TouchableOpacity style={{marginVertical: 30, fontSize: 20, textAlign: 'center'}} onPress={()=>isAddIngredient()}>
-          <Text>Add</Text>
+          <Text>{language === 'vn' ? 'Thêm' : 'Add'}</Text>
         </TouchableOpacity>
       </PopFoodAmount>
         <View >
