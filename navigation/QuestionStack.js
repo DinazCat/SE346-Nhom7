@@ -6,21 +6,28 @@ import GetGoalScreen from '../screens/GetGoalScreen';
 import GetWeeklyGoalScreen from '../screens/GetWeeklyGoalScreen';
 import GetActivityLevelScreen from '../screens/GetActivityLevelScreen';
 import TabsNavigator from './TabsNavigator';
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { useNavigation } from "@react-navigation/native";
+import { isCheck } from '../store/isQuestionNullSlice';
 
 const Stack = createNativeStackNavigator();
 
 const QuestionStack = () => {
-
+  const dispatch = useDispatch();
+  //dispatch(isCheck());
+  const initialScreen = useSelector((state) => state. isQuestionNull.value);
   return (
-    <Stack.Navigator initialRouteName='GetAgeHeightWeightScreen'>
-      <Stack.Screen 
-        name='TabsNavigator' 
-        component={TabsNavigator} 
-        options={{ header: () => null }}
-      />
+    <Stack.Navigator initialRouteName={initialScreen}>
+      
       <Stack.Screen 
         name='GetAgeHeightWeightScreen' 
         component={GetAgeHeightWeightScreen} 
+        options={{ header: () => null }}
+      />
+      <Stack.Screen 
+        name='TabsNavigator' 
+        component={TabsNavigator} 
         options={{ header: () => null }}
       />
        <Stack.Screen 

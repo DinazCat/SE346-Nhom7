@@ -87,7 +87,7 @@ const StapleFoodScreen = ({route}) => {
     else{
       const resultCalories = (parseInt(textSearch) * parseInt(calories) / parseInt(baseAmount)).toFixed();
       dispatch(Add(image, name, calories, unit, baseAmount, resultCalories, textSearch));
-      navigation.navigate('AddCustomFood')
+      navigation.goBack();
     }
       
     }

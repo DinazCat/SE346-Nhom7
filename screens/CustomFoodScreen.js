@@ -1,14 +1,13 @@
 import React, {useState, useEffect, useContext} from "react";
-import {View, Text, StyleSheet, TextInput, Image, TouchableOpacity, FlatList} from "react-native";
+import {View, Text, StyleSheet, TextInput, Image, TouchableOpacity, FlatList, Dimensions} from "react-native";
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
-import { isEdit, isAdd, createNew } from "../store/CustomFoodSlice";
+import { Edit, isAdd, createNew, isEditFood } from "../store/CustomFoodSlice";
 import PopFoodAmount from "./PopFoodAmount";
 import firestore from '@react-native-firebase/firestore';
 import { AuthContext } from "../navigation/AuthProvider";
-
-
+import { SwipeListView, SwipeRow } from 'react-native-swipe-list-view';
 
 const CustomFoodScreen = () => {
   const {user} = useContext(AuthContext);
@@ -16,35 +15,41 @@ const CustomFoodScreen = () => {
   const [visible, setVisible] = React.useState(false);//pop to add amount
   const [calories, setCalories] = useState('');
   const [image, setImage] = useState('');
-  const [name, setName] = useState('D');
+  const [name, setName] = useState('');
   
   const [selectedItem, setSelectedItem] = useState(null);
   const dispatch = useDispatch();
-  const [datas, setDatas] = useState([{name: 'A'}]);
-  const addIngredient = () => {
-    
+  const [datas, setDatas] = useState([]);
+  const addCustomFood = () => {
     dispatch(createNew())
+    dispatch(isAdd(true))
+    //can set isEditFood seperately
     navigation.navigate("AddCustomFood");
   }
-  const choosePopup = (item) => {
-    setVisible(true);//tí bỏ vô edit, new, choose
-    setImage(item.image);
+  const Add = (selectedItem, rowMap) => {
+    let index = datas.findIndex(item=>item.id === selectedItem.id)
+    rowMap[`${index}`].closeRow();
+    onChangeTextSearch('');
+    setImage(selectedItem.image);
     
-    setName(item.name);
-    setCalories(item.calories)
-  }
-  const Add = () => {
+    setName(selectedItem.name);
+    setCalories(selectedItem.calories);
+   
     setVisible(true);
     
   }
-  const Delete = (item) => {
-    firestore().collection('customFoods').doc(item.id).delete().then(() => { });
+  const Delete = (selectedItem, rowMap) => {
+    let index = datas.findIndex(item=>item.id === selectedItem.id)
+    rowMap[`${index}`].closeRow();
+    firestore().collection('customFoods').doc(selectedItem.id).delete().then(() => {});
+    
   }
-  const is_edit = (item) =>{
-    
-    
-    dispatch(isEdit(true, item.ingredients, item.calories));
-    navigation.navigate('AddCustomFood');
+  const is_edit = (selectedItem, rowMap) =>{
+    //có thể bị vướng id do navigation lại mất
+    let index = datas.findIndex(item=>item.id === selectedItem.id)
+    rowMap[`${index}`].closeRow();
+    dispatch(Edit(true, selectedItem.ingredients, selectedItem.calories));
+    navigation.navigate('AddCustomFood', {item: selectedItem});
    
     
   }
@@ -98,8 +103,11 @@ const CustomFoodScreen = () => {
     }
   }
   
+  //for item options of flatlist
+  const onRowDidOpen = rowKey => {
+    console.log('This row opened', rowKey);
+};
   const navigation = useNavigation();
-  //flat list don't have data
   
     return (
       <View styles={{flex:1}}>
@@ -109,29 +117,56 @@ const CustomFoodScreen = () => {
         placeholder="Search food"
         placeholderTextColor={'rgba(0,0,0,0.8)'}
         />
-        <TouchableOpacity onPress={()=>addIngredient()}>
+        <TouchableOpacity onPress={()=>addCustomFood()}>
           <Text>Add</Text>
         </TouchableOpacity>
         </View>
-        
-          <FlatList 
-              data={datas}
-              renderItem={({item}) => (
-                <View>
-                <TouchableOpacity onPress={()=>choosePopup(item)}>
-                  
-                      <Image source={{uri: item.image}} style={styles.tabIcon}/>
-                      <Text > {item.name} </Text>
-                      <Text > {item.calories}cals/serving  </Text>
-                      
-
-                </TouchableOpacity>
-              </View>
-              )}
-          
-              keyExtractor={(item, index) => index.toString()}
-              extraData={datas}
-          />
+         {/* Chỉ sửa giao diện của renderItem thôi */}
+          <SwipeListView
+          useFlatList={true}
+               data={datas}
+               renderItem={({item}) => (
+                 <View  style={styles.rowFront}> 
+                   
+                       <Image source={{uri: item.image}} style={styles.tabIcon}/>
+                       <Text > {item.name} </Text>
+                       <Text > {item.calories}cals/serving  </Text>
+                       
+ 
+                 </View>
+               
+               )}
+               //
+               renderHiddenItem={ ({item}, rowMap) => (
+                 <View style={styles.rowBack}>
+             <TouchableOpacity onPress={() => Add(item, rowMap)}
+                 style={[styles.backRightBtn, styles.backAdd]}
+             >
+                 <Text style={styles.backTextWhite}>Add</Text>
+             </TouchableOpacity>
+             <TouchableOpacity onPress={()=>Delete(item, rowMap)}
+                 style={[styles.backRightBtn,styles.backEdit]}
+             >
+                 <Text style={styles.backTextWhite}>Delete</Text>
+             </TouchableOpacity>
+             <TouchableOpacity onPress={()=>is_edit(item, rowMap)}
+                 style={[styles.backRightBtn,styles.backDelete]}
+             >
+                 <Text style={styles.backTextWhite}>Edit</Text>
+             </TouchableOpacity>
+         </View>
+             )}
+             keyExtractor={(item, index)=>index.toString()}
+               disableRightSwipe
+                 rightOpenValue={-225}//lấy 75 nhân vs số button cần làm
+                 //previewRowKey={'0'}
+                 previewOpenValue={-40}
+                 previewOpenDelay={3000}
+                 onRowDidOpen={onRowDidOpen}//đếm số lần mở ra mở vô
+                 recalculateHiddenLayout={true}
+               
+           />
+ 
 
           <PopFoodAmount visible={visible}>
         <View style={{alignItems: 'center'}}>
@@ -197,5 +232,44 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       margin: 20
   },
+  backTextWhite: {
+    color: '#FFF',
+},
+//custom for options
+
+rowBack: {
+    alignItems: 'center',
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingLeft: 15,
+},
+backRightBtn: {
+    alignItems: 'center',
+    bottom: 0,
+    justifyContent: 'center',
+    position: 'absolute',
+    top: 0,
+    width: 75,
+},
+backAdd: {
+    backgroundColor: 'blue',
+    right: 150,
+},
+backEdit: {
+    backgroundColor: 'red',
+    right:75,
+},
+backDelete: {
+  backgroundColor: '#D436F0',
+  right: 0,
+},
+rowFront: {
+  alignItems: 'center',
+  backgroundColor: '#CCC',
+  borderBottomColor: 'black',
+  borderBottomWidth: 1,
+  justifyContent: 'center',
+},
   });
 export default CustomFoodScreen;

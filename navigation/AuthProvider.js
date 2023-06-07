@@ -5,6 +5,7 @@ import { LoginManager, AccessToken } from 'react-native-fbsdk-next';
 import firestore from '@react-native-firebase/firestore';
 import messaging from '@react-native-firebase/messaging';
 
+
 export const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {

@@ -4,6 +4,8 @@ import TabsNavigator from './TabsNavigator';
 import firestore from '@react-native-firebase/firestore';
 import QuestionStack from './QuestionStack';
 import { AuthContext } from '../navigation/AuthProvider';
+import { useSelector } from "react-redux";
+
 
 const MainStack = () => {
 
