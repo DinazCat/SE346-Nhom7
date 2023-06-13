@@ -154,7 +154,25 @@ const ProfileScreen = ({navigation, route}) => {
           Read:'no',
 
         });
-        SendNoti(auth().currentUser.displayName+' đang theo dõi bạn.',userId);
+        firestore()
+          .collection('NotificationSetting')
+          .doc(userId)
+          .get()
+          .then((doc)=>
+          {
+            if (doc.exists) {
+              const data = doc.data();
+              try {
+                const gt = data.follow;
+                if (gt === true) {
+                  SendNoti(
+                    auth().currentUser.displayName + ' đang theo dõi bạn.',
+                    userId,
+                  );
+                }
+              } catch {}
+            }
+          });                
         }                    
     } 
     else {
@@ -171,7 +189,25 @@ const ProfileScreen = ({navigation, route}) => {
         Read:'no',
 
       });
-      SendNoti(auth().currentUser.displayName+' đang theo dõi bạn.',userId);
+      firestore()
+          .collection('NotificationSetting')
+          .doc(userId)
+          .get()
+          .then((doc)=>
+          {
+            if (doc.exists) {
+              const data = doc.data();
+              try {
+                const gt = data.follow;
+                if (gt === true) {
+                  SendNoti(
+                    auth().currentUser.displayName + ' đang theo dõi bạn.',
+                    userId,
+                  );
+                }
+              } catch {}
+            }
+          });
     }
 
     firestore()

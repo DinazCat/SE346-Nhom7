@@ -4,7 +4,7 @@ import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 
 import HomeScreen from "../screens/HomeScreen.js";
 import StatisticsScreen from "../screens/StatisticsScreen";
-import SettingsScreen from "../screens/SettingsScreen";
+import SettingScreenRoot from "../screens/SettingScreenRoot";
 import BlogsScreen from "../screens/BlogsScreen.js";
 import AddScreenHome from "../screens/AddScreenHome.js";
 
@@ -116,7 +116,7 @@ const TabsNavigator = () => {
       />
       <Tab.Screen
         name="Settings"
-        component={SettingsScreen}
+        component={SettingScreenRoot}
         options={{
           tabBarItemStyle: {
             height: 0,

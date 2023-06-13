@@ -173,7 +173,21 @@ export default AddPostScreen= function({navigation}) {
             Read:'no',
   
           });
-          SendNoti( auth().currentUser.displayName+' đã đăng 1 bài viết về món ăn: '+ FoodName, followers[i]);
+          firestore()
+          .collection('NotificationSetting')
+          .doc(followers[i])
+          .get()
+          .then((doc) => {
+            if (doc.exists) {
+              const data = doc.data();
+              try {
+                const gt = data.post;
+                if (gt === true) {
+                  SendNoti( auth().currentUser.displayName+' đã đăng 1 bài viết về món ăn: '+ FoodName, followers[i]);
+                }
+              } catch {}
+            }
+          });
         }
        
       } catch (error) {

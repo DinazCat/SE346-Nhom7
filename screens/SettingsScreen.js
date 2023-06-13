@@ -41,6 +41,11 @@ const SettingsScreen = ({navigation}) => {
           <Ionicons name='language-outline' size={27} color='#222'/>
           <Text style={styles.btnText}>{language === 'vn' ? 'Ngôn ngữ' : 'Language'}</Text>
         </TouchableOpacity>
+        <TouchableOpacity style={styles.btnContainer} 
+          onPress={() => navigation.navigate('settingNoti')}>
+          <Ionicons name="notifications-circle-outline" size={27} color='#222'/>
+          <Text style={styles.btnText}>{language === 'vn' ? 'Thông báo' : 'Notifications'}</Text>
+        </TouchableOpacity>
         <TouchableOpacity style={styles.btnContainer} onPress={() => logout()}>
           <Ionicons name='log-out-outline' size={27} color='#222'/>
           <Text style={styles.btnText}>{language === 'vn' ? 'Đăng xuất' : 'Log Out'}</Text>

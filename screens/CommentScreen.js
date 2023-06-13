@@ -65,7 +65,7 @@ const CommentScreen = ({navigation}) => {
         .catch(error => {});
       inputRef.current.clear();
       //add notification
-      if(route.params.postOwner != auth().currentUser.uid)
+      if(route.params.postOwner != auth().currentUser.uid){
       firestore().collection('Notification').add({
         PostownerId: route.params.postOwner,
         guestId: auth().currentUser.uid,
@@ -78,7 +78,27 @@ const CommentScreen = ({navigation}) => {
         Read:'no',
 
       }).then().catch((e)=>{console.log("error "+ e); console.log( auth().currentUser.uid)});
-      SendNoti(auth().currentUser.displayName+' đã bình luận bài viết của bạn về món ăn: '+ route.params.Foodname,route.params.postOwner);
+      firestore()
+        .collection('NotificationSetting')
+        .doc(route.params.postOwner)
+        .get()
+        .then((doc) => {
+          if (doc.exists) {
+            const data = doc.data();
+            try {
+              const gt = data.comment;
+              if (gt === true) {
+                SendNoti(
+                  auth().currentUser.displayName +
+                    ' đã bình luận bài viết của bạn về món ăn: ' +
+                    route.params.Foodname,
+                  route.params.postOwner,
+                );
+              }
+            } catch {}
+          }
+        });
+      }
     }
   };
   handleDeleteComment = (item, index) =>{

@@ -53,7 +53,7 @@ const PostCard = ({item, onUserPress, onCommentPress,onImagePress,deletePost,edi
             if (!flag) {
               tempLikes.push(auth().currentUser.uid);
                //add notification
-               if(item.userId != auth().currentUser.uid)
+               if(item.userId != auth().currentUser.uid){
               firestore().collection('Notification').add({
                 PostownerId: item.userId,
                 guestId: auth().currentUser.uid,
@@ -66,12 +66,33 @@ const PostCard = ({item, onUserPress, onCommentPress,onImagePress,deletePost,edi
                 Read:'no',
       
               });
-              SendNoti( auth().currentUser.displayName+' đã thích bài viết của bạn về món ăn: '+ item.postFoodName,item.userId);
+              firestore()
+                .collection('NotificationSetting')
+                .doc(item.userId)
+                .get()
+                .then((doc) => {
+                  if (doc.exists) {
+                    const data = doc.data();
+                    try {
+                      const gt = data.like;
+                      if (gt === true) {
+                        SendNoti(
+                          auth().currentUser.displayName +
+                            ' đã thích bài viết của bạn về món ăn: ' +
+                            item.postFoodName,
+                          item.userId,
+                        );
+                      }
+                    } catch {}
+                  }
+                });
+              }
+              
             }                    
         } 
         else {
           tempLikes.push(auth().currentUser.uid);
-          if(item.userId != auth().currentUser.uid)
+          if(item.userId != auth().currentUser.uid){
           firestore().collection('Notification').add({
             PostownerId: item.userId,
             guestId: auth().currentUser.uid,
@@ -83,8 +104,28 @@ const PostCard = ({item, onUserPress, onCommentPress,onImagePress,deletePost,edi
             postid: item.postId,
             Read:'no',
   
-          });
-          SendNoti( auth().currentUser.displayName+' đã thích bài viết của bạn về món ăn: '+ item.postFoodName, item.userId);
+          });}
+          firestore()
+                .collection('NotificationSetting')
+                .doc(item.userId)
+                .get()
+                .then((doc) => {
+                  if (doc.exists) {
+                    const data = doc.data();
+                    try {
+                      const gt = data.like;
+                      if (gt === true) {
+                        SendNoti(
+                          auth().currentUser.displayName +
+                            ' đã thích bài viết của bạn về món ăn: ' +
+                            item.postFoodName,
+                          item.userId,
+                        );
+                      }
+                    } catch {}
+                  }
+                });
+             // }
         }
     
         firestore()
