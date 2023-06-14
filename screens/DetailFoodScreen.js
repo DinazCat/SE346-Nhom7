@@ -7,9 +7,12 @@ import { AuthContext } from '../navigation/AuthProvider';
 import { Picker } from '@react-native-picker/picker';
 import ImagePicker from 'react-native-image-crop-picker';
 import storage from '@react-native-firebase/storage';
+import LanguageContext from "../context/LanguageContext";
+
 
 const DetailFoodScreen = ({route, navigation}) => {
   const {user} = useContext(AuthContext);
+  const language = useContext(LanguageContext);
   //lưu dữ liệu đồ ăn
   const [unit, setUnit] = useState(route.params?.item.unit||"g");
   const [baseAmount, setBaseAmount] = useState(route.params?.item.baseAmount||'');
@@ -123,13 +126,9 @@ const DetailFoodScreen = ({route, navigation}) => {
   }
   
   return (
-    <View styles={{flex:1}}>
-      <Text>Food Detail</Text>
-      {(id)?<TouchableOpacity onPress={(name==''||calories==''||baseAmount==''||unit=='')?checkInput:updateCustomFood}>
-        <Text>Update</Text>
-      </TouchableOpacity>: <TouchableOpacity onPress={(name==''||calories==''||baseAmount==''||unit=='')?checkInput:saveCustomFood}>
-        <Text>Save</Text>
-      </TouchableOpacity>}
+    <View styles={styles.container}>
+      <Text style={styles.header}>{language === 'vn' ? 'Chi tiết thức ăn' : 'Food detail'}</Text>
+      
       <TextInput placeholder="Food name" value={name} onChangeText={name=>setName(name)}/>
       <TextInput placeholder="Calories" value={calories} onChangeText={calories=>setCalories(calories)}/>
       <TextInput placeholder="Serving size" value={baseAmount} onChangeText={baseAmount=>setBaseAmount(baseAmount)}/>
@@ -147,12 +146,14 @@ const DetailFoodScreen = ({route, navigation}) => {
         <Picker.Item label="pieces" value="pieces" />
         <Picker.Item label="piece" value="piece" />
       </Picker>
+      
       {(image == null)?<Image source={{uri: imageTemp}} style={styles.tabIcon}/> : <Image source={{uri: image.path}} style={styles.tabIcon}/>}
                       
                       {(image==null)?null:<TouchableOpacity onPress={()=> setImage(null)}>
                         <Image style={styles.tabIcon} source={{uri: 'https://www.uidownload.com/files/240/295/614/delete-icon.jpg'}}></Image> 
                         
                       </TouchableOpacity>}
+                      
                       <TouchableOpacity onPress={(event) => {
             setPopoverAnchor(event.nativeEvent.target);
             setPopoverVisible(true);
@@ -186,18 +187,20 @@ const DetailFoodScreen = ({route, navigation}) => {
                 </TouchableOpacity>
             </View>
       </Popover>   
+      {(id)?<TouchableOpacity onPress={(name==''||calories==''||baseAmount==''||unit=='')?checkInput:updateCustomFood}>
+        <Text>{language === 'vn' ? 'Cập nhật' : 'Update'}</Text>
+      </TouchableOpacity>: <TouchableOpacity onPress={(name==''||calories==''||baseAmount==''||unit=='')?checkInput:saveCustomFood}>
+        <Text>{language === 'vn' ? 'Lưu' : 'Save'}</Text>
+      </TouchableOpacity>}
       </View>
 
 )
 }
 const styles = StyleSheet.create({
-    container: {
-      borderWidth: 1, 
-      borderColor: "#CFCFCF", 
-      borderRadius: 5, 
-      backgroundColor: "#CFCFCF", 
-      margin: 5,
-    },
+  container: {
+    flex: 1,
+    alignItems: 'center'
+  },
     text: {
       fontSize: 18,
       color: '#84D07D',
@@ -210,10 +213,9 @@ const styles = StyleSheet.create({
       justifyContent: "center",
     },
     header: {
-      width: '100%',
-      height: 40,
-      alignItems: 'flex-end',
-      justifyContent: 'center',
+      fontSize: 40,
+      color: '#000',
+      alignSelf: 'center'
     },
     popover:{
         backgroundColor: 'white', 

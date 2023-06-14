@@ -8,6 +8,8 @@ import Popover from 'react-native-popover-view';
 import LanguageContext from "../context/LanguageContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import RNRestart from 'react-native-restart';
+import ThemeContext from "../context/ThemeContext";
+import firestore from '@react-native-firebase/firestore';
 
 
 const SettingsScreen = ({navigation}) => {
@@ -15,6 +17,9 @@ const SettingsScreen = ({navigation}) => {
   const [isPopoverVisible, setPopoverVisible] = useState(false);
   const [popoverAnchor, setPopoverAnchor] = useState(null);
   const language = useContext(LanguageContext);
+  const theme = useContext(ThemeContext);
+  const [isPopoverThemeVisible, setPopoverThemeVisible] = useState(false);
+  const [popoverThemeAnchor, setPopoverThemeAnchor] = useState(null);
 
   const handleLanguageChange = async (newLanguage) => {
     if (language !== newLanguage){
@@ -27,29 +32,50 @@ const SettingsScreen = ({navigation}) => {
     }
     setPopoverVisible(false);
   };
+  const handleThemeChange = async (newTheme) => {
+    if (theme !== newTheme){
+      try {
+        await firestore().collection('theme').doc(user.uid).set({
+          theme: newTheme
+        }).then().catch((e)=>{console.log("error "+ e)});
+        RNRestart.Restart();
+      }
+      catch (error) {
+        console.log('Error saving theme', error);
+      }
+    }
+    setPopoverThemeVisible(false);
+  };
   return (
     <TabContainer>
-      <View style={styles.container}>
+      <View style={[styles.container, {backgroundColor: theme === 'light'? '#FFFFFF' : '#000000'}]}>
         <TouchableOpacity style={styles.btnContainer}
           onPress={() => navigation.navigate('editProfileScreen')}>
-          <Ionicons name='person-outline' size={27} color='#222'/>
-          <Text style={styles.btnText}>{language === 'vn' ? 'Chỉnh sửa hồ sơ' : 'Edit Profile'}</Text>
+          <Ionicons name='person-outline' size={27} color={theme === 'light'? '#000000' : '#FFFFFF'}/>
+          <Text style={[styles.btnText, {color: theme === 'light'? '#000000' : '#FFFFFF'}]}>{language === 'vn' ? 'Chỉnh sửa hồ sơ' : 'Edit Profile'}</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.btnContainer} 
           onPress={(event) => {setPopoverAnchor(event.nativeEvent.target);
                           setPopoverVisible(true);}}>
-          <Ionicons name='language-outline' size={27} color='#222'/>
-          <Text style={styles.btnText}>{language === 'vn' ? 'Ngôn ngữ' : 'Language'}</Text>
+          <Ionicons name='language-outline' size={27} color={theme === 'light'? '#000000' : '#FFFFFF'}/>
+          <Text style={[styles.btnText, {color: theme === 'light'? '#000000' : '#FFFFFF'}]}>{language === 'vn' ? 'Ngôn ngữ' : 'Language'}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.btnContainer} 
+          onPress={(event) => {setPopoverThemeAnchor(event.nativeEvent.target);
+            setPopoverThemeVisible(true);}}>
+          <Ionicons name='contrast-outline' size={27} color={theme === 'light'? '#000000' : '#FFFFFF'}/>
+          <Text style={[styles.btnText, {color: theme === 'light'? '#000000' : '#FFFFFF'}]}>{language === 'vn' ? 'Sáng tối' : 'Theme'}</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.btnContainer} 
           onPress={() => navigation.navigate('settingNoti')}>
-          <Ionicons name="notifications-circle-outline" size={27} color='#222'/>
-          <Text style={styles.btnText}>{language === 'vn' ? 'Thông báo' : 'Notifications'}</Text>
+          <Ionicons name="notifications-circle-outline" size={27} color={theme === 'light'? '#000000' : '#FFFFFF'}/>
+          <Text style={[styles.btnText, {color: theme === 'light'? '#000000' : '#FFFFFF'}]}>{language === 'vn' ? 'Thông báo' : 'Notifications'}</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.btnContainer} onPress={() => logout()}>
-          <Ionicons name='log-out-outline' size={27} color='#222'/>
-          <Text style={styles.btnText}>{language === 'vn' ? 'Đăng xuất' : 'Log Out'}</Text>
+          <Ionicons name='log-out-outline' size={27} color={theme === 'light'? '#000000' : '#FFFFFF'}/>
+          <Text style={[styles.btnText, {color: theme === 'light'? '#000000' : '#FFFFFF'}]}>{language === 'vn' ? 'Đăng xuất' : 'Log Out'}</Text>
         </TouchableOpacity>
+        
         <Popover
             isVisible={isPopoverVisible}
             onRequestClose={() => setPopoverVisible(false)}
@@ -69,6 +95,26 @@ const SettingsScreen = ({navigation}) => {
                 </TouchableOpacity>
             </View>
         </Popover>
+
+        <Popover
+            isVisible={isPopoverThemeVisible}
+            onRequestClose={() => setPopoverThemeVisible(false)}
+            fromView={popoverThemeAnchor}>
+            <View style={styles.popover}>              
+                <TouchableOpacity onPress={() => handleThemeChange('light')}>
+                    <View style={styles.popoverItem}>
+                        <Image source={{ uri: 'https://cdn2.iconfinder.com/data/icons/canoopi-mobile-contact-apps/32/Light_Theme-512.png' }} style={{ width: 35, height: 35 }}/>
+                        <Text style={{ fontSize: 20, color: 'black', marginLeft:15 }}>{language === 'vn' ? 'Sáng' : 'Light'}</Text>
+                    </View>
+                </TouchableOpacity>           
+                <TouchableOpacity onPress={() => handleThemeChange('dark')}>
+                    <View style={styles.popoverItem}>
+                    <Image source={{ uri: 'https://static.thenounproject.com/png/1664849-200.png' }} style={{ width: 35, height: 35 }}/>
+                        <Text style={{ fontSize: 20, color: 'black', marginLeft: 13 }}>{language === 'vn' ? 'Tối' : 'Dark'}</Text>
+                    </View>
+                </TouchableOpacity>
+            </View>
+        </Popover>
       </View>
     </TabContainer>
   );
@@ -84,6 +130,7 @@ const styles = StyleSheet.create({
   text: {
     fontWeight: "bold",
     fontSize: 32,
+    
   },
   btnContainer: {
     flexDirection: 'row',

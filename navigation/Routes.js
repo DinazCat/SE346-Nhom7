@@ -3,21 +3,40 @@ import { NavigationContainer } from '@react-navigation/native';
 import auth from '@react-native-firebase/auth';
 import AuthStack from './AuthStack';
 import { AuthContext } from './AuthProvider';
-import { useDispatch } from "react-redux";
-import { useNavigation } from "@react-navigation/native";
-import { useSelector } from "react-redux";
-import { isCheck } from '../store/isQuestionNullSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import LanguageContext from '../context/LanguageContext';
+import firestore from '@react-native-firebase/firestore';
 
 import MainStack from './MainStack';
+import ThemeContext from '../context/ThemeContext';
 
 export default function Routes() {
     const { user, setUser } = useContext(AuthContext);
-    const dispatch = useDispatch();
     //const [loading, setLoading] = useState(true);
     const [initializing, setInitializing] = useState(true);
     const [language, setLanguage] = useState('');
+    const [theme, setTheme] = useState('');
+
+    const isDarkTheme = async () => {
+
+      await firestore()
+        .collection('theme')
+        .doc(auth().currentUser.uid)
+        .get()
+        .then(documentSnapshot => {
+          if (!documentSnapshot.exists) {
+            firestore().collection('theme').doc(user.uid).set({
+              theme: 'light'
+            }).then().catch((e)=>{console.log("error "+ e)});
+            setTheme('light');
+          }
+          else {
+            
+              setTheme(documentSnapshot.data().theme);
+              //setLoading(false);
+          }
+        });
+    };
 
     function onAuthStateChanged(user) {
       setUser(user);
@@ -39,6 +58,7 @@ export default function Routes() {
         .catch((error) => {
           console.log(error);
         });
+        isDarkTheme(); 
       return subscriber;
     }, []);
 
@@ -46,9 +66,11 @@ export default function Routes() {
 
     return (
       <NavigationContainer>
+        <ThemeContext.Provider value={theme}>
         <LanguageContext.Provider value={language}>
           {user ? <MainStack/> : <AuthStack />}
         </LanguageContext.Provider>      
+        </ThemeContext.Provider>
       </NavigationContainer>
     );
   }

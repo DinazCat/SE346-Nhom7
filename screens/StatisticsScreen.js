@@ -1,13 +1,15 @@
 import {View, Text, StyleSheet, TextInput, Image, TouchableOpacity, FlatList, Alert} from "react-native";
-import React, {useState} from "react";
+import React, {useState, useContext} from "react";
 import StatisticsWeightScreen from "./StatisticsWeightScreen";
 import StatisticsHeightScreen from "./StatisticsHeightScreen";
 import StatisticsCalories from "./StatisticsCalories";
+import LanguageContext from "../context/LanguageContext";
 const StatisticsScreen = ({route}) => {
+  const language = useContext(LanguageContext);
   const[page, setPage] = useState(1);
     return(
         <View style={styles.container}>
-          <Text style={styles.header}> CHART</Text>
+          <Text style={styles.header}>{language === 'vn' ? 'Biểu đồ' : 'Chart'}</Text>
           <View style={styles.topTab}>
           <TouchableOpacity style={[styles.btn,
               {borderBottomColor: (page == 1)? '#2AE371' : null,
@@ -69,7 +71,6 @@ const styles = StyleSheet.create({
     header: {
       fontSize: 40,
       color: '#000',
-      fontFamily: 'WishShore',
       alignSelf: 'center'
     },
     textBtn:{

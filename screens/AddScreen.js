@@ -89,7 +89,7 @@ const AddScreen = ({route}) => {
 }
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 0.73,
   },
   topTab: {
     flexDirection: 'row',

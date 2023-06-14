@@ -12,14 +12,28 @@ const AddFoodScreen = ({route}) => {
   const isNavigation = (route.params)? true:false;
   const mealType = route.params?.mealType;
     return(
-        <View>
-            <TouchableOpacity onPress={()=> setPage(0)}>
-                <Text> Staple </Text>
+        <View style={styles.container}>
+          <View style={styles.topTab}>
+            <TouchableOpacity style={[styles.btn,
+              {borderBottomColor: (page == 0)? '#2AE371' : null,
+              borderBottomWidth: (page == 0)? 2:0}
+            ]}
+            onPress={()=> setPage(0)}>
+                <Text style={[styles.textBtn,
+                {fontWeight: (page == 0)? 'bold': 'normal'}
+                ]}> Staple </Text>
             </TouchableOpacity>
             
-            <TouchableOpacity onPress={()=>setPage(1)}>
-                <Text>Custom Food</Text>
+            <TouchableOpacity style={[styles.btn,
+              {borderBottomColor: (page == 1)? '#2AE371' : null,
+              borderBottomWidth: (page == 1)? 2:0}
+            ]}
+            onPress={()=>setPage(1)}>
+                <Text style={[styles.textBtn,
+                {fontWeight: (page == 1)? 'bold': 'normal'}
+                ]}>Custom Food</Text>
             </TouchableOpacity>
+            </View>
             {(() => {
         switch (page) {
           case 0:
@@ -35,29 +49,28 @@ const AddFoodScreen = ({route}) => {
     )
 }
 const styles = StyleSheet.create({
-    container: {
-      borderWidth: 1, 
-      borderColor: "#CFCFCF", 
-      borderRadius: 5, 
-      backgroundColor: "#CFCFCF", 
-      margin: 5,
-    },
-    text: {
-      fontSize: 18,
-      color: '#84D07D',
-    },
+  container: {
+    flex: 0.79,
+  },
+  topTab: {
+    flexDirection: 'row',
+    alignContent: 'center',
+    justifyContent: 'center',
+    marginVertical: 5
+  },
+  header: {
+    fontSize: 40,
+    color: '#000',
+    alignSelf: 'center'
+  },
+  textBtn:{
+    color: '#000',
+    fontSize: 16,
+    marginBottom: 10
+  },
+  btn: {
+    marginHorizontal: 30,
+  },
   
-    tabIcon: {
-      width: 25,
-      height: 25,
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    header: {
-      width: '100%',
-      height: 40,
-      alignItems: 'flex-end',
-      justifyContent: 'center',
-    },
   });
 export default AddFoodScreen;

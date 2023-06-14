@@ -12,6 +12,7 @@ import Animated from 'react-native-reanimated';
 import BottomSheet from 'reanimated-bottom-sheet';
 import { Linking } from 'react-native';
 import LanguageContext from "../context/LanguageContext";
+import ThemeContext from '../context/ThemeContext';
 
 export default function FeedsScreen({navigation}) {
   const {user} = useContext(AuthContext);
@@ -22,6 +23,7 @@ export default function FeedsScreen({navigation}) {
   const [userimg, setUserImg] = useState();
   const [hashtag, sethashtag] = useState([]);
   const language = useContext(LanguageContext);
+  const theme = useContext(ThemeContext)
 
   const fetchPosts = async()=>{
     try{
@@ -415,7 +417,7 @@ export default function FeedsScreen({navigation}) {
   const sheetRef = React.createRef();
   const fall = new Animated.Value(1);
   return (
-    <View style={{backgroundColor: '#fff', flex: 1}}>
+    <View style={{backgroundColor: theme === 'light'? '#FFFFFF' : '#000000', flex: 1}}>
       <BottomSheet
           ref={sheetRef}
           snapPoints={['93%', -100]}
@@ -425,7 +427,7 @@ export default function FeedsScreen({navigation}) {
           callbackNode={fall}
           enabledGestureInteraction={true}
         />
-      <View style={styles.container}>      
+      <View style={[styles.container, {backgroundColor: theme === 'light'? '#FFFFFF' : '#000000'}]}>      
         <Animated.View
           style={{
             opacity: fall,
@@ -433,14 +435,14 @@ export default function FeedsScreen({navigation}) {
         <View style={{flexDirection:'row'}}>
           <View style={{flex:1}}/>
           <TouchableOpacity onPress={() => navigation.push("searchScreen")}>
-                <Ionicons name={'search-outline'} style={styles.ButtonSearch} />
+                <Ionicons name={'search-outline'} style={[styles.ButtonSearch, {color: theme === 'light'? '#000000' : '#FFFFFF'}]}/>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => {sheetRef.current.snapTo(0)}}>
-                <Ionicons name={'filter-outline'} style={styles.ButtonSearch} />
+                <Ionicons name={'filter-outline'} style={[styles.ButtonSearch, {color: theme === 'light'? '#000000' : '#FFFFFF'}]}/>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => {navigation.push("nofiScreen"), setmark(false)}}>
             <View>
-                <Ionicons name={'notifications-outline'} style={styles.ButtonSearch} />
+                <Ionicons name={'notifications-outline'} style={[styles.ButtonSearch, {color: theme === 'light'? '#000000' : '#FFFFFF'}]}/>
               {(mark)&&<FontAwesome name="circle" style={styles.smallcircle}/>}
             </View>        
           </TouchableOpacity>
@@ -453,7 +455,7 @@ export default function FeedsScreen({navigation}) {
           </TouchableOpacity>
           <TouchableOpacity onPress={() => navigation.push('addPostScreen')}>
             <View style={styles.addPostTextContainer}>
-              <Text>
+              <Text style={{color: theme === 'light'? '#000000' : '#FFFFFF'}}>
               {language === 'vn' ? 'Hôm nay bạn ăn gì? Chia sẻ với mọi người...' : 'What did you eat today? Share with everyone...'}
               </Text>
             </View>          

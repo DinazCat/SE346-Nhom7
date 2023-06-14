@@ -259,7 +259,7 @@ const HomeScreen = ({navigation}) => {
           </TouchableOpacity>
         </View>
         <View style={[styles.container, { alignItems: "center", justifyContent: "center"}]}>
-            <Text style={[styles.text, {color: '#444444'}]}>Remaining = Goal - Food + Exercire</Text>
+            <Text style={[styles.text, {color: '#444444'}]}>{language === 'vn' ? 'Còn lại = Mục tiêu - Thức ăn + Thể dục' : 'Remaining = Goal - Food + Exercire'}</Text>
             <View style={{flexDirection: 'row', alignItems: "center"}}>
                 <View style={{justifyContent: "center", alignItems: "center"}}>
                   <TouchableOpacity style={{justifyContent: "center", alignItems: "center"}} onPress={viewExercise}>
@@ -291,7 +291,7 @@ const HomeScreen = ({navigation}) => {
                     bgColor="#CFCFCF" //ở trong vòng tròn
                   >
                  <Text style={{ fontSize: 16,  color: '#FFFFFF', fontWeight: 'bold'}}>{parseInt(baseGoal)+parseInt(exercise)-parseInt(breakfast)- parseInt(snacks)- parseInt(lunch)-parseInt(dinner)}</Text>
-                 <Text style={{ fontSize: 16, color: '#FFFFFF'}}>{isOver}</Text>
+                 <Text style={{ fontSize: 16, color: '#FFFFFF'}}>{language === 'vn' ? 'Còn lại' : 'Remaining'}</Text>
                  </ProgressCircle>
   
                   <TouchableOpacity style={[styles.text, {color: '#FFFFFF', marginTop: 5}]} onPress={viewAll}> 

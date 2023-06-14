@@ -6,6 +6,7 @@ import PostCard from '../components/PostCard';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import firestore from '@react-native-firebase/firestore';
 import LanguageContext from "../context/LanguageContext";
+import ThemeContext from '../context/ThemeContext';
 
 export default function DetailPostScreen({navigation,route}) {
     const [postData, setPost] = useState(null);
@@ -16,7 +17,7 @@ export default function DetailPostScreen({navigation,route}) {
     const starImgCorner = "https://raw.githubusercontent.com/tranhonghan/images/main/star_corner.png";
     const {postId} = route.params;
     const language = useContext(LanguageContext);
-
+    const theme = useContext(ThemeContext);
     onUserPress=() => navigation.navigate('profileScreen', {userId: postData.userId})
     const Item = ({each}) => (
         <Image style={[styles.PostImgsContainer, {height: each ? 250 : 0}]} 
@@ -64,7 +65,7 @@ export default function DetailPostScreen({navigation,route}) {
         getPost();
       },[postId])
     return (
-        <View style={styles.Container}>
+        <View style={[styles.Container, {backgroundColor: theme === 'light'? '#FFFFFF' : '#000000'}]}>
             <View style={styles.headerContainer}>
             <View style={styles.UserInfoContainer}>
                         <TouchableOpacity onPress={onUserPress}>
@@ -72,16 +73,16 @@ export default function DetailPostScreen({navigation,route}) {
                         </TouchableOpacity>            
                         <View style={styles.UserInfoTextContainer}>
                             <TouchableOpacity onPress={onUserPress}>
-                                <Text style={styles.UsernameText}>{postData?  postData.name : ''}</Text>
+                                <Text style={[styles.UsernameText, {color: theme === 'light'? '#000000' : '#FFFFFF'}]}>{postData?  postData.name : ''}</Text>
                             </TouchableOpacity>                
                             <Text style={styles.PostTime}>{postData?  posttime: ''}</Text>
                         </View>
                     </View>
-                <Text style={styles.foodname}>{postData? postData.postFoodName:""}</Text> 
+                <Text style={[styles.foodname, {color: theme === 'light'? '#000000' : '#FFFFFF'}]}>{postData? postData.postFoodName:""}</Text> 
             </View>
             
             
-        <View style={[styles.Container,{height:650}]}>
+        <View style={[styles.Container,{height:650, backgroundColor: theme === 'light'? '#FFFFFF' : '#000000'}]}>
             <ScrollView style={{flexDirection:'column'}}>               
                     <>
                     <View style={styles.userInfoWrapper}>
@@ -109,34 +110,34 @@ export default function DetailPostScreen({navigation,route}) {
                         </View>                              
                     </View>              
                      <View style={styles.split}/>
-                     <View style={{backgroundColor:'#F5F5F5'}}>
+                     <View style={{backgroundColor: theme === 'light'? '#FFFFFF' : '#000000'}}>
                      <Text style={[styles.PostTitle, {color: '#5AC30D'}]}>{language === 'vn' ? 'Nguyên liệu' : 'Ingredients'}</Text>
                      {/* <Text style={styles.PostText}>{postData?postData.postFoodIngredient:""}</Text> */}
                      {
                         postData?.postFoodIngredient.map((each,key)=>{
                             return(
-                                    <Text style={styles.PostText} key={key}>{"- "+each.name + " ("+ each.wty+" "+ each.dv+")"}</Text>
+                                    <Text style={[styles.PostText, {color: theme === 'light'? '#000000' : '#FFFFFF'}]} key={key}>{"- "+each.name + " ("+ each.wty+" "+ each.dv+")"}</Text>
                             )
                         })
                      }
                      </View>
                      <View style={styles.split}/>
-                     <View style={{backgroundColor:'#F5F5F5'}}>
+                     <View style={{backgroundColor: theme === 'light'? '#FFFFFF' : '#000000'}}>
                      <Text style={[styles.PostTitle, {color: '#CE3E3E'}]}>{language === 'vn' ? 'Cách làm' : 'Steps'}</Text>
-                     <Text style={styles.PostText}>{postData?postData.postFoodMaking:""}</Text>
+                     <Text style={[styles.PostText, {color: theme === 'light'? '#000000' : '#FFFFFF'}]}>{postData?postData.postFoodMaking:""}</Text>
                      </View>
                      <View style={styles.split}/>
-                     <View style={{backgroundColor:'#F5F5F5'}}>
+                     <View style={{backgroundColor: theme === 'light'? '#FFFFFF' : '#000000'}}>
                      <Text style={[styles.PostTitle, {color: '#546ED5'}]}>{language === 'vn' ? 'Tổng kết' : 'Summary'}</Text>
-                     <Text style={styles.PostText}>{postData?postData.postFoodSummary:""}</Text>
+                     <Text style={[styles.PostText, {color: theme === 'light'? '#000000' : '#FFFFFF'}]}>{postData?postData.postFoodSummary:""}</Text>
                      </View>
                      <View style={styles.split}/>
-                     <View style={{backgroundColor:'#F5F5F5'}}>
+                     <View style={{backgroundColor: theme === 'light'? '#FFFFFF' : '#000000'}}>
                      <Text style={[styles.PostTitle, {color: '#23D8A3'}]}>Tag</Text>
                      {
                         postData?.hashtags.map((each,key)=>{
                             return(
-                                <Text style={styles.PostText} key={key}>{"#"+each}</Text>
+                                <Text style={[styles.PostText, {color: theme === 'light'? '#000000' : '#FFFFFF'}]} key={key}>{"#"+each}</Text>
                             )
                         })
                      }

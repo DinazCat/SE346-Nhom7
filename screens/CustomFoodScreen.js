@@ -143,7 +143,7 @@ const CustomFoodScreen = (props, {route}) => {
           
           </View>
           
-           <View style={{marginTop: 10, marginBottom: 310}}>
+           <View style={{marginTop: 10}}>
            <TouchableOpacity onPress={()=>addCustomFood()} style={{marginLeft:'auto', marginHorizontal: 15, marginBottom: 7}}>
                 <Icon name={'plus-circle'} size={30} color={'#0AD946'}/>
           </TouchableOpacity>
