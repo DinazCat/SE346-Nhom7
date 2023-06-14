@@ -7,57 +7,134 @@ import moment from "moment";
 import { AuthContext } from '../navigation/AuthProvider';
 import LanguageContext from "../context/LanguageContext";
 
+
 import PopFoodAmount from "./PopFoodAmount";
 const exercises = [
-  {id: 1,
-    image: 'https://cdn.imgbin.com/0/14/19/imgbin-gelatin-dessert-jelly-bean-computer-icons-black-beans-jasuSuvVV7TcZpYr54xPKtngR.jpg', 
-    name: 'Run', 
-    calories:'120'
+  {
+    image: 'https://cdn-icons-png.flaticon.com/512/5147/5147283.png', 
+    name: 'Walking', 
+    calories:'148'
   },
-  {id: 2,
-    image: 'https://cdn.imgbin.com/0/14/19/imgbin-gelatin-dessert-jelly-bean-computer-icons-black-beans-jasuSuvVV7TcZpYr54xPKtngR.jpg', 
-    name: 'Walk', 
-    calories: '239'
+  {
+    image: 'https://cdn-icons-png.flaticon.com/512/5778/5778454.png', 
+    name: 'Bicycling', 
+    calories: '321'
     },
-    {id: 3,
-      image: 'https://cdn.imgbin.com/0/14/19/imgbin-gelatin-dessert-jelly-bean-computer-icons-black-beans-jasuSuvVV7TcZpYr54xPKtngR.jpg', 
-      name: 'Swim', 
-      calories: '239'}
+  {
+    image: 'https://cdn-icons-png.flaticon.com/512/4721/4721050.png', 
+    name: 'Running', 
+    calories: '296'},
+  {
+    image: 'https://cdn-icons-png.flaticon.com/512/886/886860.png', 
+    name: 'Abdominal', 
+    calories: '123'},
+  {
+    image: 'https://w7.pngwing.com/pngs/639/110/png-transparent-pink-and-black-game-controller-illustration-video-game-gamepad-joystick-icon-the-game-console-game-cartoon-handle.png', 
+    name: 'Activity Video Game', 
+    calories: '138'},
+  {
+    image: 'https://cdn-icons-png.flaticon.com/512/6901/6901517.png', 
+    name: 'Aerobic', 
+    calories: '311'},
+  {
+    image: 'https://cdn-icons-png.flaticon.com/512/184/184101.png', 
+    name: 'Archery', 
+    calories: '163'},
+  {
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Backpack_icon.svg/2048px-Backpack_icon.svg.png', 
+    name: 'Backpacking', 
+    calories: '296'},
+  {
+    image: 'https://cdn-icons-png.flaticon.com/512/2828/2828920.png', 
+    name: 'Badminton', 
+    calories: '222'},
+  {
+    image: 'https://cdn-icons-png.flaticon.com/512/346/346736.png', 
+    name: 'Baseball', 
+    calories: '197'},
+  {
+    image: 'https://cdn-icons-png.flaticon.com/512/889/889455.png', 
+    name: 'Basketball', 
+    calories: '271'},
+  {
+    image: 'https://cdn-icons-png.flaticon.com/512/4907/4907493.png', 
+    name: 'Bench Press', 
+    calories: '123'},
+  {
+    image: 'https://cdn-icons-png.flaticon.com/512/3456/3456464.png', 
+    name: 'Yoga', 
+    calories: '74'},
+  {
+    image: 'https://cdn-icons-png.flaticon.com/512/4658/4658048.png', 
+    name: 'Wrestling', 
+    calories: '247'},
+  {
+    image: 'https://cdn-icons-png.flaticon.com/512/3440/3440961.png', 
+    name: 'Water activities', 
+    calories: '212'},
+  {
+    image: 'https://cdn-icons-png.flaticon.com/512/2503/2503554.png', 
+    name: 'Windsurfing', 
+    calories: '197'},
+  {
+    image: 'https://cdn-icons-png.flaticon.com/512/2634/2634025.png', 
+    name: 'Weight Training', 
+    calories: '123'},
+  {
+    image: 'https://cdn-icons-png.flaticon.com/512/3180/3180255.png', 
+    name: 'Bicycling Mountain', 
+    calories: '370'},
+  {
+    image: 'https://static.thenounproject.com/png/22639-200.png', 
+    name: 'Bicycling Recumbent', 
+    calories: '148'},
+  {
+    image: 'https://cdn-icons-png.flaticon.com/512/5021/5021952.png', 
+    name: 'Billiards', 
+    calories: '74'},
+  {
+    image: 'https://cdn-icons-png.flaticon.com/512/3976/3976384.png', 
+    name: 'Bowling', 
+    calories: '99'},
+
 ]
 
-const AddExerciseScreen = () => {
+const AddExerciseScreen = (props) => {
   const {user} = useContext(AuthContext);
   const navigation = useNavigation();
   const [calories, setCalories] = useState('');
   const [image, setImage] = useState('');
-  const [name, setName] = useState();
+  const [name, setName] = useState('');
 
   const [textInput, onChangeTextInput] = useState('');
-  const [textSearch, onChangeTextSearch] = useState('');
+  const [textSearch, onChangeTextSearch] = useState('');//nhớ để . là số thập phân
   
   //modal
   const [visible, setVisible] = React.useState(false);
-
   const language = useContext(LanguageContext);
-  //add ingredient
   const addExercise = () => {
     
       if (textInput==""){
         //just space
+        
       }
       else{
       setVisible(false);
       //add food and foodDiary
       firestore().collection('exercise').add({
         userId: user.uid,
-        time: moment(new Date()).format('DD/MM/yyyy'),
+        time: props.date,
         image: image,
+        amount: textInput,
+        name: name,
         isDelete: false,
-        calories: (parseInt(textInput) * parseInt(calories) ).toFixed(),
+        calories: (parseFloat(textInput) * parseInt(calories) / 60).toFixed(),
         
         
       })
-      navigation.navigate('AddExercise')
+      if(props.isNavigation){
+        navigation.goBack();
+      }
     }
   
     
@@ -76,13 +153,13 @@ const AddExerciseScreen = () => {
   
   return (
     <View styles={{flex:1}}>
-      <View style={{flexDirection:'row'}}>
-        <Icon name={'search'} />
+      <View style={{flexDirection:'row', marginTop: 10, marginHorizontal: 10, alignItems: 'center'}}>
+      <Icon name={'search'} size={25}/>
         <TextInput
+        style={[styles.textInput, {marginStart: 7, fontSize: 17}]}
         value={textSearch}
         onChangeText={onChangeTextSearch}
         placeholder={language === 'vn' ? 'Tìm kiếm bài tập' : 'Search excercise'}
-        placeholderTextColor={'rgba(0,0,0,0.8)'}
         />
         </View>
         <PopFoodAmount visible={visible}>
@@ -90,38 +167,42 @@ const AddExerciseScreen = () => {
           <View style={styles.header}>
             <TouchableOpacity onPress={() => setVisible(false)}>
               <Image
-                source={require('../assets/food.png')}
+                source={{uri: 'https://static.vecteezy.com/system/resources/previews/018/887/462/original/signs-close-icon-png.png'}}
                 style={{height: 30, width: 30}}
               />
             </TouchableOpacity>
           </View>
         </View>
-        <View style={{alignItems: 'center'}}>
+        <View style={{alignItems: 'center', justifyContent:'center', flexDirection: 'row'}}>
           <Image
             source={{uri:image}}
-            style={{height: 100, width: 100, marginVertical: 10}}
+            style={{height: 110, width: 110, marginVertical: 10}}
           />
+          <View style={{marginStart: 15}}>
+            <Text style={{fontSize: 16, width: 150}}>{name}</Text>
+            <Text style={{fontSize: 16}}>{calories}cals/h</Text>
+          </View>
         </View>
-        <View >
-        <TextInput style={{marginVertical: 30, fontSize: 20}} value={textInput} onChangeText={textInput  =>onChangeTextInput(textInput)}/>
-        <Text>{calories}cals/h</Text>
+        <View style={{flexDirection: 'row'}}>
+        <TextInput style={[styles.textInput, {width: 240}]} value={textInput} onChangeText={textInput  =>onChangeTextInput(textInput)}/>
+        <Text style={styles.text}>min</Text>
         </View>
-        <TouchableOpacity style={{marginVertical: 30, fontSize: 20, textAlign: 'center'}} onPress={()=>addExercise()}>
-          <Text>{language === 'vn' ? 'Thêm' : 'Add'}</Text>
+        <TouchableOpacity style={styles.button} onPress={()=>addExercise()}>
+          <Text style={styles.text}>{language === 'vn' ? 'Thêm' : 'Add'}</Text>
         </TouchableOpacity>
       </PopFoodAmount>
-        <View >
+        <View style={{marginTop: 15, marginBottom: 230}}>
           <FlatList 
               data={exercises.filter(item=>item.name.toLowerCase().includes(textSearch.toLowerCase()))
               }
               renderItem={({item}) => (
                 <TouchableOpacity  onPress={() => ShowAddAmount(item)}>
-                  <View >
-                      <Image source = {{uri: item.image}} style={{width: 30,
-        height: 30,
+                  <View style={{alignItems: 'center', flexDirection: 'row', marginHorizontal: 15, marginVertical: 3, borderBottomWidth: 2, borderBottomColor: '#000000', paddingBottom: 5}}>
+                      <Image source = {{uri: item.image}} style={{width: 40,
+        height: 40,
         resizeMode: 'stretch'}}/>
-                      <Text > {item.name} </Text>
-                      <Text > {item.calories}cal/{item.baseAmount}{item.unit} </Text>
+                      <Text style={{fontSize: 18, width: 200, marginStart: 3}}>{item.name}</Text>
+                      <Text style={{marginLeft:'auto', fontSize: 16, color: '#2960D2'}}>{item.calories} cal/h</Text>
                   </View>
 
                 </TouchableOpacity>
@@ -134,29 +215,44 @@ const AddExerciseScreen = () => {
 )
 }
 const styles = StyleSheet.create({
-    container: {
-      borderWidth: 1, 
-      borderColor: "#CFCFCF", 
-      borderRadius: 5, 
-      backgroundColor: "#CFCFCF", 
-      margin: 5,
-    },
-    text: {
-      fontSize: 18,
-      color: '#84D07D',
-    },
-  
-    tabIcon: {
-      width: 25,
-      height: 25,
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    header: {
-      width: '100%',
-      height: 40,
-      alignItems: 'flex-end',
-      justifyContent: 'center',
-    },
+  container: {
+    borderWidth: 1, 
+    borderColor: "#CFCFCF", 
+    borderRadius: 5, 
+    backgroundColor: "#CFCFCF", 
+    margin: 5,
+  },
+  text: {
+    padding: 10,
+    fontSize: 18,
+    height: 50,
+    textAlign: 'center'
+},
+
+  tabIcon: {
+    width: 25,
+    height: 25,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  header: {
+    width: '100%',
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+  },
+  textInput: {
+    borderWidth: 1,
+    borderRadius: 10,
+    width: "90%",
+    height: 50,
+},
+button: {
+  marginTop: 15,
+  borderRadius: 20,
+  width: '40%',
+  padding: 5,
+  backgroundColor: '#2AE371',
+  alignSelf: 'center'
+},
   });
 export default AddExerciseScreen;

@@ -1,10 +1,8 @@
 import { configureStore } from "@reduxjs/toolkit";
-import CustomFoodSlice from "./CustomFoodSlice";
-import isQuestionNullSlice from "./isQuestionNullSlice";
+import CustomRecipeSlice from "./CustomRecipeSlice";
 
 export const store = configureStore({
   reducer: {
-    IngredientList: CustomFoodSlice,
-    isQuestionNull: isQuestionNullSlice
+    IngredientList: CustomRecipeSlice,
   },
 });

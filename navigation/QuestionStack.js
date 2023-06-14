@@ -8,8 +8,6 @@ import GetActivityLevelScreen from '../screens/GetActivityLevelScreen';
 import TabsNavigator from './TabsNavigator';
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-import { useNavigation } from "@react-navigation/native";
-import { isCheck } from '../store/isQuestionNullSlice';
 
 const Stack = createNativeStackNavigator();
 

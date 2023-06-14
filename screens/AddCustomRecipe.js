@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
 import firestore from '@react-native-firebase/firestore';
-import {isAdd, Delete} from "../store/CustomFoodSlice";
+import { Delete, DeleteAll } from "../store/CustomRecipeSlice";
 import { AuthContext } from '../navigation/AuthProvider';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import Popover from 'react-native-popover-view';
@@ -13,25 +13,26 @@ import storage from '@react-native-firebase/storage';
 import LanguageContext from "../context/LanguageContext";
 
 
-const AddCustomFood = ({route}) => {
+const AddCustomRecipe = ({route}) => {
   const {user} = useContext(AuthContext)
   const dispatch = useDispatch();
   const IngredientList= useSelector((state) => state.IngredientList.value);
   const totalCalories = useSelector((state) => state.IngredientList.totalCalories);
   const isEdit = useSelector((state) => state.IngredientList.isEdit);
   const imageTemp = (route.params)? route.params?.item.image :'https://cdn.imgbin.com/0/14/19/imgbin-gelatin-dessert-jelly-bean-computer-icons-black-beans-jasuSuvVV7TcZpYr54xPKtngR.jpg'
-  const language = useContext(LanguageContext);
+  //mấy cái để http bà có thể tìm ảnh khác dể dô cho đẹp nha
   
   const navigation = useNavigation();
   //thông tin textinput của customFood
   const [name, setName] = useState(route.params?.item.name)
-  const [image,setImage] = useState();
+  const [image,setImage] = useState(null);
   const [prepTime, setPrepTime] = useState(route.params?.item.prepTime);
   const [cookingTime, setCookingtime] = useState(route.params?.item.cookingTime)
   const [receipt, setReceipt] = useState(route.params?.item.receipt)
   const [id, setId] = useState(route.params?.item.id)//set route.params...vô trong const trước
   const [uploading, setUploading] = useState(false);
   const [transferred, setTransferred] = useState(0);
+  const language = useContext(LanguageContext);
 
   //thêm ảnh 
   const [isPopoverVisible, setPopoverVisible] = useState(false);
@@ -88,8 +89,11 @@ const AddCustomFood = ({route}) => {
 
   //thêm nguyên liệu
   const addIngredient = () => {
-    dispatch(isAdd(true));
-    navigation.navigate('StapleFood')
+   
+    navigation.navigate('IngredientScreen')
+  }
+  const deleteAll = () => {
+    dispatch(DeleteAll());
   }
 
   const DeleteIngredient = (index) => {
@@ -105,10 +109,10 @@ const AddCustomFood = ({route}) => {
       }},
     ]);
   }
-  const saveFood = async() => {
+  const saveRecipe = async() => {
     try{
       const imageUrl = await uploadImage(image?.path);
-      firestore().collection('customFoods').add({
+      firestore().collection('customRecipe').add({
       userId: user.uid,
       name: name || '',
       image: imageUrl,
@@ -119,11 +123,11 @@ const AddCustomFood = ({route}) => {
       ingredients: IngredientList || [],
       })
       
-      console.log('food added');
+      console.log('recipe added');
       Alert.alert(
-        'Add food successfully!'
+        'Add Recipe successfully!'
       );
-      navigation.navigate('AddFood')
+      navigation.navigate('AddScreen')
     } 
     catch (error) {
       console.log('something went wrong!', error);
@@ -134,10 +138,10 @@ const AddCustomFood = ({route}) => {
       'Name and ingredient cannot be blank'
     );
   }
-  const updateFood = async() => {
+  const updateRecipe = async() => {
       try{
         const imageUrl = await uploadImage(image?.path);
-        await firestore().collection('customFoods').doc(id).update({
+        await firestore().collection('customRecipe').doc(id).update({
         name: name,
         image: imageUrl,
         calories: totalCalories,
@@ -147,11 +151,11 @@ const AddCustomFood = ({route}) => {
         ingredients: IngredientList,
         })
         
-        console.log('custom food updated');
+        console.log('custom recipe updated');
         Alert.alert(
-          'Update custom food succesfully!'
+          'Update custom recipe succesfully!'
         );
-        navigation.navigate('AddFood')
+        navigation.navigate('AddScreen')
       } 
       catch (error) {
         console.log('something went wrong!', error);
@@ -162,11 +166,11 @@ const AddCustomFood = ({route}) => {
   return (
     <View style={styles.Container}>
     
-     {isEdit?<TouchableOpacity onPress={(IngredientList.length == 0)?checkNameAndIngredient:updateFood}>
+     {isEdit?<TouchableOpacity onPress={(IngredientList.length == 0||name=='')?checkNameAndIngredient:updateRecipe}>
       <Text>{language === 'vn' ? 'Cập nhật' : 'Update'}</Text>
      </TouchableOpacity> :
-     <TouchableOpacity onPress={(IngredientList.length == 0)?checkNameAndIngredient:saveFood}>
-        <Text>{language === 'vn' ? 'Lưu' : 'Save'}</Text>
+     <TouchableOpacity onPress={(IngredientList.length == 0||name=='')?checkNameAndIngredient:saveRecipe}>
+        <Text>{language === 'vn' ? 'Cập nhật' : 'Update'}</Text>
      </TouchableOpacity> }
             <View style={styles.headerContainer}>
             <TextInput style={styles.foodname} value={name} onChangeText={name=>setName(name)}></TextInput>
@@ -193,7 +197,7 @@ const AddCustomFood = ({route}) => {
                      <View style={styles.split}/>
                      <View style={{backgroundColor:'#F5F5F5'}}>
                      <Text style={[styles.PostTitle, {color: '#CE3E3E'}]}>Steps</Text>
-                     <TextInput style={styles.PostText} value={receipt} onChangeText={receipt=>setReceipt(receipt)}></TextInput>
+                     <TextInput multiline={true} style={styles.PostText} value={receipt} onChangeText={receipt=>setReceipt(receipt)}></TextInput>
                      </View>
                      
 
@@ -202,12 +206,14 @@ const AddCustomFood = ({route}) => {
                      <Text style={[styles.PostTitle, {color: '#5AC30D'}]}>Ingredients</Text>
                      <TouchableOpacity onPress={()=>addIngredient()}>
                       <Text>{language === 'vn' ? 'Thêm' : 'Add'}</Text>
-                     {/* Bỏ flatlist ra ngoài scrollView */}
                      </TouchableOpacity>
-                     <FlatList 
-                      data={IngredientList}
-                      renderItem={({item, index}) => (
-                        <View>
+                     <TouchableOpacity onPress={()=>deleteAll()}>
+                      <Text>Delete All</Text>
+                     </TouchableOpacity>
+                     {IngredientList?.map((item, index)=>{
+                    return(  
+                        <View key={index}>
+
                           <TouchableOpacity onPress={()=> DeleteIngredient(index)}>
                             {item.image?<Image source={{uri: item.image}} style={styles.tabIcon}/>:<Image source={{uri: imageTemp}} style={styles.tabIcon}/>}
                             <Text>{item.name}</Text>
@@ -216,12 +222,15 @@ const AddCustomFood = ({route}) => {
                             </TouchableOpacity>
                         </View>
                       )}
-                      keyExtractor={(item, index) => index.toString()}
-                      />
-                      {(image!=null)?<TouchableOpacity onPress={()=> setImage(null)}>
-                        <Text>{language === 'vn' ? 'Xóa' : 'Delete'}</Text> //thay thành hình dấu trừ
-                      </TouchableOpacity>:null}
+                     )}
+                     
                       {(image == null)?<Image source={{uri: imageTemp}} style={styles.tabIcon}/> : <Image source={{uri: image.path}} style={styles.tabIcon}/>}
+                      
+                      {(image==null)?null:<TouchableOpacity onPress={()=> setImage(null)}>
+                        <Image style={styles.tabIcon} source={{uri: 'https://www.uidownload.com/files/240/295/614/delete-icon.jpg'}}></Image> 
+                        
+                      </TouchableOpacity>}
+                      
                       <TouchableOpacity onPress={(event) => {
             setPopoverAnchor(event.nativeEvent.target);
             setPopoverVisible(true);
@@ -263,7 +272,7 @@ const AddCustomFood = ({route}) => {
     </View>
   )
             }
-export default AddCustomFood;
+export default AddCustomRecipe;
             
 
 const styles = StyleSheet.create({
