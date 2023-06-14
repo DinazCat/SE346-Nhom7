@@ -22,7 +22,7 @@ const stapleFood = [
     },
     {
       image: 'https://www.freepnglogos.com/uploads/blueberries-png/blueberries-png-image-purepng-transparent-png-image-library-27.png', 
-      name: 'Blue berry raw', 
+      name: 'Blueberries raw', 
       calories: '83', unit:'cup', baseAmount:'1'
       },
     {
@@ -215,7 +215,7 @@ const StapleFoodScreen = (props) => {
           />
           <View style={{marginStart: 15}}>
             <Text style={{fontSize: 16, width: 150}}>{name}</Text>
-            <Text style={{fontSize: 16}}>{calories}cals/{baseAmount}{unit}</Text>
+            <Text style={{fontSize: 16}}>{calories} cals/{(baseAmount!='1')?baseAmount+" ":''}{unit}</Text>
           </View>
         </View>
         <View>

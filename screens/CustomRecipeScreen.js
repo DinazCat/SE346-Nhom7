@@ -10,8 +10,10 @@ import { AuthContext } from "../navigation/AuthProvider";
 import { SwipeListView} from 'react-native-swipe-list-view';
 import { Picker } from '@react-native-picker/picker';
 import moment from "moment";
+import LanguageContext from "../context/LanguageContext";
 
 const CustomRecipeScreen = () => {
+  const language = useContext(LanguageContext)
   const {user} = useContext(AuthContext);
   const [textSearch, onChangeTextSearch] = useState('');//nhập gram
   const [visible, setVisible] = React.useState(false);//pop to add amount
@@ -108,32 +110,35 @@ const CustomRecipeScreen = () => {
   
     return (
       <View styles={{flex:1}}>
-      <View style={{flexDirection:'row'}}>
-        <Icon name={'search'} />
+        <View style={{flexDirection:'row', marginTop: 10, marginHorizontal: 10, alignItems: 'center'}}>
+        <Icon name={'search'} size={25}/>
         <TextInput
-        placeholder="Search food"
-        placeholderTextColor={'rgba(0,0,0,0.8)'}
+        style={[styles.textInput, {marginStart: 7, fontSize: 17}]}
+        placeholder={language === 'vn' ? 'Tìm kiếm món ăn' : 'Search food'}
         value={textInput}
         onChangeText={onChangeTextInput}
         />
-        <TouchableOpacity onPress={()=>addCustomFood()}>
-          <Text>Add</Text>
+       
+        </View >
+        <View style={{marginTop: 10, marginBottom: 310}}>
+        <TouchableOpacity style={{marginLeft:'auto', marginHorizontal: 15, marginBottom: 7}} onPress={()=>addCustomFood()}>
+          <Icon name={'plus-circle'} size={30} color={'#0AD946'}/>
         </TouchableOpacity>
-        <TouchableOpacity style={{marginVertical: 30, fontSize: 20, textAlign: 'center'}} onPress={()=>deleteAll()}>
-            <Text>Delete All</Text>
-          </TouchableOpacity>
-        </View>
-         {/* Chỉ sửa giao diện của renderItem thôi */}
           <SwipeListView
           useFlatList={true}
                data={datas.filter(item=>item.name.toLowerCase().includes(textInput.toLowerCase()))}
                renderItem={({item}) => (
-                 <View  style={styles.rowFront}> 
-                   
-                       <Image source={{uri: item.image}} style={styles.tabIcon}/>
+                <View style={styles.rowFront}> 
+                <View style={{alignItems: 'center', flexDirection: 'row', marginHorizontal: 15, marginVertical: 3, paddingBottom: 5}}>
+                   <Image source = {{uri: item.image}} style={{width: 40,
+     height: 40,
+     resizeMode: 'stretch'}}/>
                        <Text > {item.name} </Text>
-                       <Text > {item.calories}cals/serving  </Text>
-                       
+                       <View style={{marginLeft:'auto'}}>
+                      <Text style={{marginLeft:'auto', fontSize: 16, color: '#2960D2' }}>{item.calories} cals</Text>
+                      <Text style={{marginLeft:'auto', fontSize: 16, color: '#2960D2' }}>1 serving</Text>
+                      </View>
+                       </View>
  
                  </View>
                
@@ -145,17 +150,17 @@ const CustomRecipeScreen = () => {
              <TouchableOpacity onPress={()=>Delete(item, rowMap)}
                  style={[styles.backRightBtn,styles.backEdit]}
              >
-                 <Text style={styles.backTextWhite}>Delete</Text>
+                 <Text style={styles.backTextWhite}>{language === 'vn' ? 'Xóa' : 'Delete'}</Text>
              </TouchableOpacity>
              <TouchableOpacity onPress={()=>is_edit(item, rowMap)}
                  style={[styles.backRightBtn,styles.backDelete]}
              >
-                 <Text style={styles.backTextWhite}>Edit</Text>
+                 <Text style={styles.backTextWhite}>{language === 'vn' ? 'Sửa' : 'Edit'}</Text>
              </TouchableOpacity>
              <TouchableOpacity onPress={()=>Share(item, rowMap)}
                  style={[styles.backRightBtn,styles.backShare]}
              >
-                 <Text style={styles.backTextWhite}>Share</Text>
+                 <Text style={styles.backTextWhite}>{language === 'vn' ? 'Chia sẻ' : 'Share'}</Text>
              </TouchableOpacity>
          </View>
              )}
@@ -167,61 +172,61 @@ const CustomRecipeScreen = () => {
                  previewOpenDelay={3000}
                  onRowDidOpen={onRowDidOpen}//đếm số lần mở ra mở vô
                  recalculateHiddenLayout={true}
-               
            />
- 
-
-          
-
-    
-          
+ </View>
       </View>
-                
-
+       
     )
 }
 const styles = StyleSheet.create({
-    container: {
-      borderWidth: 1, 
-      borderColor: "#CFCFCF", 
-      borderRadius: 5, 
-      backgroundColor: "#CFCFCF", 
-      margin: 5,
-    },
-    text: {
-      fontSize: 18,
-      color: '#84D07D',
-    },
-  
-    tabIcon: {
-      width: 25,
-      height: 25,
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    popover:{
-      backgroundColor: 'white', 
-      borderRadius: 10, 
-      padding: 16, 
-      flexDirection: 'row', 
-      alignItems: 'center', 
-      justifyContent: 'space-between'
-    },
-    popoverItem:{
-      alignItems: 'center',
-      margin: 20
+  container: {
+    borderWidth: 1, 
+    borderColor: "#CFCFCF", 
+    borderRadius: 5, 
+    backgroundColor: "#CFCFCF", 
+    margin: 5,
   },
-  backTextWhite: {
-    color: '#FFF',
+  text: {
+    padding: 10,
+    fontSize: 18,
+    height: 50,
+    textAlign: 'center'
+},
+
+  tabIcon: {
+    width: 25,
+    height: 25,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  header: {
+    width: '100%',
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+  },
+  textInput: {
+    borderWidth: 1,
+    borderRadius: 10,
+    width: "90%",
+    height: 50,
+},
+button: {
+  marginTop: 15,
+  borderRadius: 20,
+  width: '40%',
+  padding: 5,
+  backgroundColor: '#2AE371',
+  alignSelf: 'center'
 },
 //custom for options
 
 rowBack: {
-    alignItems: 'center',
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingLeft: 15,
+  alignItems: 'center',
+  flex: 1,
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  paddingLeft: 15,
+  marginBottom: 3.1
 },
 backRightBtn: {
     alignItems: 'center',
@@ -244,11 +249,10 @@ backShare:{
   right: 0,
 },
 rowFront: {
-  alignItems: 'center',
   backgroundColor: '#CCC',
-  borderBottomColor: 'black',
-  borderBottomWidth: 1,
-  justifyContent: 'center',
+justifyContent: 'center',
+paddingHorizontal: 5,
+marginBottom: 3
 },
   });
 export default CustomRecipeScreen;

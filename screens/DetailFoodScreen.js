@@ -16,7 +16,7 @@ const DetailFoodScreen = ({route, navigation}) => {
   const [calories, setCalories] = useState(route.params?.item.calories||'');
   const [image, setImage] = useState(null);
   const [name, setName] = useState(route.params?.item.name||'');
-  const imageTemp = (route.params)? route.params?.item.image :'https://cdn.imgbin.com/0/14/19/imgbin-gelatin-dessert-jelly-bean-computer-icons-black-beans-jasuSuvVV7TcZpYr54xPKtngR.jpg'
+  const imageTemp = (route.params)? route.params?.item.image :'https://cdn-icons-png.flaticon.com/512/2927/2927347.png'
   const [id, setId] = useState(route.params?.item.id)//set route.params...vô trong const trước
   const [uploading, setUploading] = useState(false);
   const [transferred, setTransferred] = useState(0);

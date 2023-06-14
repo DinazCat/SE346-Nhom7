@@ -8,10 +8,12 @@ import moment from "moment";
 import { useDispatch } from "react-redux";
 import { AuthContext } from '../navigation/AuthProvider';
 import { Picker } from '@react-native-picker/picker';
+import LanguageContext from "../context/LanguageContext";
 
 import PopFoodAmount from "./PopFoodAmount";
 
 const CustomFoodScreen = (props, {route}) => {
+   const language = useContext(LanguageContext)
     const {user} = useContext(AuthContext);
     const [textSearch, onChangeTextSearch] = useState('');
     const [visible, setVisible] = React.useState(false);//pop to add amount
@@ -128,33 +130,38 @@ const CustomFoodScreen = (props, {route}) => {
     
       return (
         <View styles={{flex:1}}>
-        <View style={{flexDirection:'row'}}>
-          <Icon name={'search'} />
-          <TextInput
-          placeholder="Search food"
-        placeholderTextColor={'rgba(0,0,0,0.8)'}
+        <View style={{flexDirection:'row', marginTop: 10, marginHorizontal: 10, alignItems: 'center'}}>
+        <Icon name={'search'} size={25}/>
+        <TextInput 
         value={textSearch}
         onChangeText={onChangeTextSearch}
+        style={[styles.textInput, {marginStart: 7, fontSize: 17}]}
+        placeholder={language === 'vn' ? 'Tìm kiếm món ăn' : 'Search food'}
           />
-          <TouchableOpacity onPress={()=>addCustomFood()}>
-            <Text>Add</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={{marginVertical: 30, fontSize: 20, textAlign: 'center'}} onPress={()=>deleteAll()}>
-            <Text>Delete All</Text>
-          </TouchableOpacity>
           </View>
-           {/* Chỉ sửa giao diện của renderItem thôi */}
+          <View>
+          
+          </View>
+          
+           <View style={{marginTop: 10, marginBottom: 310}}>
+           <TouchableOpacity onPress={()=>addCustomFood()} style={{marginLeft:'auto', marginHorizontal: 15, marginBottom: 7}}>
+                <Icon name={'plus-circle'} size={30} color={'#0AD946'}/>
+          </TouchableOpacity>
             <SwipeListView
             useFlatList={true}
                  data={datas.filter(item=>item.name.toLowerCase().includes(textSearch.toLowerCase()))}
                  renderItem={({item}) => (
-                   <View  style={styles.rowFront}> 
-                     
-                         <Image source={{uri: item.image}} style={styles.tabIcon}/>
-                         <Text > {item.name} </Text>
-                         <Text > {item.calories}cals/{item.baseAmount}{item.unit} </Text>
-                         
-   
+                   <View style={styles.rowFront}> 
+                   <View style={{alignItems: 'center', flexDirection: 'row', marginHorizontal: 15, marginVertical: 3, paddingBottom: 5}}>
+                      <Image source = {{uri: item.image}} style={{width: 40,
+        height: 40,
+        resizeMode: 'stretch'}}/>
+                      <Text style={{fontSize: 18, width: 200, marginStart: 3}}>{item.name}</Text>
+                      <View style={{marginLeft:'auto'}}>
+                      <Text style={{marginLeft:'auto', fontSize: 16, color: '#2960D2' }}>{item.calories} cals</Text>
+                      <Text style={{marginLeft:'auto', fontSize: 16, color: '#2960D2' }}>{item.baseAmount} {item.unit}</Text>
+                      </View>
+                  </View>
                    </View>
                  
                  )}
@@ -164,17 +171,17 @@ const CustomFoodScreen = (props, {route}) => {
                <TouchableOpacity onPress={() => Add(item, rowMap)}
                    style={[styles.backRightBtn, styles.backAdd]}
                >
-                   <Text style={styles.backTextWhite}>Add</Text>
+                   <Text style={styles.backTextWhite}>{language === 'vn' ? 'Thêm' : 'Add'}</Text>
                </TouchableOpacity>
                <TouchableOpacity onPress={()=>Delete(item, rowMap)}
                    style={[styles.backRightBtn,styles.backEdit]}
                >
-                   <Text style={styles.backTextWhite}>Delete</Text>
+                   <Text style={styles.backTextWhite}>{language === 'vn' ? 'Xóa' : 'Delete'}</Text>
                </TouchableOpacity>
                <TouchableOpacity onPress={()=>is_edit(item, rowMap)}
                    style={[styles.backRightBtn,styles.backDelete]}
                >
-                   <Text style={styles.backTextWhite}>Edit</Text>
+                   <Text style={styles.backTextWhite}>{language === 'vn' ? 'Sửa' : 'Edit'}</Text>
                </TouchableOpacity>
            </View>
                )}
@@ -186,35 +193,38 @@ const CustomFoodScreen = (props, {route}) => {
                    previewOpenDelay={3000}
                    onRowDidOpen={onRowDidOpen}//đếm số lần mở ra mở vô
                    recalculateHiddenLayout={true}
-                 
-             />
+                />
+                
+   </View>
    
-  
             <PopFoodAmount visible={visible}>
           <View style={{alignItems: 'center'}}>
             <View style={styles.header}>
               <TouchableOpacity onPress={() => setVisible(false)}>
                 <Image
-                  source={require('../assets/food.png')}
+                  source={{uri: 'https://static.vecteezy.com/system/resources/previews/018/887/462/original/signs-close-icon-png.png'}}
                   style={{height: 30, width: 30}}
                 />
               </TouchableOpacity>
             </View>
           </View>
-          <View style={{alignItems: 'center'}}>
-            <Image
-              source={{uri: image}}
-              style={{height: 100, width: 100, marginVertical: 10}}
-            />
+          <View style={{alignItems: 'center', justifyContent:'center', flexDirection: 'row'}}>
+          <Image
+            source={{uri:image}}
+            style={{height: 110, width: 110, marginVertical: 10}}
+          />
+          <View style={{marginStart: 15}}>
+            <Text style={{fontSize: 16, width: 150}}>{name}</Text>
+            <Text style={{fontSize: 16}}>{calories} cals/{(baseAmount!='1')?baseAmount+" ":''}{unit}</Text>
           </View>
-          <View >
-          <TextInput style={{marginVertical: 30, fontSize: 20}} value={textSearch} onChangeText={textSearch  =>onChangeTextSearch(textSearch)}/>
-          <Text>{unit}</Text>
-          <Text>{calories}cals/{baseAmount}{unit}</Text>
+          </View>
+          <View style={{flexDirection: 'row'}}>
+          <TextInput style={[styles.textInput, {width: 220}]} value={textSearch} onChangeText={textSearch  =>onChangeTextSearch(textSearch)}/>
+          <Text style={styles.text}>{unit}</Text>
           </View>
           <Picker
         selectedValue={selectedValue}
-        style={{ height: 50, width: 150 }}
+        style={{ height: 50, width: 200, marginStart: 10}}
         onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}
       >
         <Picker.Item label="Breakfast" value="Breakfast" />
@@ -222,9 +232,9 @@ const CustomFoodScreen = (props, {route}) => {
         <Picker.Item label="Dinner" value="Dinner" />
         <Picker.Item label="Snacks" value="Snacks" />
       </Picker>
-          <TouchableOpacity style={{marginVertical: 30, fontSize: 20, textAlign: 'center'}} onPress={()=>finishAdd()}>
-            <Text>Add</Text>
-          </TouchableOpacity>
+      <TouchableOpacity style={styles.button} onPress={()=>isAddIngredient()}>
+          <Text style={styles.text}>{language === 'vn' ? 'Thêm' : 'Add'}</Text>
+        </TouchableOpacity>
           
         </PopFoodAmount>
   
@@ -234,64 +244,79 @@ const CustomFoodScreen = (props, {route}) => {
       )
   }
 const styles = StyleSheet.create({
-    container: {
-      borderWidth: 1, 
-      borderColor: "#CFCFCF", 
-      borderRadius: 5, 
-      backgroundColor: "#CFCFCF", 
-      margin: 5,
-    },
-    text: {
-      fontSize: 18,
-      color: '#84D07D',
-    },
-  
-    tabIcon: {
-      width: 25,
-      height: 25,
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    header: {
-      width: '100%',
-      height: 40,
-      alignItems: 'flex-end',
-      justifyContent: 'center',
-    },
-    rowBack: {
-        alignItems: 'center',
-        flex: 1,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        paddingLeft: 15,
-    },
-    backRightBtn: {
-        alignItems: 'center',
-        bottom: 0,
-        justifyContent: 'center',
-        position: 'absolute',
-        top: 0,
-        width: 75,
-    },
-    backAdd: {
-        backgroundColor: 'red',
-        right:150,
-    },
-    backDelete: {
-      backgroundColor: '#D436F0',
-      right: 75,
-    },
-    backEdit:{
-      backgroundColor: '#E3912C',
-      right: 0,
-    },
-    rowFront: {
-      alignItems: 'center',
-      backgroundColor: '#CCC',
-      borderBottomColor: 'black',
-      borderBottomWidth: 1,
-      justifyContent: 'center',
-    },
-      });
+  container: {
+    borderWidth: 1, 
+    borderColor: "#CFCFCF", 
+    borderRadius: 5, 
+    backgroundColor: "#CFCFCF", 
+    margin: 5,
+  },
+  text: {
+    padding: 10,
+    fontSize: 18,
+    height: 50,
+    textAlign: 'center'
+},
+
+  tabIcon: {
+    width: 25,
+    height: 25,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  header: {
+    width: '100%',
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+  },
+  textInput: {
+    borderWidth: 1,
+    borderRadius: 10,
+    width: "90%",
+    height: 50,
+},
+button: {
+  marginTop: 15,
+  borderRadius: 20,
+  width: '40%',
+  padding: 5,
+  backgroundColor: '#2AE371',
+  alignSelf: 'center'
+},
+rowBack: {
+  alignItems: 'center',
+  flex: 1,
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  paddingLeft: 15,
+  marginBottom: 3
+},
+backRightBtn: {
+  alignItems: 'center',
+  bottom: 0,
+  justifyContent: 'center',
+  position: 'absolute',
+  top: 0,
+  width: 75,
+},
+backAdd: {
+  backgroundColor: 'red',
+  right:150,
+},
+backDelete: {
+backgroundColor: '#D436F0',
+right: 75,
+},
+backEdit:{
+backgroundColor: '#E3912C',
+right: 0,
+},
+rowFront: {
+backgroundColor: '#CCC',
+justifyContent: 'center',
+paddingHorizontal: 5,
+marginBottom: 3
+},
+});
   
 export default CustomFoodScreen;

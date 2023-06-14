@@ -19,7 +19,7 @@ const AddCustomRecipe = ({route}) => {
   const IngredientList= useSelector((state) => state.IngredientList.value);
   const totalCalories = useSelector((state) => state.IngredientList.totalCalories);
   const isEdit = useSelector((state) => state.IngredientList.isEdit);
-  const imageTemp = (route.params)? route.params?.item.image :'https://cdn.imgbin.com/0/14/19/imgbin-gelatin-dessert-jelly-bean-computer-icons-black-beans-jasuSuvVV7TcZpYr54xPKtngR.jpg'
+  const imageTemp = (route.params)? route.params?.item.image :'https://cdn-icons-png.flaticon.com/512/2927/2927347.png'
   //mấy cái để http bà có thể tìm ảnh khác dể dô cho đẹp nha
   
   const navigation = useNavigation();
@@ -170,7 +170,7 @@ const AddCustomRecipe = ({route}) => {
       <Text>{language === 'vn' ? 'Cập nhật' : 'Update'}</Text>
      </TouchableOpacity> :
      <TouchableOpacity onPress={(IngredientList.length == 0||name=='')?checkNameAndIngredient:saveRecipe}>
-        <Text>{language === 'vn' ? 'Cập nhật' : 'Update'}</Text>
+        <Text>{language === 'vn' ? 'Save' : 'Lưu'}</Text>
      </TouchableOpacity> }
             <View style={styles.headerContainer}>
             <TextInput style={styles.foodname} value={name} onChangeText={name=>setName(name)}></TextInput>
