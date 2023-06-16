@@ -5,6 +5,8 @@ import moment from 'moment';
 import firestore from '@react-native-firebase/firestore';
 import { AuthContext } from "../navigation/AuthProvider";
 import { Picker } from '@react-native-picker/picker';
+import LanguageContext from '../context/LanguageContext';
+import ThemeContext from '../context/ThemeContext';
 
 const StatisticsWeightScreen = () => {
   const {user} = useContext(AuthContext);
@@ -15,7 +17,8 @@ const StatisticsWeightScreen = () => {
   const [listWeightsOneMonth, setListWeightsOneMonth] = useState([]);
   const [listWeightsOneYear, setListWeightsOneYear] = useState([]);
   const [selectedValue, setSelectedValue] = useState("1 week");//
-  
+  const language = useContext(LanguageContext);
+  const theme = useContext(ThemeContext);
   const getWeightOneWeek = async() => {
     try{
       await firestore()
@@ -124,20 +127,20 @@ const StatisticsWeightScreen = () => {
         if (listWeightsOneMonth.length == 0 || listWeightsOneWeek.length == 0 || listWeightsOneYear.length == 0) {
     return (
       <View style={{marginTop: 130, flex: 1, alignItems: 'center'}}>
-        <Text style={styles.text}>Loading!</Text>
+        <Text style={[styles.text, {color: theme === 'light'? '#000000' : '#FFFFFF'}]}>Loading!</Text>
       </View>
     );
   }
 return(
-<View style={styles.container}>
+<View style={[styles.container, {backgroundColor: theme === 'light'? '#FFFFFF' : '#9B9B9B'}]}>
 <Picker
         selectedValue={selectedValue}
-        style={{ height: 50, width: 150, alignSelf: 'center'}}
+        style={{width: 150, alignSelf: 'center'}}
         onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}
       >
-        <Picker.Item label="1 week" value="1 week" />
-        <Picker.Item label="1 month" value="1 month" />
-        <Picker.Item label="1 year" value="1 year" />
+        <Picker.Item label={language === 'vn'? "1 tuần": "1 week"} value="1 week"/>
+        <Picker.Item label={language === 'vn'? "1 tháng": "1 month"} value="1 month" />
+        <Picker.Item label={language === 'vn'? "1 năm": "1 year"} value="1 year" />
       </Picker> 
       {(() => {
         switch (selectedValue) {
@@ -155,11 +158,11 @@ return(
             width={Dimensions.get('window').width - 16}
             height={220}
             chartConfig={{
-              backgroundColor: '#1cc910',
-              backgroundGradientFrom: '#eff3ff',
-              backgroundGradientTo: '#efefef',
+              backgroundColor: theme === 'light'? '#FFFFFF' : '#9B9B9B',
+              backgroundGradientFrom: theme === 'light'? '#FFFFFF' : '#9B9B9B',
+              backgroundGradientTo: theme === 'light'? '#FFFFFF' : '#9B9B9B',
               decimalPlaces: 2,
-              color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+              color: (opacity = 1) => `rgba(0, 0, 255, ${opacity})`,
               style: {
                 borderRadius: 16,
               },
@@ -184,21 +187,23 @@ return(
               ]
             }}
             hidePointsAtIndex={ Array.from({length: 31}, (v, k) => (k%4 !== 0) ? k : null) }
-            width={Dimensions.get('window').width - 16}
+            width={Dimensions.get('window').width- 16}
             height={220}
             chartConfig={{
-              backgroundColor: '#1cc910',
-              backgroundGradientFrom: '#eff3ff',
-              backgroundGradientTo: '#efefef',
+              backgroundColor: theme === 'light'? '#FFFFFF' : '#9B9B9B',
+              backgroundGradientFrom: theme === 'light'? '#FFFFFF' : '#9B9B9B',
+              backgroundGradientTo: theme === 'light'? '#FFFFFF' : '#9B9B9B',
               decimalPlaces: 2,
-              color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+              color: (opacity = 1) => `rgba(0, 0, 255, ${opacity})`,
               style: {
                 borderRadius: 16,
+                
               },
             }}
             style={{
               marginVertical: 8,
               borderRadius: 16,
+             
             }}
             segments={2}
           />;
@@ -218,12 +223,11 @@ return(
             width={Dimensions.get('window').width - 16}
             height={220}
             chartConfig={{
-              
-              backgroundColor: '#1cc910',
-              backgroundGradientFrom: '#eff3ff',
-              backgroundGradientTo: '#efefef',
+              backgroundColor: theme === 'light'? '#FFFFFF' : '#9B9B9B',
+              backgroundGradientFrom: theme === 'light'? '#FFFFFF' : '#9B9B9B',
+              backgroundGradientTo: theme === 'light'? '#FFFFFF' : '#9B9B9B',
               decimalPlaces: 2,
-              color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+              color: (opacity = 1) => `rgba(0, 0, 255, ${opacity})`,
               style: {
                 borderRadius: 16,
               },

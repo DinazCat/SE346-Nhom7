@@ -4,7 +4,7 @@ import {ActivityIndicator} from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import QuestionStack from './QuestionStack';
 import { AuthContext } from '../navigation/AuthProvider';
-import HomePageScreen from '../screens/HomePageScreen';
+import TabsNavigator from './TabsNavigator';
 
 
 const MainStack = () => {
@@ -55,7 +55,7 @@ const MainStack = () => {
   }
   else{
     if (initialScreen == 'TabsNavigator'){
-      return <HomePageScreen/>
+      return <TabsNavigator/>
     }
     else{
       return <QuestionStack/>

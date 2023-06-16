@@ -127,7 +127,7 @@ const AddCustomRecipe = ({route}) => {
       Alert.alert(
         'Add Recipe successfully!'
       );
-      navigation.navigate('AddScreen')
+      navigation.goBack();
     } 
     catch (error) {
       console.log('something went wrong!', error);
@@ -155,7 +155,7 @@ const AddCustomRecipe = ({route}) => {
         Alert.alert(
           'Update custom recipe succesfully!'
         );
-        navigation.navigate('AddScreen')
+        navigation.goBack();
       } 
       catch (error) {
         console.log('something went wrong!', error);

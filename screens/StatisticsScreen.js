@@ -4,43 +4,45 @@ import StatisticsWeightScreen from "./StatisticsWeightScreen";
 import StatisticsHeightScreen from "./StatisticsHeightScreen";
 import StatisticsCalories from "./StatisticsCalories";
 import LanguageContext from "../context/LanguageContext";
+import ThemeContext from "../context/ThemeContext";
 const StatisticsScreen = ({route}) => {
   const language = useContext(LanguageContext);
+  const theme = useContext(ThemeContext);
   const[page, setPage] = useState(1);
     return(
-        <View style={styles.container}>
-          <Text style={styles.header}>{language === 'vn' ? 'Biểu đồ' : 'Chart'}</Text>
+        <View style={[styles.container, {backgroundColor: theme === 'light'? '#FFFFFF' : '#000000'}]}>
+          <Text style={[styles.header,{color: theme === 'light'? '#000000' : '#FFFFFF'}]}>{language === 'vn' ? 'Biểu đồ' : 'Chart'}</Text>
           <View style={styles.topTab}>
           <TouchableOpacity style={[styles.btn,
               {borderBottomColor: (page == 1)? '#2AE371' : null,
-              borderBottomWidth: (page == 1)? 2:0}
+              borderBottomWidth: (page == 1)? 3:0}
             ]}
             onPress={()=>setPage(1)}>
               <Text style={[styles.textBtn,
-                {fontWeight: (page == 1)? 'bold': 'normal'}
-                ]}>Weight</Text>
+                {fontWeight: (page == 1)? 'bold': 'normal', color: theme === 'light'? '#000000' : '#FFFFFF'}
+                ]}>{language === 'vn' ? 'Cân nặng' : 'Weight'}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity 
             style={[styles.btn,
               {borderBottomColor: (page == 0)? '#2AE371' : null,
-              borderBottomWidth: (page == 0)? 2:0}
+              borderBottomWidth: (page == 0)? 3:0}
             ]}
             onPress={()=>setPage(0)}>
                 <Text style={[styles.textBtn,
-                {fontWeight: (page == 0)? 'bold': 'normal'}
-                ]}>Height</Text>
+                {fontWeight: (page == 0)? 'bold': 'normal', color: theme === 'light'? '#000000' : '#FFFFFF'}
+                ]}>{language === 'vn' ? 'Chiều cao' : 'Height'}</Text>
             </TouchableOpacity>
             
             <TouchableOpacity style={[styles.btn,
               {borderBottomColor: (page == 2)? '#2AE371' : null,
-              borderBottomWidth: (page == 2)? 2:0}
+              borderBottomWidth: (page == 2)? 3:0}
             ]} 
             onPress={()=>setPage(2)}>
               <Text style={[styles.textBtn,
               
-                {fontWeight: (page == 2)? 'bold': 'normal'}
-                ]}>Calories</Text>
+                {fontWeight: (page == 2)? 'bold': 'normal', color: theme === 'light'? '#000000' : '#FFFFFF'}
+                ]}>{language === 'vn' ? 'Calories tiêu thụ' : 'Calories burned'}</Text>
             </TouchableOpacity>
             </View>
             {(() => {
@@ -79,7 +81,7 @@ const styles = StyleSheet.create({
       marginBottom: 10
     },
     btn: {
-      marginHorizontal: 30,
+      marginHorizontal: 15,
     },
     
   });

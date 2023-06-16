@@ -4,15 +4,21 @@ import StapleFoodScreen from "./StapleFoodScreen";
 import CustomRecipeScreen from "./CustomRecipeScreen";
 import CustomFoodScreen from "./CustomFoodScreen";
 import moment from "moment";
-//để isAdd trong redux = false khi nhấn vào staple
+import Icon from 'react-native-vector-icons/FontAwesome5';
 
-const AddFoodScreen = ({route}) => {
+const AddFoodScreen = ({route, navigation}) => {
   const [page, setPage] = useState(0);
   const date = route.params?.date || moment(new Date()).format('DD/MM/YYYY');
   const isNavigation = (route.params)? true:false;
   const mealType = route.params?.mealType;
+  const back = () => {
+    navigation.goBack();
+  }
     return(
         <View style={styles.container}>
+          <TouchableOpacity style={{marginLeft: 15, marginTop: 5}} onPress={back}>
+        <Icon name={'arrow-left'} size={25} />
+      </TouchableOpacity>
           <View style={styles.topTab}>
             <TouchableOpacity style={[styles.btn,
               {borderBottomColor: (page == 0)? '#2AE371' : null,
@@ -50,7 +56,7 @@ const AddFoodScreen = ({route}) => {
 }
 const styles = StyleSheet.create({
   container: {
-    flex: 0.79,
+    flex: 0.83,
   },
   topTab: {
     flexDirection: 'row',

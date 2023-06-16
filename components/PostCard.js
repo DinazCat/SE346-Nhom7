@@ -339,7 +339,7 @@ const PostCard = ({item, onUserPress, onCommentPress,onImagePress,deletePost,edi
         <Text style={[styles.PostText, {color: theme === 'light'? '#000000' : '#FFFFFF'}]}>{item.Calories + " (cal/serving)"}</Text>
         </View>
         <TouchableOpacity onPress={onImagePress}>
-          <Text style={{textDecorationLine:'underline', color:'blue',paddingHorizontal: 15,
+          <Text style={{textDecorationLine:'underline', color:'#226EE8',paddingHorizontal: 15,
         marginBottom: 10,}}>{language === 'vn' ? 'Xem chi tiết' : 'See Detail'}</Text>
         </TouchableOpacity>
         

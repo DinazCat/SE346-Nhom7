@@ -3,17 +3,25 @@ import React, {useState} from "react";
 import StapleFoodScreen from "./StapleFoodScreen";
 import CustomRecipeScreen from "./CustomRecipeScreen";
 import CustomFoodScreen from "./CustomFoodScreen";
+import { useNavigation } from "@react-navigation/native";
 import moment from "moment";
 import AddWater from "./AddWater";
 import AddExerciseScreen from "./AddExerciseScreen";
-//để isAdd trong redux = false khi nhấn vào staple
+import Icon from 'react-native-vector-icons/FontAwesome5';
 
 const AddScreen = ({route}) => {
+  const navigation = useNavigation();
   const [page, setPage] = useState(3);
   const date = route.params?.date || moment(new Date()).format('DD/MM/YYYY');
   const isNavigation = (route.params)? true:false;
+  const back = () => {
+    navigation.goBack();
+  }
     return(
-      <View style={styles.container}>
+      <View style={{flex: isNavigation? 0.83: 0.8}}>
+        {isNavigation?<TouchableOpacity style={{marginLeft: 15, marginTop: 5}} onPress={back}>
+        <Icon name={'arrow-left'} size={25} />
+      </TouchableOpacity>:null}
         <View style={{marginTop: 10}}>
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={{marginHorizontal: 10}}>
         <View style={styles.topTab}>
@@ -89,7 +97,7 @@ const AddScreen = ({route}) => {
 }
 const styles = StyleSheet.create({
   container: {
-    flex: 0.73,
+    flex: 0.8,
   },
   topTab: {
     flexDirection: 'row',

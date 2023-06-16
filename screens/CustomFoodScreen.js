@@ -13,25 +13,26 @@ import LanguageContext from "../context/LanguageContext";
 import PopFoodAmount from "./PopFoodAmount";
 
 const CustomFoodScreen = (props, {route}) => {
+    const navigation = useNavigation();
    const language = useContext(LanguageContext)
     const {user} = useContext(AuthContext);
     const [textSearch, onChangeTextSearch] = useState('');
+    const [textInput, onChangeTextInput] = useState('');
     const [visible, setVisible] = React.useState(false);//pop to add amount
     const [calories, setCalories] = useState('');
     const [image, setImage] = useState('');
     const [name, setName] = useState('');
     const [baseAmount, setBaseAmount] = useState('');
     const [unit, setUnit] = useState('');
-    const dispatch = useDispatch();
     const [datas, setDatas] = useState([]);
     const [selectedValue, setSelectedValue] = useState("Breakfast");//value cho meal types
     const addCustomFood = () => {
-      navigation.navigate("DetailFood");
+      navigation.navigate('DetailFood');
     }
     const Add = (selectedItem, rowMap) => {
       let index = datas.findIndex(item=>item.id === selectedItem.id)
       rowMap[`${index}`].closeRow();
-      onChangeTextSearch('');
+      onChangeTextInput('');
       setImage(selectedItem.image);
       setBaseAmount(selectedItem.baseAmount);
       setUnit(selectedItem.unit);
@@ -69,7 +70,7 @@ const CustomFoodScreen = (props, {route}) => {
     }
     const finishAdd = () => {
       setVisible(false)
-      if (textSearch == ''){
+      if (textInput == ''){
         
       }
       else{
@@ -79,8 +80,8 @@ const CustomFoodScreen = (props, {route}) => {
           time: props.date,
           unit: unit,
           mealType: selectedValue,
-          amount: textSearch,
-          calories: (parseInt(textSearch) * parseInt(calories) / parseInt(baseAmount)).toFixed(),
+          amount: textInput,
+          calories: (parseInt(textInput) * parseInt(calories) / parseInt(baseAmount)).toFixed(),
           image: image,
           isCustom: true,
         })
@@ -126,10 +127,10 @@ const CustomFoodScreen = (props, {route}) => {
     const onRowDidOpen = rowKey => {
       console.log('This row opened', rowKey);
   };
-    const navigation = useNavigation();
+    
     
       return (
-        <View styles={{flex:1}}>
+        <View>
         <View style={{flexDirection:'row', marginTop: 10, marginHorizontal: 10, alignItems: 'center'}}>
         <Icon name={'search'} size={25}/>
         <TextInput 
@@ -143,11 +144,11 @@ const CustomFoodScreen = (props, {route}) => {
           
           </View>
           
-           <View style={{marginTop: 10}}>
+           <View style={{marginTop: 7, marginBottom: 140}}>
            <TouchableOpacity onPress={()=>addCustomFood()} style={{marginLeft:'auto', marginHorizontal: 15, marginBottom: 7}}>
                 <Icon name={'plus-circle'} size={30} color={'#0AD946'}/>
           </TouchableOpacity>
-            <SwipeListView
+            <SwipeListView  
             useFlatList={true}
                  data={datas.filter(item=>item.name.toLowerCase().includes(textSearch.toLowerCase()))}
                  renderItem={({item}) => (
@@ -219,7 +220,7 @@ const CustomFoodScreen = (props, {route}) => {
           </View>
           </View>
           <View style={{flexDirection: 'row'}}>
-          <TextInput style={[styles.textInput, {width: 220}]} value={textSearch} onChangeText={textSearch  =>onChangeTextSearch(textSearch)}/>
+          <TextInput style={[styles.textInput, {width: 220}]} value={textInput} onChangeText={textInput =>onChangeTextInput(textInput)}/>
           <Text style={styles.text}>{unit}</Text>
           </View>
           <Picker
@@ -232,7 +233,7 @@ const CustomFoodScreen = (props, {route}) => {
         <Picker.Item label="Dinner" value="Dinner" />
         <Picker.Item label="Snacks" value="Snacks" />
       </Picker>
-      <TouchableOpacity style={styles.button} onPress={()=>isAddIngredient()}>
+      <TouchableOpacity style={styles.button} onPress={()=>finishAdd()}>
           <Text style={styles.text}>{language === 'vn' ? 'Thêm' : 'Add'}</Text>
         </TouchableOpacity>
           
@@ -274,7 +275,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: "90%",
     height: 50,
-},
+  },
 button: {
   marginTop: 15,
   borderRadius: 20,
@@ -289,7 +290,7 @@ rowBack: {
   flexDirection: 'row',
   justifyContent: 'space-between',
   paddingLeft: 15,
-  marginBottom: 3
+  marginBottom: 3.1
 },
 backRightBtn: {
   alignItems: 'center',
@@ -315,7 +316,8 @@ rowFront: {
 backgroundColor: '#CCC',
 justifyContent: 'center',
 paddingHorizontal: 5,
-marginBottom: 3
+marginBottom: 3,
+flex: 1
 },
 });
   

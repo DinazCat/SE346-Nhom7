@@ -6,6 +6,7 @@ import firestore from '@react-native-firebase/firestore';
 import { AuthContext } from "../navigation/AuthProvider";
 import { useNavigation } from "@react-navigation/native";
 import LanguageContext from "../context/LanguageContext";
+import ThemeContext from "../context/ThemeContext";
 import moment from 'moment';
 const HomeScreen = ({navigation}) => {
   const {user} = useContext(AuthContext);
@@ -22,7 +23,7 @@ const HomeScreen = ({navigation}) => {
   const [date, setDate] = useState(new Date());
   const [show, setShow] = useState(false);
   const [time, setTime] = useState('Today');
-
+  const theme = useContext(ThemeContext);
   //View All
   const viewAll = () => {
     navigation.navigate("DetailHomeScreen", {time: time})
@@ -237,8 +238,10 @@ const HomeScreen = ({navigation}) => {
  }
  
   return (
+    <View style={{backgroundColor: theme === 'light'? '#FFFFFF' : '#000000', flex: 1}}>
     <ScrollView>
-        <View style={styles.container}>
+      
+        <View style={[styles.container, {backgroundColor: theme === 'light'? '#DBDBDB' : '#4E4E4E', borderColor: theme === 'light'? '#DBDBDB' : '#4E4E4E'}]}>
         {show && (
         <DateTimePicker
           value={date}
@@ -258,8 +261,8 @@ const HomeScreen = ({navigation}) => {
           </View>
           </TouchableOpacity>
         </View>
-        <View style={[styles.container, { alignItems: "center", justifyContent: "center"}]}>
-            <Text style={[styles.text, {color: '#444444'}]}>{language === 'vn' ? 'Còn lại = Mục tiêu - Thức ăn + Thể dục' : 'Remaining = Goal - Food + Exercire'}</Text>
+        <View style={[styles.container, { alignItems: "center", justifyContent: "center", backgroundColor: theme === 'light'? '#DBDBDB' : '#4E4E4E', borderColor: theme === 'light'? '#DBDBDB' : '#4E4E4E'}]}>
+            <Text style={[styles.text, {color: '#FFFFFF'}]}>{language === 'vn' ? 'Còn lại = Mục tiêu - Thức ăn + Thể dục' : 'Remaining = Goal - Food + Exercire'}</Text>
             <View style={{flexDirection: 'row', alignItems: "center"}}>
                 <View style={{justifyContent: "center", alignItems: "center"}}>
                   <TouchableOpacity style={{justifyContent: "center", alignItems: "center"}} onPress={viewExercise}>
@@ -288,7 +291,7 @@ const HomeScreen = ({navigation}) => {
                     borderWidth={8}
                     color={(parseInt(baseGoal)+parseInt(exercise)-parseInt(breakfast)- parseInt(snacks)- parseInt(lunch)-parseInt(dinner) > 0)? '#12CE46' : '#E8142F'}
                     shadowColor="#FFFFFF" //phần trăm không chiếm
-                    bgColor="#CFCFCF" //ở trong vòng tròn
+                    bgColor={theme === 'light'? '#DBDBDB' : '#4E4E4E'} //ở trong vòng tròn
                   >
                  <Text style={{ fontSize: 16,  color: '#FFFFFF', fontWeight: 'bold'}}>{parseInt(baseGoal)+parseInt(exercise)-parseInt(breakfast)- parseInt(snacks)- parseInt(lunch)-parseInt(dinner)}</Text>
                  <Text style={{ fontSize: 16, color: '#FFFFFF'}}>{language === 'vn' ? 'Còn lại' : 'Remaining'}</Text>
@@ -319,7 +322,7 @@ const HomeScreen = ({navigation}) => {
                 </View>
             </View>
           </View>
-          <View style={styles.container}>
+          <View style={[styles.container, {backgroundColor: theme === 'light'? '#DBDBDB' : '#4E4E4E', borderColor: theme === 'light'? '#DBDBDB' : '#4E4E4E'}]}>
           <View style={{flexDirection: 'row', alignItems: "center"}}>
             <Image
                 source={require("../assets/microscope.png")}
@@ -342,16 +345,16 @@ const HomeScreen = ({navigation}) => {
             })()}
           </View>
         </View>
+       
     </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     borderWidth: 1, 
-    borderColor: "#CFCFCF", 
     borderRadius: 5, 
-    backgroundColor: "#CFCFCF", 
     margin: 5,
   },
   text: {

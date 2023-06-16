@@ -14,6 +14,7 @@ import { Linking } from 'react-native';
 import LanguageContext from "../context/LanguageContext";
 import ThemeContext from '../context/ThemeContext';
 
+
 export default function FeedsScreen({navigation}) {
   const {user} = useContext(AuthContext);
   const [posts, setPosts]= useState(null);

@@ -191,13 +191,12 @@ const AddExerciseScreen = (props) => {
           <Text style={styles.text}>{language === 'vn' ? 'Thêm' : 'Add'}</Text>
         </TouchableOpacity>
       </PopFoodAmount>
-        <View style={{marginTop: 15, marginBottom: 230}}>
-          <FlatList 
+          <FlatList style={{marginTop: 10}}
               data={exercises.filter(item=>item.name.toLowerCase().includes(textSearch.toLowerCase()))
               }
               renderItem={({item}) => (
                 <TouchableOpacity  onPress={() => ShowAddAmount(item)}>
-                  <View style={{alignItems: 'center', flexDirection: 'row', marginHorizontal: 15, marginVertical: 3, borderBottomWidth: 2, borderBottomColor: '#000000', paddingBottom: 5}}>
+                  <View style={{alignItems: 'center', flexDirection: 'row', marginHorizontal: 15, marginVertical: 3, borderBottomWidth: 2, borderBottomColor: '#000000', paddingBottom: 5, flex: 1}}>
                       <Image source = {{uri: item.image}} style={{width: 40,
         height: 40,
         resizeMode: 'stretch'}}/>
@@ -210,7 +209,6 @@ const AddExerciseScreen = (props) => {
               keyExtractor={(item, index) => index.toString()}
           />
           </View>
-      </View>
 
 )
 }

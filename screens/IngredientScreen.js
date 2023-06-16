@@ -220,7 +220,7 @@ const IngredientScreen = ({route}) => {
         <Text style={styles.text}>{language === 'vn' ? 'Thêm' : 'Add'}</Text>
         </TouchableOpacity>
       </PopFoodAmount>
-        <View style={{marginTop: 15, marginBottom: 230}}>
+        <View style={{marginTop: 10, marginBottom: 170}}>
           <FlatList 
               data={stapleFood.filter(item=>item.name.toLowerCase().includes(textInput.toLowerCase()))
               }

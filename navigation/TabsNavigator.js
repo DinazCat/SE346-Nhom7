@@ -1,36 +1,37 @@
-import React from "react";
+import React, { useContext } from "react";
 import {Image, StyleSheet, View} from "react-native";
 import {createBottomTabNavigator} from "@react-navigation/bottom-tabs";
 
-import HomeScreen from "../screens/HomeScreen.js";
 import StatisticsScreen from "../screens/StatisticsScreen";
 import SettingScreenRoot from "../screens/SettingScreenRoot";
 import BlogsScreen from "../screens/BlogsScreen.js";
-import AddScreenHome from "../screens/AddScreenHome.js";
+import ThemeContext from "../context/ThemeContext.js";
+import HomeStack from "./HomeStack";
+import AddStack from "./AddStack";
 
 import {useTabMenu} from "../context/TabContext";
 
 const Tab = createBottomTabNavigator();
-
-const getIconColor = focused => ({
-  tintColor: focused ? "#6360DC" : "#000",
-});
-
 const TabsNavigator = () => {
+  const theme = useContext(ThemeContext);
+  const getIconColor = focused => ({
+   tintColor: focused ? "#6360DC" : (theme==='light'?"#000": '#FFFFFF'),
+  });
   const {opened, toggleOpened} = useTabMenu();
+  
   return (
     <Tab.Navigator 
       initialRouteName="Home"
       screenOptions={{
         headerShown: false,
         tabBarShowLabel: false,
-        tabBarStyle: styles.tabBar,
+        tabBarStyle: [styles.tabBar, {backgroundColor: theme==='light'?"#fff":"#000", borderColor: theme==='light'?"#000":"#fff"}],
         
       }}
       >
       <Tab.Screen
         name="Home"
-        component={HomeScreen}
+        component={HomeStack}
         options={{
           
           tabBarItemStyle: {
@@ -73,7 +74,7 @@ const TabsNavigator = () => {
       />
       <Tab.Screen
         name="Add"
-        component={AddScreenHome}
+        component={AddStack}
         options={{
           unmountOnBlur: true,
           tabBarItemStyle: {
@@ -144,8 +145,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     height: 56,
     bottom: 0,
-    backgroundColor: "#fff",
-    borderTopColor: "transparent",
+    
+    //borderTopColor: "transparent",
     shadowColor: "#000",
     shadowOffset: {
       height: 6,

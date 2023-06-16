@@ -1,10 +1,12 @@
 import {StyleSheet, Text, View, TouchableOpacity, Dimensions, Alert} from 'react-native';
 import React, { useContext, useState, useEffect} from 'react';
-import { BarChart, LineChart } from 'react-native-chart-kit';
+import { BarChart,} from 'react-native-chart-kit';
 import moment from 'moment';
 import firestore from '@react-native-firebase/firestore';
 import { Picker } from '@react-native-picker/picker';
 import { AuthContext } from "../navigation/AuthProvider";
+import LanguageContext from '../context/LanguageContext';
+import ThemeContext from '../context/ThemeContext';
 
 const StatisticsCalories = () => {
     const {user} = useContext(AuthContext);
@@ -15,7 +17,8 @@ const StatisticsCalories = () => {
   const [listCaloriesOneMonth, setListCaloriesOneMonth] = useState([]);
   const [listCaloriesOneYear, setListCaloriesOneYear] = useState([]);
   const [selectedValue, setSelectedValue] = useState("1 week");//
-  
+  const language = useContext(LanguageContext);
+  const theme = useContext(ThemeContext)
   const getCaloriesOneWeek = async() => {
     try{
       await firestore()
@@ -118,20 +121,20 @@ const StatisticsCalories = () => {
         if (listCaloriesOneMonth.length == 0 || listCaloriesOneWeek.length == 0 || listCaloriesOneYear.length == 0) {
     return (
       <View style={{marginTop: 130, flex: 1, alignItems: 'center'}}>
-        <Text style={styles.text}>Loading!</Text>
+        <Text style={[styles.text, {color: theme === 'light'? '#000000' : '#FFFFFF'}]}>Loading!</Text>
       </View>
     );
   }
 return(
-<View style={styles.container}> 
+<View style={[styles.container, {backgroundColor: theme === 'light'? '#FFFFFF' : '#9B9B9B'}]}> 
 <Picker 
         selectedValue={selectedValue}
         style={{ height: 50, width: 150, alignSelf: 'center'}}
         onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}
       >
-        <Picker.Item label="1 week" value="1 week"/>
-        <Picker.Item label="1 month" value="1 month" />
-        <Picker.Item label="1 year" value="1 year" />
+        <Picker.Item label={language === 'vn'? "1 tuần": "1 week"} value="1 week"/>
+        <Picker.Item label={language === 'vn'? "1 tháng": "1 month"} value="1 month" />
+        <Picker.Item label={language === 'vn'? "1 năm": "1 year"} value="1 year" />
       </Picker> 
       {(() => {
         switch (selectedValue) {
@@ -148,11 +151,11 @@ return(
             width={Dimensions.get('window').width - 16}
             height={220}
             chartConfig={{
-                backgroundColor: '#1cc910',
-                backgroundGradientFrom: '#eff3ff',
-                backgroundGradientTo: '#efefef',
+              backgroundColor: theme === 'light'? '#FFFFFF' : '#9B9B9B',
+              backgroundGradientFrom: theme === 'light'? '#FFFFFF' : '#9B9B9B',
+              backgroundGradientTo: theme === 'light'? '#FFFFFF' : '#9B9B9B',
                 decimalPlaces: 2,
-                color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+                color: (opacity = 1) => `rgba(0, 0, 255, ${opacity})`,
                 style: {
                 borderRadius: 16,
                 },
@@ -178,12 +181,12 @@ return(
             height={220}
             hidePointsAtIndex={ Array.from({length: 31}, (v, k) => (k%4 !== 0) ? k : null) }
             chartConfig={{
-              backgroundColor: '#1cc910',
-              backgroundGradientFrom: '#eff3ff',
-              backgroundGradientTo: '#efefef',
+              backgroundColor: theme === 'light'? '#FFFFFF' : '#9B9B9B',
+              backgroundGradientFrom: theme === 'light'? '#FFFFFF' : '#9B9B9B',
+              backgroundGradientTo: theme === 'light'? '#FFFFFF' : '#9B9B9B',
               decimalPlaces: 2,
               barPercentage: .3,
-              color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+              color: (opacity = 1) => `rgba(0, 0, 255, ${opacity})`,
               style: {
                 borderRadius: 16,
               },
@@ -209,11 +212,11 @@ return(
             height={220}
             chartConfig={{
               barPercentage: .3,
-              backgroundColor: '#1cc910',
-              backgroundGradientFrom: '#eff3ff',
-              backgroundGradientTo: '#efefef',
+              backgroundColor: theme === 'light'? '#FFFFFF' : '#9B9B9B',
+              backgroundGradientFrom: theme === 'light'? '#FFFFFF' : '#9B9B9B',
+              backgroundGradientTo: theme === 'light'? '#FFFFFF' : '#9B9B9B',
               decimalPlaces: 2,
-              color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+              color: (opacity = 1) => `rgba(0, 0, 255, ${opacity})`,
               style: {
                 borderRadius: 16,
               },

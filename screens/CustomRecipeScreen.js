@@ -120,11 +120,11 @@ const CustomRecipeScreen = () => {
         />
        
         </View >
-        <View style={{marginTop: 10}}>
+        <View style={{marginTop: 7, marginBottom: 140}}>
         <TouchableOpacity style={{marginLeft:'auto', marginHorizontal: 15, marginBottom: 7}} onPress={()=>addCustomFood()}>
           <Icon name={'plus-circle'} size={30} color={'#0AD946'}/>
         </TouchableOpacity>
-          <SwipeListView
+          <SwipeListView 
           useFlatList={true}
                data={datas.filter(item=>item.name.toLowerCase().includes(textInput.toLowerCase()))}
                renderItem={({item}) => (
@@ -252,7 +252,8 @@ rowFront: {
   backgroundColor: '#CCC',
 justifyContent: 'center',
 paddingHorizontal: 5,
-marginBottom: 3
+marginBottom: 3,
+flex: 1
 },
   });
 export default CustomRecipeScreen;

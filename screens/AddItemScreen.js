@@ -1,19 +1,25 @@
 import {View, Text, StyleSheet, TextInput, Image, TouchableOpacity, FlatList, Alert} from "react-native";
-import React, {useState} from "react";
+import React, {useState, useContext} from "react";
+import Icon from 'react-native-vector-icons/FontAwesome5';
 import StapleFoodScreen from "./StapleFoodScreen";
 import CustomRecipeScreen from "./CustomRecipeScreen";
 import CustomFoodScreen from "./CustomFoodScreen";
 import moment from "moment";
 import AddWater from "./AddWater";
 import AddExerciseScreen from "./AddExerciseScreen";
-//để isAdd trong redux = false khi nhấn vào staple
 
-const AddItemScreen = ({route}) => {
+const AddItemScreen = ({route, navigation}) => {
   const page = route.params?.page;
   const date = route.params?.date || moment(new Date()).format('DD/MM/YYYY');
   const isNavigation = (route.params)? true:false;
+  const back = () => {
+    navigation.goBack();
+  }
     return(
-       <View>
+       <View style={{flex: 0.97}}> 
+        <TouchableOpacity style={{marginLeft: 15, marginTop: 5}} onPress={back}>
+        <Icon name={'arrow-left'} size={25} />
+      </TouchableOpacity>
             {(() => {
         switch (page) {
           case 0:

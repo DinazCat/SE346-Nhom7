@@ -23,8 +23,8 @@ export default AddPostScreen= function({navigation}) {
     const [popoverAnchor, setPopoverAnchor] = useState(null);
 
     const [FoodName, setFoodName] = useState(route.params?.name);
-    const [Ingredient, setIngredient] = useState([]);
-    const [Making, setMaking] = useState("");
+    const [Ingredient, setIngredient] = useState(route.params?.ingredients||[]);
+    const [Making, setMaking] = useState(route.params?.receipt||"");
     const [Summary, setSummary] = useState("");
     const [uploading, setUploading] = useState(false);
     const [transferred, setTransferred] = useState(0);
@@ -32,10 +32,10 @@ export default AddPostScreen= function({navigation}) {
     const [defaultRating, setdefaulRating] = useState(0);
     const [maxRating, setmaxRating] = useState([1,2,3,4,5])
     const [hashtag, sethashtag] = useState([]);
-    const [Total, setTotal] = useState("");
-    const [Cal, setCal] = useState(route.params?.calories);
-    const [Prep, setPrep] = useState("");
-    const [Cookingtime, setCookingtime] = useState("");
+    const [Total, setTotal] = useState(route.params?.total||"");
+    const [Cal, setCal] = useState(route.params?.calories||"");
+    const [Prep, setPrep] = useState(route.params?.prepTime||"");
+    const [Cookingtime, setCookingtime] = useState(route.params?.cookingTime||"");
     const language = useContext(LanguageContext);
 
     const starImgFilled = "https://github.com/tranhonghan/images/blob/main/star_filled.png?raw=true";
@@ -159,7 +159,7 @@ export default AddPostScreen= function({navigation}) {
           'Post uploaded',
           'Your post has been upload to the Firebase Cloud Storage successfully!'
         );
-        navigation.push('feedsScreen');
+        route.params? navigation.navigate('AddScreen') : navigation.navigate('feedsScreen')
         for(let i = 0; i < followers.length; i++){
           firestore().collection('Notification').add({
             PostownerId: followers[i],
@@ -362,7 +362,7 @@ export default AddPostScreen= function({navigation}) {
             alignItems: 'center',
             backgroundColor: '#FFFF99',
           }}>
-          <TouchableOpacity onPress={()=> {route.params? navigation.navigate('AddFood') : navigation.navigate('feedsScreen')}}>
+          <TouchableOpacity onPress={()=> {route.params? navigation.navigate('AddScreen') : navigation.navigate('feedsScreen')}}>
             <Icon name={'arrow-left'} style={{color: '#333', fontSize: 25, padding: 5}} />
           </TouchableOpacity>
 

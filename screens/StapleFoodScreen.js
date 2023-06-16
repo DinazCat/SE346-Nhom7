@@ -186,7 +186,7 @@ const StapleFoodScreen = (props) => {
 
   
   return (
-    <View styles={{flex:1}}>
+    <View >
       <View style={{flexDirection:'row', marginTop: 10, marginHorizontal: 10, alignItems: 'center'}}>
         <Icon name={'search'} size={25}/>
         <TextInput 
@@ -240,13 +240,12 @@ const StapleFoodScreen = (props) => {
           <Text style={styles.text}>{language === 'vn' ? 'Thêm' : 'Add'}</Text>
         </TouchableOpacity>
       </PopFoodAmount>
-        <View style={{marginTop: 10}}>
-          <FlatList 
+          <FlatList style={{marginTop: 10}}
               data={stapleFood.filter(item=>item.name.toLowerCase().includes(textInput.toLowerCase()))
               }
               renderItem={({item}) => (
                 <TouchableOpacity  onPress={() => ShowAddAmount(item)}>
-                  <View style={{alignItems: 'center', flexDirection: 'row', marginHorizontal: 15, marginVertical: 3, borderBottomWidth: 2, borderBottomColor: '#000000', paddingBottom: 5}}>
+                  <View style={{alignItems: 'center', flexDirection: 'row', marginHorizontal: 15, marginVertical: 3, borderBottomWidth: 2, borderBottomColor: '#000000', paddingBottom: 5, flex: 1}}>
                       <Image source = {{uri: item.image}} style={{width: 40,
         height: 40,
         resizeMode: 'stretch'}}/>
@@ -262,7 +261,6 @@ const StapleFoodScreen = (props) => {
               keyExtractor={(item, index) => index.toString()}
           />
           </View>
-      </View>
 
 )
 }
@@ -284,12 +282,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
 },
   
-    tabIcon: {
-      width: 25,
-      height: 25,
-      alignItems: "center",
-      justifyContent: "center",
-    },
+    
     header: {
       width: '100%',
       alignItems: 'flex-end',
@@ -308,6 +301,6 @@ const styles = StyleSheet.create({
     padding: 5,
     backgroundColor: '#2AE371',
     alignSelf: 'center'
-},
-  });
+  },
+});
 export default StapleFoodScreen;

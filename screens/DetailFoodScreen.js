@@ -9,7 +9,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 import storage from '@react-native-firebase/storage';
 import LanguageContext from "../context/LanguageContext";
 
-
+import ThemeContext from "../context/ThemeContext";
 const DetailFoodScreen = ({route, navigation}) => {
   const {user} = useContext(AuthContext);
   const language = useContext(LanguageContext);
@@ -23,7 +23,7 @@ const DetailFoodScreen = ({route, navigation}) => {
   const [id, setId] = useState(route.params?.item.id)//set route.params...vô trong const trước
   const [uploading, setUploading] = useState(false);
   const [transferred, setTransferred] = useState(0);
-
+  const theme = useContext(ThemeContext);
   //thêm ảnh 
   const [isPopoverVisible, setPopoverVisible] = useState(false);
   const [popoverAnchor, setPopoverAnchor] = useState(null);
@@ -37,6 +37,9 @@ const DetailFoodScreen = ({route, navigation}) => {
       setImage(img);  
     });
   };
+  const cancel = () => {
+    navigation.goBack();
+  }
   const takePhotoFromCamera = () => {
     setPopoverVisible(false);
     ImagePicker.openCamera({
@@ -82,6 +85,7 @@ const DetailFoodScreen = ({route, navigation}) => {
   const saveCustomFood = async() => {
     
     try{
+      
         const imageUrl = await uploadImage(image?.path);
         await firestore().collection('customFoods').add({
         userId:user.uid,
@@ -96,7 +100,7 @@ const DetailFoodScreen = ({route, navigation}) => {
         Alert.alert(
           'Add custom food succesfully!'
         );
-        navigation.navigate('AddScreen')
+        navigation.goBack();
       } 
       catch (error) {
         console.log('something went wrong!', error);
@@ -118,7 +122,7 @@ const DetailFoodScreen = ({route, navigation}) => {
         Alert.alert(
           'Update custom food succesfully!'
         );
-        navigation.navigate('AddScreen')
+        navigation.goBack();
       } 
       catch (error) {
         console.log('something went wrong!', error);
@@ -127,14 +131,26 @@ const DetailFoodScreen = ({route, navigation}) => {
   
   return (
     <View styles={styles.container}>
-      <Text style={styles.header}>{language === 'vn' ? 'Chi tiết thức ăn' : 'Food detail'}</Text>
-      
-      <TextInput placeholder="Food name" value={name} onChangeText={name=>setName(name)}/>
-      <TextInput placeholder="Calories" value={calories} onChangeText={calories=>setCalories(calories)}/>
-      <TextInput placeholder="Serving size" value={baseAmount} onChangeText={baseAmount=>setBaseAmount(baseAmount)}/>
+      <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingVertical: 15, backgroundColor: theme === 'light' ?'#2AE371': '#7B7B7B'}}>
+      <TouchableOpacity onPress={cancel}>
+        <Text style={[styles.text, {color: theme === 'light' ?'#fff': '#2AE371'}]}>{language === 'vn' ? 'Hủy' : 'Cancel'}</Text>
+      </TouchableOpacity>
+      <Text style={{fontSize: 23, color: '#fff', fontWeight: 'bold', marginHorizontal: 30}}>{language === 'vn' ? 'Chi tiết thức ăn' : 'Food detail'}</Text>
+      {(id)?<TouchableOpacity onPress={(name==''||calories==''||baseAmount==''||unit=='')?checkInput:updateCustomFood}>
+        <Text style={[styles.text, {color: theme === 'light' ?'#fff': '#2AE371'}]}>{language === 'vn' ? 'Cập nhật' : 'Update'}</Text>
+      </TouchableOpacity>: <TouchableOpacity onPress={(name==''||calories==''||baseAmount==''||unit=='')?checkInput:saveCustomFood}>
+        <Text style={[styles.text, {color: theme === 'light' ?'#fff': '#2AE371'}]}>{language === 'vn' ? 'Lưu' : 'Save'}</Text>
+      </TouchableOpacity>}
+      </View>
+      <View style={{marginTop: 20}}>
+      <TextInput style={styles.textInput} placeholder={language === 'vn' ? 'Nhập tên món ăn' : 'Enter food name'} value={name} onChangeText={name=>setName(name)}/>
+      <TextInput style={styles.textInput} placeholder={language === 'vn' ? 'Nhập calories' : 'Enter calories'} value={calories} onChangeText={calories=>setCalories(calories)}/>
+      <TextInput style={styles.textInput} placeholder={language === 'vn' ? 'Nhập khối lượng phần ăn' : 'Enter serving size'} value={baseAmount} onChangeText={baseAmount=>setBaseAmount(baseAmount)}/>
+      <View style={{alignItems: 'center', flexDirection: 'row', marginStart: 20, borderColor: '#000', borderWidth: 1, borderRadius: 13, width: "90%"}}>
+        <Text style={{fontSize: 17, marginStart: 3}}>{language === 'vn' ? 'Chọn đơn vị: ' : 'Choose unit:'}</Text>
       <Picker
         selectedValue={unit}
-        style={{ height: 50, width: 150 }}
+        style={{ width: 170 }}
         onValueChange={(itemValue, itemIndex) => setUnit(itemValue)}
       >
         <Picker.Item label="g" value="g" />
@@ -146,28 +162,36 @@ const DetailFoodScreen = ({route, navigation}) => {
         <Picker.Item label="pieces" value="pieces" />
         <Picker.Item label="piece" value="piece" />
       </Picker>
-      
-      {(image == null)?<Image source={{uri: imageTemp}} style={styles.tabIcon}/> : <Image source={{uri: image.path}} style={styles.tabIcon}/>}
+      </View>
+      <View style={{alignItems: 'center', marginStart: 20, borderColor: '#000', borderWidth: 1, borderRadius: 13, width: "90%", marginTop: 10}}>
+      <View>
+        
+      {(image == null)?<Image source={{uri: imageTemp}} style={styles.image}/> : <Image source={{uri: image.path}} style={styles.image}/>}
                       
-                      {(image==null)?null:<TouchableOpacity onPress={()=> setImage(null)}>
-                        <Image style={styles.tabIcon} source={{uri: 'https://www.uidownload.com/files/240/295/614/delete-icon.jpg'}}></Image> 
-                        
-                      </TouchableOpacity>}
-                      
-                      <TouchableOpacity onPress={(event) => {
+        {(image==null)?null:<TouchableOpacity style={{position:'absolute', marginLeft: -15, marginTop: 5}} onPress={()=> setImage(null)}>
+          <Image style={styles.icon} source={{uri: 'https://static.vecteezy.com/system/resources/previews/018/887/462/original/signs-close-icon-png.png'}}></Image> 
+          
+        </TouchableOpacity>}
+        </View>    
+        <Text style={{fontSize: 13}}>{language === 'vn' ? 'Thêm hình ảnh' : 'Add image'}</Text>          
+          <TouchableOpacity style={{marginTop: 10, marginBottom: 5, marginLeft: 'auto', marginRight: 10}} onPress={(event) => {
             setPopoverAnchor(event.nativeEvent.target);
             setPopoverVisible(true);
             }}>
           <Icon
               name={'images'}
               style={{
-                marginLeft: 300,
+                
                 color: 'green',
-                fontSize: 50,
+                fontSize: 30,
                 alignSelf: 'center',
               }}
             /> 
+            
           </TouchableOpacity>
+          
+          </View>   
+          </View>
       <Popover
             isVisible={isPopoverVisible}
             onRequestClose={() => setPopoverVisible(false)}
@@ -187,11 +211,7 @@ const DetailFoodScreen = ({route, navigation}) => {
                 </TouchableOpacity>
             </View>
       </Popover>   
-      {(id)?<TouchableOpacity onPress={(name==''||calories==''||baseAmount==''||unit=='')?checkInput:updateCustomFood}>
-        <Text>{language === 'vn' ? 'Cập nhật' : 'Update'}</Text>
-      </TouchableOpacity>: <TouchableOpacity onPress={(name==''||calories==''||baseAmount==''||unit=='')?checkInput:saveCustomFood}>
-        <Text>{language === 'vn' ? 'Lưu' : 'Save'}</Text>
-      </TouchableOpacity>}
+      
       </View>
 
 )
@@ -201,33 +221,50 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center'
   },
-    text: {
-      fontSize: 18,
-      color: '#84D07D',
+  text: {
+    fontSize: 17
+  },
+    image: {
+      width: 100,
+      height: 100,
+      marginTop: 15,
+      
     },
-  
-    tabIcon: {
+    icon: {
       width: 25,
       height: 25,
-      alignItems: "center",
-      justifyContent: "center",
+      
     },
-    header: {
-      fontSize: 40,
-      color: '#000',
-      alignSelf: 'center'
-    },
+    
     popover:{
-        backgroundColor: 'white', 
-        borderRadius: 10, 
-        padding: 16, 
-        flexDirection: 'row', 
-        alignItems: 'center', 
-        justifyContent: 'space-between'
-      },
-      popoverItem:{
-          alignItems: 'center',
-          margin: 20
-      },
+    backgroundColor: 'white', 
+    borderRadius: 10, 
+    padding: 16, 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    justifyContent: 'space-between'
+    },
+    popoverItem:{
+        alignItems: 'center',
+        margin: 20
+    },
+    textInput: {
+      borderWidth: 1,
+      borderRadius: 10,
+      fontSize: 17,
+      height: 60,
+      width: "90%",
+      alignSelf: 'center',
+      marginBottom: 10
+    },
+    button: {
+      marginTop: 15,
+      borderRadius: 20,
+      width: '40%',
+      padding: 5,
+      backgroundColor: '#2AE371',
+      alignSelf: 'center'
+  },
+
   });
 export default DetailFoodScreen;
