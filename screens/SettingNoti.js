@@ -8,9 +8,11 @@ import auth from '@react-native-firebase/auth';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import LanguageContext from "../context/LanguageContext";
 import CheckBox from '@react-native-community/checkbox'
+import ThemeContext from "../context/ThemeContext";
 
 const SettingNoti = ({navigation}) => {
     const language = useContext(LanguageContext);
+    const theme = useContext(ThemeContext);
     const [isChecked1, setCheck1] = useState(false);
     const [isChecked2, setCheck2] = useState(false);
     const [isChecked3, setCheck3] = useState(false);
@@ -119,21 +121,21 @@ const SettingNoti = ({navigation}) => {
         docNotiSetting();
       },[])
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, {backgroundColor: theme === 'light'? '#FFFFFF' : '#000000'}]}>
         <View style={{height: 50, flexDirection: 'row', alignItems: 'center'}}>
           <TouchableOpacity
             onPress={() => { navigation.goBack();
             }}>
             <Icon
               name={'arrow-left'}
-              style={{color: 'black', fontSize: 30, padding: 5}}
+              style={{color: theme === 'light'? '#000' : '#fff', fontSize: 30, padding: 5}}
             />
           </TouchableOpacity>
-          <Text style={styles.textfont}>
+          <Text style={[styles.textfont, {color: theme === 'light'? '#000' : '#fff'}]}>
           {language === 'vn' ?"Cài đặt thông báo":"Notification Setting"}
           </Text>
         </View>
-        <Text style={[styles.textfont,{marginTop:20}]}>{language === 'vn' ?"Gửi tôi thông báo khi: ":"Send me a push notification when:"}</Text>
+        <Text style={[styles.textfont,{marginTop:20, color: theme === 'light'? '#000' : '#fff'}]}>{language === 'vn' ?"Gửi tôi thông báo khi: ":"Send me a push notification when:"}</Text>
         <View style={styles.row}>
             <Text style={[styles.textfont,{width:"90%"}]}> {language === 'vn' ?"Ai đó bắt đầu theo dõi tôi":"Someone starts following me"}</Text>    
             <CheckBox

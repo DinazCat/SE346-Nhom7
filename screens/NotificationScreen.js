@@ -7,12 +7,12 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import auth from '@react-native-firebase/auth';
 import NotificationForm from '../components/NotificationForm';
 import LanguageContext from "../context/LanguageContext";
-
+import ThemeContext from '../context/ThemeContext';
 const NotificationScreen = ({navigation}) => {
   const [noread, setnoread] = useState([]);
   const [read, setread] = useState([]);
   const language = useContext(LanguageContext);
-
+  const theme = useContext(ThemeContext);
   const getNotification = async () => {  
    firestore()
     .collection('Notification')
@@ -94,12 +94,12 @@ const NotificationScreen = ({navigation}) => {
     }
 }
     return(
-        <View style={styles.container}>
+        <View style={[styles.container, {backgroundColor: theme === 'light'? '#fff' : '#000'}]}>
             <View style={{height:50, flexDirection:'row', alignItems:'center'}}>
             <TouchableOpacity onPress={()=> {setMark(),navigation.goBack()}}>
-            <Icon name={'arrow-left'} style={{color: 'black', fontSize: 30, padding: 5}} />
+            <Icon name={'arrow-left'} style={{color: theme === 'light'? '#000' : '#fff', fontSize: 30, padding: 5}} />
           </TouchableOpacity>
-          <Text style={{fontSize: 20, flex: 1, marginLeft: 5, color:'black'}}>
+          <Text style={{fontSize: 20, flex: 1, marginLeft: 5, color:theme === 'light'? '#000' : '#fff'}}>
            Thông báo
           </Text>
             </View>
@@ -107,7 +107,7 @@ const NotificationScreen = ({navigation}) => {
             <ScrollView>
             {(noread.length != 0)?
             <> 
-            <Text style={styles.headertext}>{language === 'vn' ? 'Thông báo mới: ' : 'New Notifications'}</Text>
+            <Text style={[styles.headertext, {color: theme === 'light'? '#000' : '#fff'}]}>{language === 'vn' ? 'Thông báo mới: ' : 'New Notifications'}</Text>
             <FlatList
               data={noread}
               renderItem={({item, index}) => (
@@ -126,7 +126,7 @@ const NotificationScreen = ({navigation}) => {
             </> : null}
             {(read.length != 0)?
             <> 
-            <Text style={styles.headertext}>{language === 'vn' ? 'Thông báo đã đọc: ' : 'Read Notifications'}</Text>
+            <Text style={[styles.headertext, {color: theme === 'light'? '#000' : '#fff'}]}>{language === 'vn' ? 'Thông báo đã đọc: ' : 'Read Notifications'}</Text>
             <FlatList
               data={read}
               renderItem={({item, index}) => (
@@ -163,7 +163,6 @@ const styles = StyleSheet.create({
       marginLeft:5, 
       marginBottom:10, 
       marginTop:10,
-      color:'black',
       fontWeight:'600'
     }
 })

@@ -304,7 +304,7 @@ const PostCard = ({item, onUserPress, onCommentPress,onImagePress,deletePost,edi
                 }
               </View>}
            <TouchableOpacity style={styles.MenuButton} onPress={()=>setvisible(!visible)}>
-                <Icon name={'ellipsis-h'}  />
+                <Icon name={'ellipsis-h'}  color={theme === 'light'? '#000' : '#fff'}/>
             </TouchableOpacity>
           </View>
         )

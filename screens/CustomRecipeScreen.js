@@ -11,9 +11,11 @@ import { SwipeListView} from 'react-native-swipe-list-view';
 import { Picker } from '@react-native-picker/picker';
 import moment from "moment";
 import LanguageContext from "../context/LanguageContext";
+import ThemeContext from "../context/ThemeContext";
 
 const CustomRecipeScreen = () => {
   const language = useContext(LanguageContext)
+  const theme = useContext(ThemeContext)
   const {user} = useContext(AuthContext);
   const [textSearch, onChangeTextSearch] = useState('');//nhập gram
   const [visible, setVisible] = React.useState(false);//pop to add amount
@@ -109,14 +111,15 @@ const CustomRecipeScreen = () => {
   const navigation = useNavigation();
   
     return (
-      <View styles={{flex:1}}>
+      <View >
         <View style={{flexDirection:'row', marginTop: 10, marginHorizontal: 10, alignItems: 'center'}}>
-        <Icon name={'search'} size={25}/>
+        <Icon name={'search'} size={25} color={theme==='light'?'#000':'#fff'}/>
         <TextInput
-        style={[styles.textInput, {marginStart: 7, fontSize: 17}]}
-        placeholder={language === 'vn' ? 'Tìm kiếm món ăn' : 'Search food'}
+        style={[styles.textInput, {marginStart: 7, fontSize: 17, color: theme==='light'?"#000":"#fff", borderColor: theme==='light'?"#000":"#fff"}]}
+        placeholder={language === 'vn' ? 'Tìm kiếm công thức' : 'Search recipe'}
         value={textInput}
         onChangeText={onChangeTextInput}
+        placeholderTextColor={theme==='light'?'#BABABA':'#A3A3A3'}
         />
        
         </View >
@@ -171,6 +174,14 @@ const CustomRecipeScreen = () => {
                  previewOpenValue={-40}
                  previewOpenDelay={3000}
                  onRowDidOpen={onRowDidOpen}//đếm số lần mở ra mở vô
+                 ItemSeparatorComponent={()=> (
+                  <View
+      style={{
+        height: 2,
+        backgroundColor: "#fff",
+      }}
+    />
+                 )}
                  recalculateHiddenLayout={true}
            />
  </View>
@@ -226,7 +237,6 @@ rowBack: {
   flexDirection: 'row',
   justifyContent: 'space-between',
   paddingLeft: 15,
-  marginBottom: 3.1
 },
 backRightBtn: {
     alignItems: 'center',
@@ -251,8 +261,6 @@ backShare:{
 rowFront: {
   backgroundColor: '#CCC',
 justifyContent: 'center',
-paddingHorizontal: 5,
-marginBottom: 3,
 flex: 1
 },
   });

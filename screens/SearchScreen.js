@@ -7,6 +7,7 @@ import AvatarComponent from '../components/AvatarComponent';
 import PostCard from '../components/PostCard';
 import firestore from '@react-native-firebase/firestore';
 import LanguageContext from "../context/LanguageContext";
+import ThemeContext from "../context/ThemeContext";
 
 const SearchScreen = ({navigation}) => {
     const {user} = useContext(AuthContext);
@@ -22,7 +23,7 @@ const SearchScreen = ({navigation}) => {
     const [postfilter, setPostFilter] = useState(null);
     const [peoplefilter, setPeopleFilter] = useState(null);
     const language = useContext(LanguageContext);
-
+    const theme = useContext(ThemeContext)
     const getProfile = async() => {
         await firestore()
         .collection('users')
@@ -144,12 +145,12 @@ const SearchScreen = ({navigation}) => {
       }, []);
     
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {backgroundColor: theme === 'light'? '#fff' : '#000'}]}>
       <View style={styles.part1}>
         <TextInput
-          style={styles.textinput}
+          style={[styles.textinput, {color: theme==='light'?'#000':'#fff'}]}
           placeholder={language === 'vn' ? 'Tìm bài viết, bạn bè...' : 'Search posts, friends...'}
-          placeholderTextColor={'rgba(0,0,0,0.8)'}
+          placeholderTextColor={theme==='light'?'#BABABA':'#A3A3A3'}
           onChangeText={text => {filterPost(text), filterPeople(text)}}
         />
         <TouchableOpacity
@@ -160,7 +161,7 @@ const SearchScreen = ({navigation}) => {
       </View>
       {checkSearch == false ? (
         <>
-          <Text style={{marginTop: 50, marginLeft: 15}}>
+          <Text style={{marginTop: 50, marginLeft: 15, color: theme==='light'?'#000':'#fff'}}>
           {language === 'vn' ? 'Những người bạn có thể biết' : 'People you may know'}
           </Text>
           <ScrollView>
@@ -186,13 +187,13 @@ const SearchScreen = ({navigation}) => {
         <View style={{flexDirection:"column"}}>
           <View style={styles.Wrapper}>
             <TouchableOpacity  onPress={() => {setSelectedTab(0)}}>
-              <View style={[styles.Item ,{backgroundColor: selectedTab == 0 ? '#f545' : '#fff'}]}>
-                <Text style={styles.Title}>Bài viết</Text>
+              <View style={[styles.Item ,{backgroundColor: selectedTab == 0 ? '#CD2C2C' : '#fff'}]}>
+                <Text style={[styles.Title, {color: '#000'}]}>Bài viết</Text>
               </View>
             </TouchableOpacity>
             <TouchableOpacity  onPress={() => {setSelectedTab(1)}}>
-              <View style={[styles.Item,  {backgroundColor: selectedTab == 1 ? '#f545' : '#fff'}]}>
-                <Text style={styles.Title}>Mọi người</Text>
+              <View style={[styles.Item,  {backgroundColor: selectedTab == 1 ? '#CD2C2C' : '#fff'}]}>
+                <Text style={[styles.Title, {color: '#000'}]}>Mọi người</Text>
               </View>
             </TouchableOpacity>
           </View>

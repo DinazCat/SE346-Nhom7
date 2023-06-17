@@ -1,14 +1,15 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native'
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useContext} from 'react'
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import SendNoti from './SendNoti';
+import ThemeContext from '../context/ThemeContext';
 
 const AvatarComponent = ({item, onUserPress, onFollowsChange}) => {
 
   const [avatar, setAvatar] = useState();
   const [onFollowClick, setOnFollowClick] = useState(false);
-
+  const theme = useContext(ThemeContext)
   const getFollowStatus = followers => {
     if(followers == null) return false;
     let status = false;
@@ -146,7 +147,7 @@ const AvatarComponent = ({item, onUserPress, onFollowsChange}) => {
       <TouchableOpacity onPress={onUserPress}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <Image style={styles.UserImage} source={{uri: avatar ? avatar.userImg ? avatar.userImg :'https://cdn-icons-png.flaticon.com/512/1946/1946429.png' : 'https://cdn-icons-png.flaticon.com/512/1946/1946429.png'}}/>
-          <Text style={styles.UsernameText}>{avatar ? avatar.name : ''}</Text>
+          <Text style={[styles.UsernameText, {color: theme==='light'?'#000':'#fff'}]}>{avatar ? avatar.name : ''}</Text>
         </View>
       </TouchableOpacity>
       {(auth().currentUser.uid !== item) &&

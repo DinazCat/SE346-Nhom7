@@ -1,5 +1,5 @@
 import {View, Text, StyleSheet, TouchableOpacity, ScrollView} from "react-native";
-import React, {useState} from "react";
+import React, {useContext, useState} from "react";
 import StapleFoodScreen from "./StapleFoodScreen";
 import CustomRecipeScreen from "./CustomRecipeScreen";
 import CustomFoodScreen from "./CustomFoodScreen";
@@ -8,9 +8,13 @@ import moment from "moment";
 import AddWater from "./AddWater";
 import AddExerciseScreen from "./AddExerciseScreen";
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import ThemeContext from "../context/ThemeContext";
+import LanguageContext from "../context/LanguageContext";
 
 const AddScreen = ({route}) => {
   const navigation = useNavigation();
+  const theme = useContext(ThemeContext);
+  const language = useContext(LanguageContext);
   const [page, setPage] = useState(3);
   const date = route.params?.date || moment(new Date()).format('DD/MM/YYYY');
   const isNavigation = (route.params)? true:false;
@@ -18,58 +22,65 @@ const AddScreen = ({route}) => {
     navigation.goBack();
   }
     return(
-      <View style={{flex: isNavigation? 0.83: 0.8}}>
-        {isNavigation?<TouchableOpacity style={{marginLeft: 15, marginTop: 5}} onPress={back}>
-        <Icon name={'arrow-left'} size={25} />
+      <View style={{backgroundColor: theme==='light'?"#fff":"#000", borderColor: theme==='light'?"#000":"#fff", flex: 1}}>
+      <View style={{flex: isNavigation? 0.83: 0.81}}>
+        {isNavigation?<TouchableOpacity style={{marginLeft: 15, marginVertical: 5}} onPress={back}>
+        <Icon name={'arrow-left'} size={25} color={theme==='light'?"#000":"#fff"}/>
       </TouchableOpacity>:null}
-        <View style={{marginTop: 10}}>
+        <View style={{paddingTop: 10, backgroundColor: theme === 'light'? '#FFFFFF' : '#747474'}}>
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={{marginHorizontal: 10}}>
         <View style={styles.topTab}>
           <TouchableOpacity style={[styles.btn,
               {borderBottomColor: (page == 3)? '#2AE371' : null,
-              borderBottomWidth: (page == 3)? 2:0}
+              borderBottomWidth: (page == 3)? 3:0}
             ]}
             onPress={()=> setPage(3)}>
                 <Text style={[styles.textBtn,
-                {fontWeight: (page == 3)? 'bold': 'normal'}
-                ]}>Water</Text>
+                {fontWeight: (page == 3)? 'bold': 'normal',
+                color: theme==='light'?"#000":"#fff"
+                }  
+                ]}>{language === 'vn'? 'Nước': 'Water'}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={[styles.btn,
               {borderBottomColor: (page == 0)? '#2AE371' : null,
-              borderBottomWidth: (page == 0)? 2:0}
+              borderBottomWidth: (page == 0)? 3:0}
             ]}
             onPress={()=> setPage(0)}>
                 <Text style={[styles.textBtn,
-                {fontWeight: (page == 0)? 'bold': 'normal'}
-                ]}>Staple</Text>
+                
+                {fontWeight: (page == 0)? 'bold': 'normal',
+                color: theme==='light'?"#000":"#fff"}
+                ]}>{language === 'vn'? 'Món ăn chính': 'Staple'}</Text>
             </TouchableOpacity>
             
             <TouchableOpacity style={[styles.btn,
               {borderBottomColor: (page == 2)? '#2AE371' : null,
-              borderBottomWidth: (page == 2)? 2:0}
+              borderBottomWidth: (page == 2)? 3:0}
             ]} onPress={()=>setPage(2)}>
                 <Text style={[styles.textBtn,
-              
-              {fontWeight: (page == 2)? 'bold': 'normal'}
-              ]}>Custom Food</Text>
+              {fontWeight: (page == 2)? 'bold': 'normal',
+              color: theme==='light'?"#000":"#fff"}
+              ]}>{language === 'vn'? 'Món ăn tạo': 'Custom food'}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={[styles.btn,
               {borderBottomColor: (page == 1)? '#2AE371' : null,
-              borderBottomWidth: (page == 1)? 2:0}
+              borderBottomWidth: (page == 1)? 3:0}
             ]} 
             onPress={()=>setPage(1)}>
                 <Text style={[styles.textBtn,
-                {fontWeight: (page == 1)? 'bold': 'normal'}
-                ]}>Custom Recipe</Text>
+                {fontWeight: (page == 1)? 'bold': 'normal',
+                color: theme==='light'?"#000":"#fff"}
+                ]}>{language === 'vn'? 'Công thức tạo': 'Custom recipe'}</Text>
             </TouchableOpacity>
             <TouchableOpacity style={[styles.btn,
               {borderBottomColor: (page == 4)? '#2AE371' : null,
-              borderBottomWidth: (page == 4)? 2:0}
+              borderBottomWidth: (page == 4)? 3:0}
             ]} 
             onPress={()=> setPage(4)}>
                 <Text style={[styles.textBtn,
-                {fontWeight: (page == 4)? 'bold': 'normal'}
-                ]}>Exercise</Text>
+                {fontWeight: (page == 4)? 'bold': 'normal',
+                color: theme==='light'?"#000":"#fff"}
+                ]}>{language === 'vn'? 'Thể dục': 'Exercise'}</Text>
             </TouchableOpacity>
             </View>
          </ScrollView>
@@ -91,7 +102,7 @@ const AddScreen = ({route}) => {
         }
       })()}
             
-        
+            </View>
         </View>
     )
 }

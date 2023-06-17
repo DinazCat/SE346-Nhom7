@@ -9,7 +9,7 @@ import { AuthContext } from '../navigation/AuthProvider';
 import { Picker } from '@react-native-picker/picker';
 import Popover from 'react-native-popover-view';
 import LanguageContext from "../context/LanguageContext";
-
+import ThemeContext from '../context/ThemeContext';
 export default EditPostScreen= function({navigation,route}) {
     const [image,setimage] = useState(route.params.item.postImg);
     const [imageUrl,setimageUrl] = useState([]);
@@ -34,7 +34,7 @@ export default EditPostScreen= function({navigation,route}) {
     const starImgCorner = "https://raw.githubusercontent.com/tranhonghan/images/main/star_corner.png";
     const {user} = useContext(AuthContext);
     const language = useContext(LanguageContext);
-
+    const theme = useContext(ThemeContext)
     const TextChangeFoodName = (Text)=>{setFoodName(Text)};
     const TextChangeIngredient = (text,index)=>{
       const i = Ingredient.findIndex(item => item.id === index);
@@ -340,7 +340,7 @@ const [editI, seteditI] = useState([...Ingredient]);
    
       
     return (
-      <View style={styles.container}>
+      <View style={[styles.container, {backgroundColor: theme === 'light'? '#fff' : '#000'}]}>
         <View
           style={{
             // marginTop: 50,
@@ -386,57 +386,59 @@ const [editI, seteditI] = useState([...Ingredient]);
               fontSize: 18,
               fontWeight: '700',
               alignSelf: 'center',
+              color: theme === 'light'? '#000' : '#fff'
             }}>
             {language === 'vn' ? '1. Thông tin cơ bản về món ăn' : 'Step 1. Something about food'}
           </Text>
         </View>
-           <View style={styles.TextBox}>
+          <View style={[styles.TextBox, {borderColor:theme === 'light'? '#000' : '#fff'}]}>
            <Icon name={"pencil-alt"} style={{ color: "#FFCC00", fontSize: 30, marginLeft:340,position:"absolute" }} />
            <ScrollView>
-             <Text style={[styles.TextStyle,{marginTop:20}]}>{language === 'vn' ? 'Tên món ăn: ' : 'Food name: '}</Text>
+             <Text style={[styles.TextStyle,{marginTop:20, color: theme === 'light'? '#000' : '#fff'}]}>{language === 'vn' ? 'Tên món ăn: ' : 'Food name: '}</Text>
            <TextInput
              style={{fontSize: 16, 
                 marginLeft: 3, 
-                borderBottomColor:'black', 
+                borderBottomColor:theme === 'light'? '#000' : '#fff', 
                 alignSelf:'center',
+                color: theme === 'light'? '#000' : '#fff',
                 borderBottomWidth:1, 
                 width:"90%", }}
              value={FoodName}
              onChangeText={TextChangeFoodName}
            />
-            <Text style={[styles.TextStyle,{marginTop:20, width: 150}]}>{language === 'vn' ? 'Độ khó' : 'Difficulty level'}</Text>
+            <Text style={[styles.TextStyle,{marginTop:20, width: 150, color: theme === 'light'? '#000' : '#fff'}]}>{language === 'vn' ? 'Độ khó' : 'Difficulty level'}</Text>
             <CustomRatingBar/>
             <View style={styles.InputBox}>
-            <Text  style={[styles.TextStyle,{width: 120}]}>{language === 'vn' ? 'Tổng phần: ' : 'Total: '}</Text>
+            <Text style={[styles.TextStyle,{marginTop:20, width: 150, color: theme === 'light'? '#000' : '#fff'}]}>{language === 'vn' ? 'Tổng phần: ' : 'Total: '}</Text>
             <TextInput
-             style={styles.InputStyle}
+             style={[styles.InputStyle,{color: theme === 'light'? '#000' : '#fff',borderBottomColor:theme === 'light'? '#000' : '#fff'}]}
              value={Total}
              onChangeText={TextChangetotal}
            />
-            <Text style={{fontSize: 16}}>servings</Text>
+            <Text style={{fontSize: 16, color: theme === 'light'? '#000' : '#fff'}}>servings</Text>
             </View>
             
             <View style={styles.InputBox}>
-            <Text style={[styles.TextStyle,{width: 120}]}>Calories</Text>
+            <Text style={[styles.TextStyle,{marginTop:20, width: 150, color: theme === 'light'? '#000' : '#fff'}]}>Calories</Text>
            <TextInput
-             style={styles.InputStyle}
+             style={[styles.InputStyle,{color: theme === 'light'? '#000' : '#fff',borderBottomColor:theme === 'light'? '#000' : '#fff'}]}
              value={Cal}
              onChangeText={TextChangecal}
            />
-            <Text style={{fontSize: 16}}>cals/serving</Text>
+            <Text style={{fontSize: 16, color: theme === 'light'? '#000' : '#fff'}}>cals/serving</Text>
             </View>
             <View style={styles.InputBox}>
-            <Text style={[styles.TextStyle,{width: 120}]}>{language === 'vn' ? 'Thời gian chuẩn bị: ' : 'Prep time: '}</Text>
+            <Text style={[styles.TextStyle,{marginTop:20, width: 150, color: theme === 'light'? '#000' : '#fff'}]}>{language === 'vn' ? 'Thời gian chuẩn bị: ' : 'Prep time: '}</Text>
            <TextInput
-             style={styles.InputStyle}
+             style={[styles.InputStyle,{color: theme === 'light'? '#000' : '#fff',borderBottomColor:theme === 'light'? '#000' : '#fff'}]}
              value={Prep}
              onChangeText={TextChangeprep}
            />
             </View>
             <View style={styles.InputBox}>
-            <Text style={[styles.TextStyle,{width: 120}]}>{language === 'vn' ? 'Thời gian nấu: ' : 'Cooking time: '}</Text>
+            <Text style={[styles.TextStyle,{marginTop:20, width: 150, color: theme === 'light'? '#000' : '#fff'}]}>{language === 'vn' ? 'Thời gian nấu: ' : 'Cooking time: '}</Text>
            <TextInput
-             style={styles.InputStyle}
+             style={[styles.InputStyle,{color: theme === 'light'? '#000' : '#fff',borderBottomColor:theme === 'light'? '#000' : '#fff'}]}
              value={Cookingtime}
              onChangeText={TextChangecooking}
            />
@@ -463,14 +465,15 @@ const [editI, seteditI] = useState([...Ingredient]);
               fontSize: 18,
               fontWeight: '700',
               alignSelf: 'center',
+              color:theme === 'light'? '#000' : '#fff'
             }}>
             {language === 'vn' ? '2. Cách làm' : 'Step 2. How to make food?'}
           </Text>
         </View>
-           <View style={styles.TextBox}>
+           <View style={[styles.TextBox, {borderColor:theme === 'light'? '#000' : '#fff'}]}>
             <ScrollView>
             <View style={{flexDirection:'row'}}>
-            <Text style={[styles.TextStyle,{marginTop:20}]}>{language === 'vn' ? 'Các nguyên liệu cần có?' : 'What ingredients are there?'}</Text>
+            <Text style={[styles.TextStyle,{marginTop:20, color:theme === 'light'? '#000' : '#fff'}]}>{language === 'vn' ? 'Các nguyên liệu cần có?' : 'What ingredients are there?'}</Text>
            <TouchableOpacity onPress={()=>{
              const newData = [
                 ...Ingredient,
@@ -495,24 +498,24 @@ const [editI, seteditI] = useState([...Ingredient]);
         renderItem={({item})=><Item itemI={item} />}
         keyExtractor={(item, index) => index.toString()}
       />
-       <Text style={[styles.TextStyle,{marginTop:20}]}>{language === 'vn' ? 'Công thức làm món ăn này là gì?' : 'Give me the recipe of your food'}</Text>
+       <Text style={[styles.TextStyle,{marginTop:20, color:theme === 'light'? '#000' : '#fff'}]}>{language === 'vn' ? 'Công thức làm món ăn này là gì?' : 'Give me the recipe of your food'}</Text>
            <TextInput
            multiline={true}
              style={{fontSize: 16, 
                 marginLeft: 3, 
-                borderBottomColor:'black', 
+                borderBottomColor:theme === 'light'? '#000' : '#fff',  
                 alignSelf:'center',
                 borderBottomWidth:1, 
                 width:"90%", }}
                 value={Making}
              onChangeText={TextChangeMaking}
            />
-           <Text style={[styles.TextStyle,{marginTop:20}]}>{language === 'vn' ? 'Đôi lời muốn nói?' : 'Do you want to say something?'}</Text>
+           <Text style={[styles.TextStyle,{marginTop:20, color:theme === 'light'? '#000' : '#fff'}]}>{language === 'vn' ? 'Đôi lời muốn nói?' : 'Do you want to say something?'}</Text>
            <TextInput
            multiline={true}
              style={{fontSize: 16, 
                 marginLeft: 3, 
-                borderBottomColor:'black', 
+                borderBottomColor:theme === 'light'? '#000' : '#fff', 
                 alignSelf:'center',
                 borderBottomWidth:1, 
                 width:"90%", }}
@@ -539,41 +542,42 @@ const [editI, seteditI] = useState([...Ingredient]);
               fontSize: 18,
               fontWeight: '700',
               alignSelf: 'center',
+              color:theme === 'light'? '#000' : '#fff'
             }}>
             {language === 'vn' ? '3. Chọn hashtag cho bài viết' : 'Step 3.Choose hashtags'}
           </Text>
         </View>
-           <View style={styles.TextBox}>
+        <View style={[styles.TextBox, {borderColor:theme === 'light'? '#000' : '#fff'}]}>
          { (loading)&&<ScrollView>
-            <Text style={[styles.TextStyle,{marginTop:20}]}>Meal Type</Text>
+            <Text style={[styles.TextStyle,{marginTop:20, color:theme === 'light'? '#000' : '#fff'}]}>Meal Type</Text>
             <FlatList
         data={mealtype}
         renderItem={({item})=><Hashtags each={item} />}
         keyExtractor={(item, index) => index.toString()}
         numColumns={3}
       />
-            <Text style={[styles.TextStyle,{marginTop:20}]}>Cooking Style</Text>
+            <Text style={[styles.TextStyle,{marginTop:20, color:theme === 'light'? '#000' : '#fff'}]}>Cooking Style</Text>
             <FlatList
         data={cookingstyle}
         renderItem={({item})=><Hashtags each={item} />}
         keyExtractor={(item, index) => index.toString()}
         numColumns={3}
       />
-            <Text style={[styles.TextStyle,{marginTop:20}]}>Course</Text>
+            <Text style={[styles.TextStyle,{marginTop:20, color:theme === 'light'? '#000' : '#fff'}]}>Course</Text>
             <FlatList
         data={course}
         renderItem={({item})=><Hashtags each={item} />}
         keyExtractor={(item, index) => index.toString()}
         numColumns={3}
       />
-            <Text style={[styles.TextStyle,{marginTop:20}]}>Main Ingredient</Text>
+            <Text style={[styles.TextStyle,{marginTop:20, color:theme === 'light'? '#000' : '#fff'}]}>Main Ingredient</Text>
             <FlatList
         data={mainingredient}
         renderItem={({item})=><Hashtags each={item} />}
         keyExtractor={(item, index) => index.toString()}
         numColumns={3}
       />
-            <Text style={[styles.TextStyle,{marginTop:20}]}>Diet Type</Text>
+            <Text style={[styles.TextStyle,{marginTop:20, color:theme === 'light'? '#000' : '#fff'}]}>Diet Type</Text>
             <FlatList
         data={diettype}
         renderItem={({item})=><Hashtags each={item} />}
@@ -600,7 +604,7 @@ const [editI, seteditI] = useState([...Ingredient]);
                   marginTop: 150,
                 }}
               />
-              <Text style={{alignSelf: 'center'}}>
+               <Text style={{alignSelf: 'center', color:theme === 'light'? '#000' : '#fff'}}>
               {language === 'vn' ? 'Thêm hình ảnh' : 'Add images'}
               </Text>
             </View>

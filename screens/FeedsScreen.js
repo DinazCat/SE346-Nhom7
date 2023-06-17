@@ -319,69 +319,69 @@ export default function FeedsScreen({navigation}) {
   }
 
   renderContent = () => (
-    <View style={styles.panel}>
+    <View style={[styles.panel, {backgroundColor: theme === 'light'? '#fff' : '#4E4E4E'}]}>
       <View style={{alignItems: 'center'}}>
-        <Text style={styles.panelSubtitle}>{language === 'vn' ? 'Lọc bằng' : 'Filter by'}</Text>
+        <Text style={[styles.panelSubtitle, {color: theme === 'light'? '#000' : '#fff'}]}>{language === 'vn' ? 'Lọc bằng' : 'Filter by'}</Text>
       </View>    
       <View style={{height: 510, borderColor: '#DDD', borderBottomWidth: 1, borderTopWidth: 1}}>
           <ScrollView>
-            <Text style={[styles.TextStyle,{marginTop: 15}]}>Post</Text>
+            <Text style={[styles.TextStyle,{marginTop: 15, color: theme === 'light'? '#000' : '#fff'}]}>Post</Text>
           <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
             <TouchableOpacity
               style={styles.panelButton}
               onPress={() => {sheetRef.current.snapTo(1); setrefreshing(true); filterPosts(1)}}>
-              <Text style={styles.panelButtonTitle}>Newest</Text>
+              <Text style={[styles.panelButtonTitle, {color: theme === 'light'? '#000' : '#fff'}]}>Newest</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.panelButton}
               onPress={() => { sheetRef.current.snapTo(1); setrefreshing(true); filterPosts(2)}}>
-              <Text style={styles.panelButtonTitle}>Hottest</Text>
+              <Text style={[styles.panelButtonTitle, {color: theme === 'light'? '#000' : '#fff'}]}>Hottest</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.panelButton}
               onPress={() => {sheetRef.current.snapTo(1); setrefreshing(true); filterPosts(3)}}>
-              <Text style={styles.panelButtonTitle}>Liked</Text>
+              <Text style={[styles.panelButtonTitle, {color: theme === 'light'? '#000' : '#fff'}]}>Liked</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.panelButton}
               onPress={() => {sheetRef.current.snapTo(1); setrefreshing(true); filterPosts(4)}}>
-              <Text style={styles.panelButtonTitle}>Commented</Text>
+              <Text style={[styles.panelButtonTitle, {color: theme === 'light'? '#000' : '#fff'}]}>Commented</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.panelButton}
               onPress={() => {sheetRef.current.snapTo(1); setrefreshing(true); filterPosts(5)}}>
-              <Text style={styles.panelButtonTitle}>Following</Text>
+              <Text style={[styles.panelButtonTitle, {color: theme === 'light'? '#000' : '#fff'}]}>Following</Text>
             </TouchableOpacity>
           </View>
-          <Text style={[styles.TextStyle,{marginTop:20}]}>Meal Type</Text>
+          <Text style={[styles.TextStyle,{marginTop:20, color: theme === 'light'? '#000' : '#fff'}]}>Meal Type</Text>
           <FlatList
             data={mealtype}
             renderItem={({item})=><Hashtags each={item} />}
             keyExtractor={(item, index) => index.toString()}
             numColumns={3}
           />
-          <Text style={[styles.TextStyle,{marginTop:20}]}>Cooking Style</Text>
+          <Text style={[styles.TextStyle,{marginTop:20, color: theme === 'light'? '#000' : '#fff'}]}>Cooking Style</Text>
           <FlatList
             data={cookingstyle}
             renderItem={({item})=><Hashtags each={item} />}
             keyExtractor={(item, index) => index.toString()}
             numColumns={3}
           />
-          <Text style={[styles.TextStyle,{marginTop:20}]}>Course</Text>
+          <Text style={[styles.TextStyle,{marginTop:20, color: theme === 'light'? '#000' : '#fff'}]}>Course</Text>
           <FlatList
             data={course}
             renderItem={({item})=><Hashtags each={item} />}
             keyExtractor={(item, index) => index.toString()}
             numColumns={3}
           />
-          <Text style={[styles.TextStyle,{marginTop:20}]}>Main Ingredient</Text>
+          <Text style={[styles.TextStyle,{marginTop:20, color: theme === 'light'? '#000' : '#fff'}]}>Main Ingredient</Text>
           <FlatList
             data={mainingredient}
             renderItem={({item})=><Hashtags each={item} />}
             keyExtractor={(item, index) => index.toString()}
             numColumns={3}
           />
-          <Text style={[styles.TextStyle,{marginTop:20}]}>Diet Type</Text>
+          <Text style={[styles.TextStyle,{marginTop:20, color: theme === 'light'? '#000' : '#fff'}]}>Diet Type</Text>
           <FlatList
             data={diettype}
             renderItem={({item})=><Hashtags each={item} />}
@@ -408,7 +408,7 @@ export default function FeedsScreen({navigation}) {
   );
 
   renderHeader = () => (
-    <View style={styles.header}>
+    <View style={[styles.header, {backgroundColor: theme === 'light'? '#fff' : '#838383'}]}>
       <View style={styles.panelHeader}>
         <View style={styles.panelHandle} />
       </View>
@@ -538,7 +538,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     paddingTop: 20,
     width: '100%',
-    marginLeft: 10,
   },
   header: {
     backgroundColor: '#fff',
@@ -560,7 +559,6 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     backgroundColor: '#00000040',
     marginBottom: 10,
-    marginLeft: 20
   },
   panelSubtitle: {
     fontSize: 18,

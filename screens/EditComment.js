@@ -3,7 +3,7 @@ import React, {useEffect, useContext, useState, useRef} from 'react';
 import firestore from '@react-native-firebase/firestore';
 import {useRoute} from '@react-navigation/native';
 import LanguageContext from "../context/LanguageContext";
-
+import ThemeContext from '../context/ThemeContext';
 const EditComment = ({navigation}) => {
     const route = useRoute();
     const item =  route.params.item;
@@ -11,7 +11,7 @@ const EditComment = ({navigation}) => {
     const onCommentUpdated = route.params?.onCommentUpdated;
     const [comment, setComment] = useState(item.comment);
     const language = useContext(LanguageContext);
-    
+    const theme = useContext(ThemeContext);
     handleSave = () => {
       let temComment = {
         userId: item.userId,
@@ -47,7 +47,7 @@ const EditComment = ({navigation}) => {
           });
     }
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {backgroundColor: theme === 'light'? '#FFFFFF' : '#000000'}]}>
         <View style={styles.cmtContainer}>
             <Image
                 source={{uri: item.profile ? item.profile : 'https://cdn-icons-png.flaticon.com/512/1946/1946429.png'}}
@@ -71,7 +71,7 @@ const EditComment = ({navigation}) => {
             </TouchableOpacity>  
             <TouchableOpacity onPress={() => navigation.goBack()}
                 style={styles.buttonContainer}>
-                <Text style={styles.buttontext}>{language === 'vn' ? 'Hủy' : 'Cancel'}</Text>
+                <Text style={[styles.buttontext, {color: theme === 'light'? '#000' : '#fff'}]}>{language === 'vn' ? 'Hủy' : 'Cancel'}</Text>
             </TouchableOpacity>  
         </View>         
     </View>

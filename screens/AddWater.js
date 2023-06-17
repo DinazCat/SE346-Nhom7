@@ -4,12 +4,14 @@ import firestore from '@react-native-firebase/firestore';
 import { useNavigation } from "@react-navigation/native";
 import { AuthContext } from '../navigation/AuthProvider';
 import LanguageContext from "../context/LanguageContext";
+import ThemeContext from "../context/ThemeContext";
 
 const AddWater = (props) => {
     const navigation = useNavigation();
     const{user} = useContext(AuthContext);
-    const[water, setWater] = useState();
+    const[water, setWater] = useState('');
     const language = useContext(LanguageContext);
+    const theme = useContext(ThemeContext)
     const saveWater = async() => {
         if (water==""){
             //just space
@@ -28,15 +30,18 @@ const AddWater = (props) => {
         }
     }
     return (
-        <View style={styles.container}>
+        <View style={[styles.container]}>
                 <Image style={styles.img} source={require( '../assets/water_.png')}/>
                 <View style={{flexDirection: 'row', marginStart: 46}}>
-                <TextInput style = {styles.textInput} value={water} onChangeText={water=> setWater(water)}/>
-                <Text style={styles.text}>ml</Text>
+                <TextInput 
+                placeholder={language === 'vn' ? 'Nhập lượng nước' : 'Enter amount of water'}
+                placeholderTextColor={theme==='light'?'#BABABA':'#A3A3A3'}
+                style = {[styles.textInput, {color: theme==='light'?"#000":"#fff", borderColor: theme==='light'?"#000":"#fff"}]} value={water} onChangeText={water=> setWater(water)}/>
+                <Text style={[styles.text, {color: theme==='light'?"#000":"#fff"}]}>ml</Text>
                 </View>
             <TouchableOpacity style={styles.button}
             onPress={saveWater}>
-                <Text style={styles.text}> {language === 'vn' ? 'Thêm' : 'Add'}</Text>
+                <Text style={[styles.text, {color: "#fff"}]}> {language === 'vn' ? 'Thêm' : 'Add'}</Text>
             </TouchableOpacity>
         </View>
     )
@@ -61,7 +66,7 @@ const styles = StyleSheet.create({
     textInput: {
         borderWidth: 3,
         borderRadius: 10,
-        width: "40%",
+       
         height: 50,
     },
     button: {

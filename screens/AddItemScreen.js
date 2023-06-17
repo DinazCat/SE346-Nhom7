@@ -7,18 +7,21 @@ import CustomFoodScreen from "./CustomFoodScreen";
 import moment from "moment";
 import AddWater from "./AddWater";
 import AddExerciseScreen from "./AddExerciseScreen";
+import ThemeContext from "../context/ThemeContext";
 
 const AddItemScreen = ({route, navigation}) => {
   const page = route.params?.page;
+  const theme = useContext(ThemeContext)
   const date = route.params?.date || moment(new Date()).format('DD/MM/YYYY');
   const isNavigation = (route.params)? true:false;
   const back = () => {
     navigation.goBack();
   }
     return(
-       <View style={{flex: 0.97}}> 
+      <View style={{backgroundColor: theme==='light'?"#fff":"#000", borderColor: theme==='light'?"#000":"#fff", flex: 1}}>
+       <View style={{flex: 0.9}}> 
         <TouchableOpacity style={{marginLeft: 15, marginTop: 5}} onPress={back}>
-        <Icon name={'arrow-left'} size={25} />
+        <Icon name={'arrow-left'} size={25} color={theme==='light'?"#000":"#fff"}/>
       </TouchableOpacity>
             {(() => {
         switch (page) {
@@ -37,6 +40,7 @@ const AddItemScreen = ({route, navigation}) => {
         }
       })()}
             
+        </View>
         </View>
     )
 }

@@ -42,13 +42,14 @@ const HomeScreen = ({navigation}) => {
   }
   
   useEffect(() => {
-    getWater(moment(new Date()).format('DD/MM/YYYY'))
+    getBaseGoal(new Date());
     getExercise(moment(new Date()).format('DD/MM/YYYY'))
+    getWater(moment(new Date()).format('DD/MM/YYYY'))
     getBreakfast(moment(new Date()).format('DD/MM/YYYY'))
     getLunch(moment(new Date()).format('DD/MM/YYYY'))
     getDinner(moment(new Date()).format('DD/MM/YYYY'))
     getSnacks(moment(new Date()).format('DD/MM/YYYY'))
-    getBaseGoal(new Date());
+    
     //setRemaining(parseInt(baseGoal)+parseInt(exercise)-parseInt(breakfast)- parseInt(snacks)- parseInt(lunch)-parseInt(dinner));
    }, []);
   
@@ -216,24 +217,25 @@ const HomeScreen = ({navigation}) => {
      let newDate = new Date();
      if (newDate.getDate() == tempDate.getDate() && newDate.getMonth() == tempDate.getMonth() && tempDate.getFullYear() == newDate.getFullYear()){
         setTime('Today');
-        getWater(moment(new Date()).format('DD/MM/YYYY'))
+        getBaseGoal(new Date());
         getExercise(moment(new Date()).format('DD/MM/YYYY'))
+        getWater(moment(new Date()).format('DD/MM/YYYY'))
         getBreakfast(moment(new Date()).format('DD/MM/YYYY'))
         getLunch(moment(new Date()).format('DD/MM/YYYY'))
         getDinner(moment(new Date()).format('DD/MM/YYYY'))
         getSnacks(moment(new Date()).format('DD/MM/YYYY'))
-        getBaseGoal(new Date());
         
      }
     else {
+      
       setTime(moment(new Date(currentDate)).format('DD/MM/YYYY'));
-      getWater(moment(new Date(currentDate)).format('DD/MM/YYYY'))
+      getBaseGoal(new Date(currentDate));
       getExercise(moment(new Date(currentDate)).format('DD/MM/YYYY'))
+      getWater(moment(new Date(currentDate)).format('DD/MM/YYYY'))
       getBreakfast(moment(new Date(currentDate)).format('DD/MM/YYYY'))
       getLunch(moment(new Date(currentDate)).format('DD/MM/YYYY'))
       getDinner(moment(new Date(currentDate)).format('DD/MM/YYYY'))
       getSnacks(moment(new Date(currentDate)).format('DD/MM/YYYY'))
-      getBaseGoal(new Date(currentDate));
     }
  }
  

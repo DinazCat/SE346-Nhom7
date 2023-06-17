@@ -9,11 +9,12 @@ import { Add } from "../store/CustomRecipeSlice";
 import { useSelector } from "react-redux";
 import { Picker } from '@react-native-picker/picker';
 import LanguageContext from "../context/LanguageContext";
+import ThemeContext from "../context/ThemeContext";
 
 import PopFoodAmount from "./PopFoodAmount";
 const stapleFood = [
   {
-    image: 'https://cdn-icons-png.flaticon.com/512/651/651589.png', 
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Bowl-of-rice_icon.svg/948px-Bowl-of-rice_icon.svg.png', 
     name: 'Rice', 
     calories:'130', unit:'bowl', baseAmount:'1'
   },
@@ -32,11 +33,11 @@ const stapleFood = [
       name: 'Grapefruit white raw', 
       calories: '78', unit:'fruit', baseAmount:'1'
       },
-  {
-    image: 'https://freepngimg.com/save/137644-currant-berries-black-fruit-free-transparent-image-hq/1123x1123', 
-    name: 'currants european black raw', 
-    calories: '6', unit:'g', baseAmount:'10'
-    },
+      {
+        image: 'https://cdn-icons-png.flaticon.com/512/3068/3068002.png', 
+        name: 'Seaweed Nori dried', 
+        calories: '5', unit:'sheet', baseAmount:'1'
+        },
   {
     image: 'https://target.scene7.com/is/image/Target/GUEST_0194a7b1-abe7-4df9-b655-2d08529e0206?wid=488&hei=488&fmt=pjpeg', 
     name: 'Carbonated ginger ale', 
@@ -68,7 +69,7 @@ const stapleFood = [
     calories: '6', unit:'g', baseAmount:'10'
     },
   {
-    image: 'https://static.thenounproject.com/png/348935-200.png', 
+    image: 'https://png.pngitem.com/pimgs/s/72-723093_bread-food-bun-kaiser-roll-hard-dough-bread.png', 
     name: 'Rolls dinner', 
     calories: '87', unit:'roll', baseAmount:'1'
     },
@@ -131,6 +132,7 @@ const stapleFood = [
 
 const IngredientScreen = ({route}) => {
   const language = useContext(LanguageContext);
+  const theme = useContext(ThemeContext)
   const {user} = useContext(AuthContext);
   const navigation = useNavigation();
   //lưu dữ liệu đồ ăn
@@ -178,17 +180,18 @@ const IngredientScreen = ({route}) => {
 
   
   return (
-    <View styles={{flex:1}}>
+    <View style={{backgroundColor: theme==='light'?"#fff":"#000", borderColor: theme==='light'?"#000":"#fff", flex: 1}}>
       <TouchableOpacity style={{marginLeft: 15, marginTop: 5}} onPress={back}>
-        <Icon name={'arrow-left'} size={25} />
+        <Icon name={'arrow-left'} size={25} color={theme==='light'?'#000':'#fff'}/>
       </TouchableOpacity>
       <View style={{flexDirection:'row', marginTop: 5, marginHorizontal: 15, alignItems: 'center'}}>
-        <Icon name={'search'} size={25}/>
+        <Icon name={'search'} size={25} color={theme==='light'?'#000':'#fff'}/>
         <TextInput
         value={textInput}
-        style={[styles.textInput, {marginStart: 7, fontSize: 17}]}
+        style={[styles.textInput, {marginStart: 7, fontSize: 17, color: theme==='light'?"#000":"#fff", borderColor: theme==='light'?"#000":"#fff"}]}
         onChangeText={onChangeTextInput}
-        placeholder={language === 'vn' ? 'Tìm kiếm món ăn' : 'Search food'}
+        placeholder={language === 'vn' ? 'Tìm nguyên liệu' : 'Search ingredient'}
+        placeholderTextColor={theme==='light'?'#000':'#fff'}
         />
         </View>
         <PopFoodAmount visible={visible}>
@@ -220,17 +223,17 @@ const IngredientScreen = ({route}) => {
         <Text style={styles.text}>{language === 'vn' ? 'Thêm' : 'Add'}</Text>
         </TouchableOpacity>
       </PopFoodAmount>
-        <View style={{marginTop: 10, marginBottom: 170}}>
+        
           <FlatList 
               data={stapleFood.filter(item=>item.name.toLowerCase().includes(textInput.toLowerCase()))
               }
               renderItem={({item}) => (
                 <TouchableOpacity  onPress={() => ShowAddAmount(item)}>
-                  <View style={{alignItems: 'center', flexDirection: 'row', marginHorizontal: 15, marginVertical: 3, borderBottomWidth: 2, borderBottomColor: '#000000', paddingBottom: 5}}>
+                  <View style={{alignItems: 'center', flexDirection: 'row', marginHorizontal: 15, marginVertical: 3, paddingBottom: 5}}>
                       <Image source = {{uri: item.image}} style={{width: 40,
         height: 40,
         resizeMode: 'stretch'}}/>
-                      <Text style={{fontSize: 18, width: 200, marginStart: 3}}>{item.name}</Text>
+                      <Text style={{fontSize: 18, width: 200, marginStart: 3, color: theme==='light'?"#000":"#fff"}}>{item.name}</Text>
                       <View style={{marginLeft:'auto'}}>
                       <Text style={{marginLeft:'auto', fontSize: 16, color: '#2960D2' }}>{item.calories} cals</Text>
                       <Text style={{marginLeft:'auto', fontSize: 16, color: '#2960D2' }}>{item.baseAmount} {item.unit}</Text>
@@ -240,9 +243,17 @@ const IngredientScreen = ({route}) => {
                 </TouchableOpacity>
               )}
               keyExtractor={(item, index) => index.toString()}
+              ItemSeparatorComponent={()=> (
+                <View
+    style={{
+      height: 2,
+      backgroundColor: theme==='light'?"#000":"#fff",
+      marginHorizontal: 15
+    }}
+  />
+               )}
           />
           </View>
-      </View>
 
 )
 }

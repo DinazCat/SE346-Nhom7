@@ -8,7 +8,7 @@ import storage from '@react-native-firebase/storage';
 import auth from '@react-native-firebase/auth';
 import SendNoti from '../components/SendNoti';
 import LanguageContext from "../context/LanguageContext";
-
+import ThemeContext from '../context/ThemeContext';
 const ProfileScreen = ({navigation, route}) => {
   const {user} = useContext(AuthContext);
   const {userId} = route.params;
@@ -19,7 +19,7 @@ const ProfileScreen = ({navigation, route}) => {
   const [profileData, setProfileData] = useState(null);
   const [selectedTab, setSelectedTab] = useState(0);
   const language = useContext(LanguageContext);
-
+  const theme = useContext(ThemeContext)
   const fetchPosts = async()=>{
     try{
       const list = [];
@@ -300,7 +300,7 @@ const ProfileScreen = ({navigation, route}) => {
    
   }
   return (
-    <View style={{flex: 1, backgroundColor: '#fff'}}>
+    <View style={{backgroundColor: theme === 'light'? '#fff' : '#000', flex: 1}}>
       <ScrollView
         style={styles.container}
         contentContainerStyle={{justifyContent: 'center', alignItems: 'center'}}
@@ -309,7 +309,7 @@ const ProfileScreen = ({navigation, route}) => {
           style={styles.userImg}
           source={{uri: profileData ? profileData.userImg ? profileData.userImg : 'https://cdn-icons-png.flaticon.com/512/1946/1946429.png' : 'https://cdn-icons-png.flaticon.com/512/1946/1946429.png'}}
         />
-        <Text style={styles.userName}>{profileData ? profileData.name : ''}</Text>
+        <Text style={[styles.userName, {color: theme === 'light'? '#000' : '#fff'}]}>{profileData ? profileData.name : ''}</Text>
         <Text multiline style={styles.aboutUser}>
         {profileData ? profileData.about || (language === 'vn' ? 'Không có thông tin khác.' : 'No details added.') : ''}
         </Text>
@@ -349,7 +349,7 @@ const ProfileScreen = ({navigation, route}) => {
             </View>
           </TouchableOpacity>  
           <TouchableOpacity onPress={() => {setSelectedTab(2)}}>
-            <View style={[styles.userInfoItem, {backgroundColor: selectedTab == 2 ? '#f545' : '#fff'}]}>
+            <View style={[styles.userInfoItem, {backgroundColor: selectedTab == 2 ? '#e05c5c' : '#fff'}]}>
               <Text style={styles.userInfoTitle}>{profileData ? profileData.following.length : 0}</Text>
               <Text style={styles.userInfoSubTitle}>{language === 'vn' ? 'Đang theo dõi' : 'Following'}</Text>
             </View>
@@ -392,7 +392,6 @@ export default ProfileScreen
 const styles = StyleSheet.create({
   container:{
     flex: 1,
-    backgroundColor: '#fff',
     paddingHorizontal: 10,
     paddingVertical: 20,
     marginBottom: 60
@@ -422,7 +421,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   userBtn: {
-    width: '40%',
+    width: '50%',
     borderColor: '#66cc00',
     borderWidth: 2,
     borderRadius: 3,
@@ -444,7 +443,7 @@ const styles = StyleSheet.create({
   },
   userInfoItem: {
     justifyContent: 'center',
-    width: 100,
+    width: 110,
     borderRadius: 5,
     paddingVertical: 2
   },

@@ -9,8 +9,6 @@ import LanguageContext from "../context/LanguageContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import RNRestart from 'react-native-restart';
 import ThemeContext from "../context/ThemeContext";
-import firestore from '@react-native-firebase/firestore';
-
 
 const SettingsScreen = ({navigation}) => {
   const {user, logout} = useContext(AuthContext);
@@ -35,13 +33,10 @@ const SettingsScreen = ({navigation}) => {
   const handleThemeChange = async (newTheme) => {
     if (theme !== newTheme){
       try {
-        await firestore().collection('theme').doc(user.uid).set({
-          theme: newTheme
-        }).then().catch((e)=>{console.log("error "+ e)});
+        await AsyncStorage.setItem('theme', newTheme);
         RNRestart.Restart();
-      }
-      catch (error) {
-        console.log('Error saving theme', error);
+      } catch (error) {
+        console.log('Error saving theme to AsyncStorage:', error);
       }
     }
     setPopoverThemeVisible(false);

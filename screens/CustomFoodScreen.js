@@ -9,12 +9,14 @@ import { useDispatch } from "react-redux";
 import { AuthContext } from '../navigation/AuthProvider';
 import { Picker } from '@react-native-picker/picker';
 import LanguageContext from "../context/LanguageContext";
+import ThemeContext from "../context/ThemeContext";
 
 import PopFoodAmount from "./PopFoodAmount";
 
 const CustomFoodScreen = (props, {route}) => {
     const navigation = useNavigation();
    const language = useContext(LanguageContext)
+   const theme = useContext(ThemeContext)
     const {user} = useContext(AuthContext);
     const [textSearch, onChangeTextSearch] = useState('');
     const [textInput, onChangeTextInput] = useState('');
@@ -132,12 +134,13 @@ const CustomFoodScreen = (props, {route}) => {
       return (
         <View>
         <View style={{flexDirection:'row', marginTop: 10, marginHorizontal: 10, alignItems: 'center'}}>
-        <Icon name={'search'} size={25}/>
+        <Icon name={'search'} size={25} color={theme==='light'?'#000':'#fff'}/>
         <TextInput 
         value={textSearch}
         onChangeText={onChangeTextSearch}
-        style={[styles.textInput, {marginStart: 7, fontSize: 17}]}
+        style={[styles.textInput, {marginStart: 7, fontSize: 17, color: theme==='light'?"#000":"#fff", borderColor: theme==='light'?"#000":"#fff"}]}
         placeholder={language === 'vn' ? 'Tìm kiếm món ăn' : 'Search food'}
+        placeholderTextColor={theme==='light'?'#BABABA':'#A3A3A3'}
           />
           </View>
           <View>
@@ -192,8 +195,16 @@ const CustomFoodScreen = (props, {route}) => {
                    //previewRowKey={'0'}
                    previewOpenValue={-40}
                    previewOpenDelay={3000}
-                   onRowDidOpen={onRowDidOpen}//đếm số lần mở ra mở vô
-                   recalculateHiddenLayout={true}
+                   onRowDidOpen={onRowDidOpen}//đếm vị trí mở
+                   ItemSeparatorComponent={()=> (
+                    <View
+        style={{
+          height: 2,
+          backgroundColor: "#fff",
+        }}
+      />
+                   )}
+                   recalculateHiddenLayout={true} //{nội dung để tick chọn xóa thì đẩy flex ở add screen lên là đc}
                 />
                 
    </View>
@@ -220,7 +231,7 @@ const CustomFoodScreen = (props, {route}) => {
           </View>
           </View>
           <View style={{flexDirection: 'row'}}>
-          <TextInput style={[styles.textInput, {width: 220}]} value={textInput} onChangeText={textInput =>onChangeTextInput(textInput)}/>
+          <TextInput style={[styles.textInput, {width: 220}]}  value={textInput} onChangeText={textInput =>onChangeTextInput(textInput)}/>
           <Text style={styles.text}>{unit}</Text>
           </View>
           <Picker
@@ -258,13 +269,6 @@ const styles = StyleSheet.create({
     height: 50,
     textAlign: 'center'
 },
-
-  tabIcon: {
-    width: 25,
-    height: 25,
-    alignItems: "center",
-    justifyContent: "center",
-  },
   header: {
     width: '100%',
     alignItems: 'flex-end',
@@ -290,7 +294,6 @@ rowBack: {
   flexDirection: 'row',
   justifyContent: 'space-between',
   paddingLeft: 15,
-  marginBottom: 3.1
 },
 backRightBtn: {
   alignItems: 'center',
@@ -315,8 +318,6 @@ right: 0,
 rowFront: {
 backgroundColor: '#CCC',
 justifyContent: 'center',
-paddingHorizontal: 5,
-marginBottom: 3,
 flex: 1
 },
 });

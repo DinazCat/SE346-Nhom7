@@ -8,7 +8,7 @@ import Animated from 'react-native-reanimated';
 import BottomSheet from 'reanimated-bottom-sheet';
 import { AuthContext } from '../navigation/AuthProvider';
 import LanguageContext from "../context/LanguageContext";
-
+import ThemeContext from "../context/ThemeContext";
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -23,7 +23,7 @@ const EditProfileScreen = () => {
   const [transferred, setTransferred] = useState(0);
   const [userData, setUserData] = useState(null);
   const language = useContext(LanguageContext);
-
+  const theme = useContext(ThemeContext);
   useEffect(() => {
     getUserData();
   }, []);
@@ -187,10 +187,10 @@ const EditProfileScreen = () => {
     });    
   };
   renderContent = () => (
-    <View style={styles.panel}>
+    <View style={[styles.panel, {marginLeft:15, backgroundColor: theme === 'light'? '#fff' : '#4E4E4E'}]}>
       <View style={{alignItems: 'center'}}>
-        <Text style={styles.panelTitle}>Upload Photo</Text>
-        <Text style={styles.panelSubtitle}>Choose Your Profile Picture</Text>
+        <Text style={[styles.panelTitle, {color: theme === 'light'? '#000' : '#fff'}]}>Upload Photo</Text>
+        <Text style={[styles.panelSubtitle, {color: theme === 'light'? '#000' : '#fff'}]}>Choose Your Profile Picture</Text>
       </View>
       <TouchableOpacity
         style={styles.panelButton}
@@ -211,7 +211,7 @@ const EditProfileScreen = () => {
   );
 
   renderHeader = () => (
-    <View style={styles.header}>
+    <View style={[styles.header, {marginLeft:15, backgroundColor: theme === 'light'? '#fff' : '#838383'}]}>
       <View style={styles.panelHeader}>
         <View style={styles.panelHandle} />
       </View>
@@ -222,7 +222,7 @@ const EditProfileScreen = () => {
   fall = new Animated.Value(1);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {backgroundColor: theme === 'light'? '#FFFFFF' : '#000000'}]}>
       <BottomSheet
         ref={this.sheetRef}
         snapPoints={[370, 0]}
@@ -260,84 +260,84 @@ const EditProfileScreen = () => {
               </ImageBackground>
             </View>
           </TouchableOpacity>
-          <Text style={{marginTop: 10, fontSize: 18, fontWeight: 'bold'}}>
+          <Text style={{marginTop: 10, fontSize: 18, fontWeight: 'bold', color: theme==='light'?'#000':'#fff'}}>
             {userData ? userData.name : user ? user.displayName : ''}
           </Text>
         </View>
 
         <View style={styles.action}>
-          <FontAwesome name="user-o" color="#333333" size={20} />
+          <FontAwesome name="user-o" color={theme==='light'?'#000':'#fff'} size={20} />
           <TextInput
             placeholder={language === 'vn' ? 'Tên' : 'Name'}
-            placeholderTextColor="#666666"
+            placeholderTextColor={theme==='light'?'#BABABA':'#A3A3A3'}
             value={userData ? userData.name : ''}
             onChangeText={(txt) => setUserData({...userData, name: txt})}
             autoCorrect={false}
-            style={styles.textInput}
+            style={[styles.textInput, {color: theme==='light'?'#000':'#fff'}]}
           />
         </View>
         <View style={styles.action}>
-          <Ionicons name="ios-clipboard-outline" color="#333333" size={20} />
+          <Ionicons name="ios-clipboard-outline" color={theme==='light'?'#000':'#fff'} size={20} />
           <TextInput
             multiline
             numberOfLines={3}
             placeholder={language === 'vn' ? 'Tiểu sử' : 'About Me'}
-            placeholderTextColor="#666666"
+            placeholderTextColor={theme==='light'?'#BABABA':'#A3A3A3'}
             value={userData ? userData.about : ''}
             onChangeText={(txt) => setUserData({...userData, about: txt})}
             autoCorrect={true}
-            style={[styles.textInput, {height: 40}]}
+            style={[styles.textInput, {height: 40, color: theme==='light'?'#000':'#fff'}]}
           />
         </View>
         <View style={styles.action}>
-          <FontAwesome name="envelope-o" color="#333333" size={19} />
+          <FontAwesome name="envelope-o" color={theme==='light'?'#000':'#fff'} size={19} />
           <TextInput
             placeholder="Email"
-            placeholderTextColor="#666666"
+            placeholderTextColor={theme==='light'?'#BABABA':'#A3A3A3'}
             keyboardType='email-address'
             value={userData ? userData.email : ''}
             onChangeText={(txt) => setUserData({...userData, email: txt})}
             autoCorrect={false}
-            style={[styles.textInput, {height: 40}]}
+            style={[styles.textInput, {height: 40, color: theme==='light'?'#000':'#fff'}]}
           />
         </View>
         <View style={styles.action}>
-          <Feather name="phone" color="#333333" size={20} />
+          <Feather name="phone" color={theme==='light'?'#000':'#fff'} size={20} />
           <TextInput
             placeholder="Phone"
-            placeholderTextColor="#666666"
+            placeholderTextColor={theme==='light'?'#BABABA':'#A3A3A3'}
             keyboardType="number-pad"
             autoCorrect={false}
             value={userData ? userData.phone : ''}
             onChangeText={(txt) => setUserData({...userData, phone: txt})}
-            style={styles.textInput}
+            style={[styles.textInput, {color: theme==='light'?'#000':'#fff'}]}
           />
         </View>
 
         <View style={styles.action}>
-          <FontAwesome name="globe" color="#333333" size={21} />
+          <FontAwesome name="globe" color={theme==='light'?'#000':'#fff'} size={21} />
           <TextInput
             placeholder="Country"
-            placeholderTextColor="#666666"
+            placeholderTextColor={theme==='light'?'#BABABA':'#A3A3A3'}
             autoCorrect={false}
             value={userData ? userData.country : ''}
             onChangeText={(txt) => setUserData({...userData, country: txt})}
-            style={styles.textInput}
+            style={[styles.textInput, {color: theme==='light'?'#000':'#fff'}]}
           />
         </View>
         <View style={styles.action}>
           <MaterialCommunityIcons
             name="map-marker-outline"
-            color="#333333"
+            color={theme==='light'?'#000':'#fff'}
             size={24}
           />
           <TextInput
             placeholder="City"
-            placeholderTextColor="#666666"
+            placeholderTextColor={theme==='light'?'#BABABA':'#A3A3A3'}
             autoCorrect={false}
             value={userData ? userData.city : ''}
             onChangeText={(txt) => setUserData({...userData, city: txt})}
-            style={styles.textInput}
+            style={[styles.textInput, {color: theme==='light'?'#000':'#fff'}]}
           />
         </View>
         <FormButton title={language === 'vn' ? 'Cập nhật' : 'Update'} onPress={handleUpdate}/>
@@ -386,7 +386,6 @@ const styles = StyleSheet.create({
       backgroundColor: '#FFFFFF',
       paddingTop: 20,
       width: '100%',
-      marginLeft: 20
     },
     header: {
       backgroundColor: '#FFFFFF',
@@ -408,7 +407,6 @@ const styles = StyleSheet.create({
       borderRadius: 4,
       backgroundColor: '#00000040',
       marginBottom: 10,
-      marginLeft: 40
     },
     panelTitle: {
       fontSize: 27,
@@ -427,6 +425,7 @@ const styles = StyleSheet.create({
       backgroundColor: '#66cc00',
       alignItems: 'center',
       marginVertical: 7,
+      marginRight: 15
     },
     panelButtonTitle: {
       fontSize: 17,

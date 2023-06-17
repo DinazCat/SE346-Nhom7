@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from "react";
-import {View, Text, StyleSheet, TextInput, Image, TouchableOpacity, FlatList, ScrollView, Alert, ActivityIndicator} from "react-native";
+import {View, Text, StyleSheet, TextInput, Image, TouchableOpacity, SafeAreaView, ScrollView, Alert, FlatList} from "react-native";
 import { useDispatch } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { useSelector } from "react-redux";
@@ -11,10 +11,12 @@ import Popover from 'react-native-popover-view';
 import ImagePicker from 'react-native-image-crop-picker';
 import storage from '@react-native-firebase/storage';
 import LanguageContext from "../context/LanguageContext";
-
+import ThemeContext from "../context/ThemeContext";
+import { SwipeListView } from "react-native-swipe-list-view";
 
 const AddCustomRecipe = ({route}) => {
   const {user} = useContext(AuthContext)
+  const theme = useContext(ThemeContext);
   const dispatch = useDispatch();
   const IngredientList= useSelector((state) => state.IngredientList.value);
   const totalCalories = useSelector((state) => state.IngredientList.totalCalories);
@@ -34,6 +36,9 @@ const AddCustomRecipe = ({route}) => {
   const [transferred, setTransferred] = useState(0);
   const language = useContext(LanguageContext);
 
+  const cancel = () => {
+    navigation.goBack();
+  }
   //thêm ảnh 
   const [isPopoverVisible, setPopoverVisible] = useState(false);
   const [popoverAnchor, setPopoverAnchor] = useState(null);
@@ -97,7 +102,6 @@ const AddCustomRecipe = ({route}) => {
   }
 
   const DeleteIngredient = (index) => {
-
     Alert.alert('Delete', 'Do you want to remove ingredient?', [
       {
         text: 'Cancel',
@@ -105,6 +109,7 @@ const AddCustomRecipe = ({route}) => {
         style: 'cancel',
       },
       {text: 'OK', onPress: () => {
+        
         dispatch(Delete(index))
       }},
     ]);
@@ -161,93 +166,124 @@ const AddCustomRecipe = ({route}) => {
         console.log('something went wrong!', error);
       }
   }
+  
 
   // add image
   return (
-    <View style={styles.Container}>
-    
+    <View style={{backgroundColor: theme==='light'?"#fff":"#000", borderColor: theme==='light'?"#000":"#fff", flex: 1}}>
+    <View style={{flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', paddingVertical: 15, backgroundColor: theme === 'light' ?'#2AE371': '#747474'}}>
+    <TouchableOpacity onPress={cancel}>
+        <Text style={[styles.text, {color: theme === 'light' ?'#fff': '#2AE371'}]}>{language === 'vn' ? 'Hủy' : 'Cancel'}</Text>
+      </TouchableOpacity>
+      <Text style={{fontSize: 23, color: '#fff', fontWeight: 'bold', textAlign: 'center', width: 250}}>{language === 'vn' ? 'Chi tiết công thức' : 'Recipe detail'}</Text>
      {isEdit?<TouchableOpacity onPress={(IngredientList.length == 0||name=='')?checkNameAndIngredient:updateRecipe}>
-      <Text>{language === 'vn' ? 'Cập nhật' : 'Update'}</Text>
+      <Text style={[styles.text, {color: theme === 'light' ?'#fff': '#2AE371'}]}>{language === 'vn' ? 'Cập nhật' : 'Update'}</Text>
      </TouchableOpacity> :
-     <TouchableOpacity onPress={(IngredientList.length == 0||name=='')?checkNameAndIngredient:saveRecipe}>
-        <Text>{language === 'vn' ? 'Save' : 'Lưu'}</Text>
+     <TouchableOpacity onPress={(IngredientList.length == 0||name=='')?checkNameAndIngredient
+     :saveRecipe}>
+        <Text style={[styles.text, {color: theme === 'light' ?'#fff': '#2AE371'}]}>{language === 'vn' ? 'Lưu' : 'Save'}</Text>
      </TouchableOpacity> }
+     </View> 
             <View style={styles.headerContainer}>
-            <TextInput style={styles.foodname} value={name} onChangeText={name=>setName(name)}></TextInput>
-            </View>
+            <TextInput style={[styles.foodname, {color: theme === 'light' ?'#000': '#fff', borderColor: theme==='light'?"#000":"#fff"}]} 
+            placeholder={language === 'vn' ? 'Nhập tên món ăn' : 'Enter food name'} 
+            placeholderTextColor={theme==='light'?'#C7C7CD':'#A3A3A3'}
             
-        <View style={[styles.Container,{height:650}]}>
-            <ScrollView style={{flexDirection:'column'}}>               
+            value={name} onChangeText={name=>setName(name)}></TextInput>
+            </View>
+                
+        <View style={[styles.Container, {flex: 1, backgroundColor: theme==='light'?"#fff":"#000"}]}>
+            <ScrollView>               
                     <>
                     <View style={styles.foodInfoWrapper}>
                         <View style={styles.foodInfoItem}>
-                        <TextInput style={styles.foodInfoTitle} value={prepTime} onChangeText={prepTime=>setPrepTime(prepTime)}></TextInput>
-                        <Text style={styles.foodInfoSubTitle}>Prep</Text>
+                        <TextInput style={styles.foodInfoTitle} 
+                        placeholder={language === 'vn' ? 'thời gian' : 'time'}
+                        placeholderTextColor={theme==='light'?'#C7C7CD':'#A3A3A3'} 
+                        value={prepTime} onChangeText={prepTime=>setPrepTime(prepTime)}></TextInput>
+                        <Text style={styles.foodInfoSubTitle}>{language === 'vn' ? 'Chuẩn bị' : 'Prep'}</Text>
                         </View>
                         <View style={styles.foodInfoItem}>
-                        <TextInput style={styles.foodInfoTitle} value={cookingTime} onChangeText={cookingTime=>setCookingtime(cookingTime)}></TextInput>
-                        <Text style={styles.foodInfoSubTitle}>Cooking</Text>
+                        <TextInput style={styles.foodInfoTitle} 
+                        placeholder={language === 'vn' ? 'thời gian' : 'time'}
+                        placeholderTextColor={theme==='light'?'#C7C7CD':'#A3A3A3'} 
+                        value={cookingTime} onChangeText={cookingTime=>setCookingtime(cookingTime)}></TextInput>
+                        <Text style={styles.foodInfoSubTitle}>{language === 'vn' ? 'Nấu' : 'Cooking'}</Text>
                         </View>     
                         <View style={styles.foodInfoItem}>
-                        <Text>{totalCalories}</Text>
-                        <Text style={styles.foodInfoSubTitle}>Cal/serving</Text>
+                        <Text style={[styles.foodInfoTitle, {marginVertical: 10}]}>{(totalCalories=='')? 0: totalCalories}</Text>
+                        <Text style={styles.foodInfoSubTitle}>Cals/{language === 'vn' ? 'phần ăn' : 'serving'}</Text>
                         </View>                                                          
                     </View>              
                      
                      <View style={styles.split}/>
-                     <View style={{backgroundColor:'#F5F5F5'}}>
-                     <Text style={[styles.PostTitle, {color: '#CE3E3E'}]}>Steps</Text>
-                     <TextInput multiline={true} style={styles.PostText} value={receipt} onChangeText={receipt=>setReceipt(receipt)}></TextInput>
+                     <View >
+                     <Text style={[styles.PostTitle, {color: '#5AC30D'}]}>{language === 'vn' ? 'Cách làm' : 'Step'}</Text>
+                     <TextInput multiline={true} style={[styles.PostText, {color: theme==='light'?"#000":"#fff"}]} 
+                     placeholder={language === 'vn' ? 'Nhập cách làm' : 'Enter step'}
+                     placeholderTextColor={theme==='light'?'#C7C7CD':'#A3A3A3'} 
+                     value={receipt} onChangeText={receipt=>setReceipt(receipt)}></TextInput>
                      </View>
                      
-
                      <View style={styles.split}/>
-                     <View style={{backgroundColor:'#F5F5F5'}}>
-                     <Text style={[styles.PostTitle, {color: '#5AC30D'}]}>Ingredients</Text>
-                     <TouchableOpacity onPress={()=>addIngredient()}>
-                      <Text>{language === 'vn' ? 'Thêm' : 'Add'}</Text>
+                     <View >
+                     <Text style={[styles.PostTitle, {color: '#CE3E3E'}]}>Ingredients</Text>
+                     <TouchableOpacity style={{marginLeft:'auto', marginHorizontal: 15, marginBottom: 7}} onPress={()=>addIngredient()}>
+                     <Icon name={'plus-circle'} size={30} color={'#0AD946'}/>
                      </TouchableOpacity>
-                     <TouchableOpacity onPress={()=>deleteAll()}>
-                      <Text>Delete All</Text>
-                     </TouchableOpacity>
+                     
+                     <View style={{backgroundColor: theme === 'light'? '#DBDBDB' : '#4E4E4E'}}>
                      {IngredientList?.map((item, index)=>{
                     return(  
-                        <View key={index}>
+                        
 
-                          <TouchableOpacity onPress={()=> DeleteIngredient(index)}>
-                            {item.image?<Image source={{uri: item.image}} style={styles.tabIcon}/>:<Image source={{uri: imageTemp}} style={styles.tabIcon}/>}
-                            <Text>{item.name}</Text>
-                            <Text>{item.resultCalories}</Text>
-                            <Text>{item.amount}</Text>
+                          <TouchableOpacity onPress={()=> DeleteIngredient(index)} key={index}>
+                            <View style={{alignItems: 'center', flexDirection: 'row', marginHorizontal: 15, marginVertical: 3, paddingBottom: 5, flex: 1}}>
+                          <Image source = {{uri: item.image}} style={{width: 40,
+           height: 40,
+           resizeMode: 'stretch'}}/>
+                         <Text style={{fontSize: 18, width: 200, marginStart: 3, color: theme==='light'?"#000":"#fff"}}>{item.name}</Text>
+                         <View style={{marginLeft:'auto'}}>
+                         <Text style={{marginLeft:'auto', fontSize: 16, color: "#2684fc"}}>{item.resultCalories}cals</Text>
+                         <Text style={{marginLeft:'auto', fontSize: 16, color: "#2684fc"}}>{item.amount} {item.unit}</Text>
+                         </View>
+                         </View>
                             </TouchableOpacity>
-                        </View>
+                        
                       )}
                      )}
-                     
-                      {(image == null)?<Image source={{uri: imageTemp}} style={styles.tabIcon}/> : <Image source={{uri: image.path}} style={styles.tabIcon}/>}
-                      
-                      {(image==null)?null:<TouchableOpacity onPress={()=> setImage(null)}>
-                        <Image style={styles.tabIcon} source={{uri: 'https://www.uidownload.com/files/240/295/614/delete-icon.jpg'}}></Image> 
-                        
-                      </TouchableOpacity>}
-                      
-                      <TouchableOpacity onPress={(event) => {
+            </View>
+            <View style={styles.split}/>
+            <View style={{alignItems: 'center', backgroundColor: theme==='light'?'#DBDBDB' : '#4E4E4E', borderRadius: 13, marginHorizontal: 10, marginTop: 10}}>
+            <View>
+              {(image == null)?<Image source={{uri: imageTemp}} style={styles.image}/> : <Image source={{uri: image.path}} style={styles.image}/>}
+            
+              {(image==null)?null:<TouchableOpacity style={{position:'absolute', marginLeft: -15, marginTop: 5}} onPress={()=> setImage(null)}>
+              <Image style={styles.icon} source={{uri: 'https://static.vecteezy.com/system/resources/previews/018/887/462/original/signs-close-icon-png.png'}}/>  
+                
+              </TouchableOpacity>}
+            </View>       
+            <Text style={{fontSize: 13, color: theme === 'light'? '#000' : '#fff'}}>{language === 'vn' ? 'Thêm hình ảnh' : 'Add image'}</Text>     
+             <TouchableOpacity style={{marginTop: 10, marginBottom: 5, marginLeft: 'auto', marginRight: 10}} onPress={(event) => {
             setPopoverAnchor(event.nativeEvent.target);
             setPopoverVisible(true);
             }}>
           <Icon
               name={'images'}
               style={{
-                marginLeft: 300,
+                
                 color: 'green',
-                fontSize: 50,
+                fontSize: 30,
                 alignSelf: 'center',
               }}
             /> 
           </TouchableOpacity>
+          </View>
                      </View>
-                </>
-                <Popover
+                </>    
+            </ScrollView>
+        </View>   
+        <Popover
             isVisible={isPopoverVisible}
             onRequestClose={() => setPopoverVisible(false)}
             fromView={popoverAnchor}>
@@ -265,10 +301,7 @@ const AddCustomRecipe = ({route}) => {
                     </View>
                 </TouchableOpacity>
             </View>
-      </Popover>          
-            </ScrollView>
-        </View>   
-        
+      </Popover>  
     </View>
   )
             }
@@ -276,107 +309,103 @@ export default AddCustomRecipe;
             
 
 const styles = StyleSheet.create({
-    Container:{
-        width: '100%',
-        marginBottom: 10,
-        borderRadius: 5,
-        backgroundColor: '#fff',
-        padding: 5,
-    },
-    foodname:{
-        fontSize: 45,
-        textAlign: 'center',
-        color: '#000',
-        fontFamily: 'WishShore',
-    },
-    headerContainer:{
-        paddingVertical: 5,
-        borderBottomWidth: 1,
-        borderBottomColor: '#DDD',
-    },
+  Container:{
+      width: '100%',
+      marginBottom: 10,
+      borderRadius: 5,
+      backgroundColor: '#fff',
+      padding: 5,
+  },
+  foodname:{
+      fontSize: 30,
+      textAlign: 'center',
+  },
+  headerContainer:{
+      paddingVertical: 5,
+      borderBottomWidth: 1,
+      borderBottomColor: '#DDD',
+  },
+
+  PostText:{
+      fontSize: 16,
+      paddingHorizontal: 15,
+      marginBottom: 5,
+      color:'black',
+  },
+
+  PostTitle:{
+      fontSize: 18,
+      fontFamily: 'Lato-Regular',
+      paddingHorizontal: 15,
+      fontWeight:"900",
+      marginTop: 2,
+  },
+
+  split: {
+      height: 1,
+      backgroundColor: '#DDD',
+      marginVertical: 10,
+      marginHorizontal: 5
+  },
+  foodInfoWrapper: {
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      marginVertical: 5,
+  },
+  foodInfoItem: {
+    justifyContent: 'center',
+    width: 105,
+    paddingVertical: 2,
+  },
+  foodInfoTitle: {
+    fontSize: 17,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    color: '#E8B51A'
+  },
+  foodInfoSubTitle: {
+    fontSize: 13,
+    color: '#666',
+    textAlign: 'center',
+  },
+
+  text: {
+    fontSize: 17
+  },
+
+  tabIcon: {
+    width: 25,
+    height: 25,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  header: {
+    width: '100%',
+    height: 40,
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+  },
+  popover:{
+    backgroundColor: 'white', 
+    borderRadius: 10, 
+    padding: 16, 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    justifyContent: 'space-between'
+  },
+  popoverItem:{
+      alignItems: 'center',
+      margin: 20
+  },
+  icon: {
+    width: 25,
+    height: 25,
     
-    PostText:{
-        fontSize: 16,
-        paddingHorizontal: 15,
-        marginBottom: 5,
-        color:'black',
-    },
-   
-    PostTitle:{
-        fontSize: 18,
-        fontFamily: 'Lato-Regular',
-        paddingHorizontal: 15,
-        marginBottom: 10,
-        fontWeight:"900",
-        marginTop: 2,
-    },
+  },
+  image: {
+    width: 100,
+    height: 100,
+    marginTop: 15,
     
-    split: {
-        height: 1,
-        backgroundColor: '#DDD',
-        marginVertical: 10,
-        marginHorizontal: 5
-    },
-    foodInfoWrapper: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        width: '100%',
-        marginVertical: 15,
-      },
-      foodInfoItem: {
-        justifyContent: 'center',
-        width: 100,
-        borderRadius: 5,
-        paddingVertical: 2,
-      },
-      foodInfoTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginBottom: 5,
-        textAlign: 'center',
-        color: '#E8B51A'
-      },
-      foodInfoSubTitle: {
-        fontSize: 13,
-        color: '#666',
-        textAlign: 'center',
-      },
-     
-        container: {
-          borderWidth: 1, 
-          borderColor: "#CFCFCF", 
-          borderRadius: 5, 
-          backgroundColor: "#CFCFCF", 
-          margin: 5,
-        },
-        text: {
-          fontSize: 18,
-          color: '#84D07D',
-        },
-      
-        tabIcon: {
-          width: 25,
-          height: 25,
-          alignItems: "center",
-          justifyContent: "center",
-        },
-        header: {
-          width: '100%',
-          height: 40,
-          alignItems: 'flex-end',
-          justifyContent: 'center',
-        },
-        popover:{
-          backgroundColor: 'white', 
-          borderRadius: 10, 
-          padding: 16, 
-          flexDirection: 'row', 
-          alignItems: 'center', 
-          justifyContent: 'space-between'
-        },
-        popoverItem:{
-            alignItems: 'center',
-            margin: 20
-        },
-        
-  });
+  },
+});

@@ -17,30 +17,10 @@ export default function Routes() {
     const [language, setLanguage] = useState('');
     const [theme, setTheme] = useState('');
 
-    const isDarkTheme = async () => {
-
-      await firestore()
-        .collection('theme')
-        .doc(auth().currentUser.uid)
-        .get()
-        .then(documentSnapshot => {
-          if (!documentSnapshot.exists) {
-            firestore().collection('theme').doc(user.uid).set({
-              theme: 'light'
-            }).then().catch((e)=>{console.log("error "+ e)});
-            setTheme('light');
-          }
-          else {
-            
-              setTheme(documentSnapshot.data().theme);
-              //setLoading(false);
-          }
-        });
-    };
+    
 
     function onAuthStateChanged(user) {
       setUser(user);
-      
       if (initializing) setInitializing(false);
       //setLoading(false);
     }
@@ -58,7 +38,17 @@ export default function Routes() {
         .catch((error) => {
           console.log(error);
         });
-        isDarkTheme(); 
+        AsyncStorage.getItem('theme')
+        .then((value) => {
+          if (value) {
+            setTheme(value);
+          } else {
+            setTheme('light');
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
       return subscriber;
     }, []);
 

@@ -10,7 +10,7 @@ const StatisticsScreen = ({route}) => {
   const theme = useContext(ThemeContext);
   const[page, setPage] = useState(1);
     return(
-        <View style={[styles.container, {backgroundColor: theme === 'light'? '#FFFFFF' : '#000000'}]}>
+        <View style={[styles.container, {backgroundColor: theme === 'light'? '#FFFFFF' : '#747474'}]}>
           <Text style={[styles.header,{color: theme === 'light'? '#000000' : '#FFFFFF'}]}>{language === 'vn' ? 'Biểu đồ' : 'Chart'}</Text>
           <View style={styles.topTab}>
           <TouchableOpacity style={[styles.btn,

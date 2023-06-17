@@ -3,16 +3,22 @@ import React, {useState, useContext, useEffect} from "react";
 import { AuthContext } from '../navigation/AuthProvider';
 import firestore from '@react-native-firebase/firestore';
 import moment from "moment";
-//để isAdd trong redux = false khi nhấn vào staple
+import ThemeContext from "../context/ThemeContext";
+import LanguageContext from "../context/LanguageContext";
 
 const TakeNoteScreen = ({route, navigation}) => {
     const {user} = useContext(AuthContext);
     const date = (route.params?.time == 'Today')? moment(new Date()).format('DD/MM/YYYY'): route.params?.time;
     const [id, setID] = useState('');
     const [note, setNote] = useState('');
+    const theme = useContext(ThemeContext);
+    const language = useContext(LanguageContext);
     useEffect(() => {
        getNote();
        }, []);
+    const cancel = () => {
+      navigation.goBack();
+    }
     const getNote = () => {
         try{
             firestore()
@@ -61,14 +67,24 @@ const TakeNoteScreen = ({route, navigation}) => {
     }
  
     return(
-        <View>
+      <View style={{backgroundColor: theme==='light'?"#fff":"#000", borderColor: theme==='light'?"#000":"#fff", flex: 1}}>
+        <View style={{flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', paddingVertical: 15, backgroundColor: theme === 'light' ?'#2AE371': '#747474'}}>
+        <TouchableOpacity onPress={cancel}>
+        <Text style={[styles.text, {color: theme === 'light' ?'#fff': '#2AE371'}]}>{language === 'vn' ? 'Hủy' : 'Cancel'}</Text>
+        </TouchableOpacity>
+        <Text style={{fontSize: 23, color: '#fff', fontWeight: 'bold', textAlign: 'center', width: 250}}>{language === 'vn' ? 'Ghi chú' : 'Take note'}</Text>
            {(id == '')? <TouchableOpacity onPress={addNote}>
-                <Text>Save</Text>
+                <Text style={[styles.text, {color: theme === 'light' ?'#fff': '#2AE371'}]}>{language === 'vn' ? 'Lưu' : 'Save'}</Text>
             </TouchableOpacity>:  <TouchableOpacity onPress={updateNote}>
-                <Text>Save</Text>
+                <Text style={[styles.text, {color: theme === 'light' ?'#fff': '#2AE371'}]}>{language === 'vn' ? 'Lưu' : 'Save'}</Text>
+                
             </TouchableOpacity>}
-            <Text>Note</Text>
-            <TextInput  multiline={true} value={note} onChangeText={note => setNote(note)}></TextInput>
+            </View>
+         
+            <TextInput style={{color: theme === 'light' ?'#000': '#fff', borderColor: theme==='light'?"#000":"#fff", paddingHorizontal: 10}}  
+            placeholder={language === 'vn' ? 'Nhập ghi chú' : 'Enter note'} 
+            placeholderTextColor={theme==='light'?'#C7C7CD':'#A3A3A3'}
+            multiline={true} value={note} onChangeText={note => setNote(note)}></TextInput>
         </View>
     )
 }
@@ -81,8 +97,7 @@ const styles = StyleSheet.create({
       margin: 5,
     },
     text: {
-      fontSize: 18,
-      color: '#84D07D',
+      fontSize: 17
     },
   
     tabIcon: {

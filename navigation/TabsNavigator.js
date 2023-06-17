@@ -25,7 +25,7 @@ const TabsNavigator = () => {
       screenOptions={{
         headerShown: false,
         tabBarShowLabel: false,
-        tabBarStyle: [styles.tabBar, {backgroundColor: theme==='light'?"#fff":"#000", borderColor: theme==='light'?"#000":"#fff"}],
+        tabBarStyle: [styles.tabBar, {backgroundColor: theme==='light'?"#fff":"#2B2B2B", borderColor: theme==='light'?"#2B2B2B":"#fff"}],
         
       }}
       >

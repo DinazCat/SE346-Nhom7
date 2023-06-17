@@ -7,11 +7,12 @@ import { AuthContext } from '../navigation/AuthProvider';
 import { useNavigation } from "@react-navigation/native";
 import { Picker } from '@react-native-picker/picker';
 import LanguageContext from "../context/LanguageContext";
+import ThemeContext from "../context/ThemeContext";
 
 import PopFoodAmount from "./PopFoodAmount";
 const stapleFood = [
   {
-    image: 'https://cdn-icons-png.flaticon.com/512/651/651589.png', 
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Bowl-of-rice_icon.svg/948px-Bowl-of-rice_icon.svg.png', 
     name: 'Rice', 
     calories:'130', unit:'bowl', baseAmount:'1'
   },
@@ -31,9 +32,9 @@ const stapleFood = [
       calories: '78', unit:'fruit', baseAmount:'1'
       },
   {
-    image: 'https://freepngimg.com/save/137644-currant-berries-black-fruit-free-transparent-image-hq/1123x1123', 
-    name: 'currants european black raw', 
-    calories: '6', unit:'g', baseAmount:'10'
+    image: 'https://cdn-icons-png.flaticon.com/512/3068/3068002.png', 
+    name: 'Seaweed Nori dried', 
+    calories: '5', unit:'sheet', baseAmount:'1'
     },
   {
     image: 'https://target.scene7.com/is/image/Target/GUEST_0194a7b1-abe7-4df9-b655-2d08529e0206?wid=488&hei=488&fmt=pjpeg', 
@@ -66,7 +67,7 @@ const stapleFood = [
     calories: '6', unit:'g', baseAmount:'10'
     },
   {
-    image: 'https://static.thenounproject.com/png/348935-200.png', 
+    image: 'https://png.pngitem.com/pimgs/s/72-723093_bread-food-bun-kaiser-roll-hard-dough-bread.png', 
     name: 'Rolls dinner', 
     calories: '87', unit:'roll', baseAmount:'1'
     },
@@ -130,6 +131,7 @@ const stapleFood = [
 
 const StapleFoodScreen = (props) => {
   const language = useContext(LanguageContext);
+  const theme = useContext(ThemeContext);
   const {user} = useContext(AuthContext);
   const navigation = useNavigation();
   //lưu dữ liệu đồ ăn
@@ -186,15 +188,15 @@ const StapleFoodScreen = (props) => {
 
   
   return (
-    <View >
+    <View>
       <View style={{flexDirection:'row', marginTop: 10, marginHorizontal: 10, alignItems: 'center'}}>
-        <Icon name={'search'} size={25}/>
+        <Icon name={'search'} size={25} color={theme==='light'?'#000':'#fff'}/>
         <TextInput 
-        style={[styles.textInput, {marginStart: 7, fontSize: 17}]}
-        autoFocus={true}
+        style={[styles.textInput, {marginStart: 7, fontSize: 17, color: theme==='light'?"#000":"#fff", borderColor: theme==='light'?"#000":"#fff"}]}
         value={textInput}
         onChangeText={onChangeTextInput}
         placeholder={language === 'vn' ? 'Tìm kiếm món ăn' : 'Search food'}
+        placeholderTextColor={theme==='light'?'#BABABA':'#A3A3A3'}
         />
         </View>
         <PopFoodAmount visible={visible}>
@@ -220,7 +222,7 @@ const StapleFoodScreen = (props) => {
         </View>
         <View>
         <View style={{flexDirection: 'row'}}>
-        <TextInput style={[styles.textInput, {width: 220}]} value={textSearch} onChangeText={textSearch  =>onChangeTextSearch(textSearch)}/>
+        <TextInput style={[styles.textInput, {width: 220}]} autoFocus={true} value={textSearch} onChangeText={textSearch  =>onChangeTextSearch(textSearch)}/>
         <Text style={styles.text}>{unit}</Text>
         </View>
        
@@ -240,26 +242,37 @@ const StapleFoodScreen = (props) => {
           <Text style={styles.text}>{language === 'vn' ? 'Thêm' : 'Add'}</Text>
         </TouchableOpacity>
       </PopFoodAmount>
-          <FlatList style={{marginTop: 10}}
+      
+          <FlatList style={{marginTop: 10, marginBottom: 5}}
               data={stapleFood.filter(item=>item.name.toLowerCase().includes(textInput.toLowerCase()))
               }
               renderItem={({item}) => (
                 <TouchableOpacity  onPress={() => ShowAddAmount(item)}>
-                  <View style={{alignItems: 'center', flexDirection: 'row', marginHorizontal: 15, marginVertical: 3, borderBottomWidth: 2, borderBottomColor: '#000000', paddingBottom: 5, flex: 1}}>
+                  <View style={{alignItems: 'center', flexDirection: 'row', marginHorizontal: 15, marginVertical: 3, paddingBottom: 5, flex: 1}}>
                       <Image source = {{uri: item.image}} style={{width: 40,
         height: 40,
         resizeMode: 'stretch'}}/>
-                      <Text style={{fontSize: 18, width: 200, marginStart: 3}}>{item.name}</Text>
+                      <Text style={{fontSize: 18, width: 200, marginStart: 3, color: theme==='light'?"#000":"#fff"}}>{item.name}</Text>
                       <View style={{marginLeft:'auto'}}>
-                      <Text style={{marginLeft:'auto', fontSize: 16, color: '#2960D2' }}>{item.calories} cals</Text>
-                      <Text style={{marginLeft:'auto', fontSize: 16, color: '#2960D2' }}>{item.baseAmount} {item.unit}</Text>
+                      <Text style={{marginLeft:'auto', fontSize: 16, color: '#2960D2'}}>{item.calories} cals</Text>
+                      <Text style={{marginLeft:'auto', fontSize: 16, color: '#2960D2'}}>{item.baseAmount} {item.unit}</Text>
                       </View>
                   </View>
 
                 </TouchableOpacity>
               )}
               keyExtractor={(item, index) => index.toString()}
+              ItemSeparatorComponent={()=> (
+                <View
+    style={{
+      height: 2,
+      backgroundColor: theme==='light'?"#000":"#fff",
+      marginHorizontal: 15
+    }}
+  />
+               )}
           />
+          
           </View>
 
 )
@@ -281,8 +294,6 @@ const styles = StyleSheet.create({
   textInfo: {
     fontSize: 18,
 },
-  
-    
     header: {
       width: '100%',
       alignItems: 'flex-end',

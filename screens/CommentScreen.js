@@ -8,6 +8,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import PostComment from '../components/PostComment';
 import SendNoti from '../components/SendNoti';
 import LanguageContext from "../context/LanguageContext";
+import ThemeContext from '../context/ThemeContext';
 
 const CommentScreen = ({navigation}) => {
   const route = useRoute();
@@ -17,7 +18,7 @@ const CommentScreen = ({navigation}) => {
   const {user} = useContext(AuthContext);
   const onCommentChanged = route.params.onCommentChanged
   const language = useContext(LanguageContext);
-
+  const theme = useContext(ThemeContext);
   useEffect(() => {
     postId = route.params?.postId;  
     fetchComments();
@@ -136,17 +137,17 @@ const CommentScreen = ({navigation}) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {backgroundColor: theme === 'light'? '#FFFFFF' : '#000000'}]}>
       <View style={styles.headerContainer}>
         <TouchableOpacity onPress={() => navigation.navigate('feedsScreen')}>
             <Ionicons 
                 name="arrow-back"
                 size={28}
                 backgroundColor='transparent'
-                color="#333"                            
+                color={theme === 'light'? '#000' : '#fff'}                          
                 />
         </TouchableOpacity>
-        <Text style={styles.headerText}>{language === 'vn' ? 'Bình luận' : 'Comments'}</Text>       
+        <Text style={[styles.headerText, {color: theme === 'light'? '#000' : '#fff'}]}>{language === 'vn' ? 'Bình luận' : 'Comments'}</Text>       
       </View>
       <FlatList
         data={commentList}
@@ -163,7 +164,7 @@ const CommentScreen = ({navigation}) => {
         )}
         />
       <View
-        style={styles.bottomViewContainer}>
+        style={[styles.bottomViewContainer, {backgroundColor: theme === 'light'? '#FFFFFF' : '#000000'}]}>
         <TextInput
           ref={inputRef}
           value={comment}
@@ -171,11 +172,12 @@ const CommentScreen = ({navigation}) => {
             setComment(txt);
           }}
           placeholder={language === 'vn' ? 'Viết bình luận...' : 'Type comment here...'}
+          placeholderTextColor={theme==='light'?'#BABABA':'#A3A3A3'}
           multiline={true}
-          style={styles.commentInput}
+          style={[styles.commentInput, {color: theme === 'light'? '#000' : '#fff'}]}
         />
         <Text
-          style={{marginRight: 10, fontSize: 18, fontWeight: '600'}}
+          style={{marginRight: 10, fontSize: 18, fontWeight: '600', color: theme === 'light'? '#000' : '#fff'}}
           onPress={() => {handlePostComment()}}>
           {language === 'vn' ? 'Gửi' : 'Send'}
         </Text>

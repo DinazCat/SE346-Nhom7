@@ -130,12 +130,13 @@ const DetailFoodScreen = ({route, navigation}) => {
   }
   
   return (
-    <View styles={styles.container}>
-      <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingVertical: 15, backgroundColor: theme === 'light' ?'#2AE371': '#7B7B7B'}}>
+    <View style={{backgroundColor: theme==='light'?"#fff":"#000", borderColor: theme==='light'?"#000":"#fff", flex: 1}}>
+      <View style={{flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', paddingVertical: 15, backgroundColor: theme === 'light' ?'#2AE371': '#747474'}}>
       <TouchableOpacity onPress={cancel}>
         <Text style={[styles.text, {color: theme === 'light' ?'#fff': '#2AE371'}]}>{language === 'vn' ? 'Hủy' : 'Cancel'}</Text>
       </TouchableOpacity>
-      <Text style={{fontSize: 23, color: '#fff', fontWeight: 'bold', marginHorizontal: 30}}>{language === 'vn' ? 'Chi tiết thức ăn' : 'Food detail'}</Text>
+      <Text style={{fontSize: 23, color: '#fff', fontWeight: 'bold', textAlign: 'center', width: 250}}>{language === 'vn' ? 'Chi tiết thức ăn' : 'Food detail'}</Text>
+      
       {(id)?<TouchableOpacity onPress={(name==''||calories==''||baseAmount==''||unit=='')?checkInput:updateCustomFood}>
         <Text style={[styles.text, {color: theme === 'light' ?'#fff': '#2AE371'}]}>{language === 'vn' ? 'Cập nhật' : 'Update'}</Text>
       </TouchableOpacity>: <TouchableOpacity onPress={(name==''||calories==''||baseAmount==''||unit=='')?checkInput:saveCustomFood}>
@@ -143,14 +144,24 @@ const DetailFoodScreen = ({route, navigation}) => {
       </TouchableOpacity>}
       </View>
       <View style={{marginTop: 20}}>
-      <TextInput style={styles.textInput} placeholder={language === 'vn' ? 'Nhập tên món ăn' : 'Enter food name'} value={name} onChangeText={name=>setName(name)}/>
-      <TextInput style={styles.textInput} placeholder={language === 'vn' ? 'Nhập calories' : 'Enter calories'} value={calories} onChangeText={calories=>setCalories(calories)}/>
-      <TextInput style={styles.textInput} placeholder={language === 'vn' ? 'Nhập khối lượng phần ăn' : 'Enter serving size'} value={baseAmount} onChangeText={baseAmount=>setBaseAmount(baseAmount)}/>
-      <View style={{alignItems: 'center', flexDirection: 'row', marginStart: 20, borderColor: '#000', borderWidth: 1, borderRadius: 13, width: "90%"}}>
-        <Text style={{fontSize: 17, marginStart: 3}}>{language === 'vn' ? 'Chọn đơn vị: ' : 'Choose unit:'}</Text>
+      <TextInput style={[styles.textInput, {color: theme==='light'?"#000":"#fff", borderColor: theme==='light'?"#000":"#fff"}]} 
+      placeholder={language === 'vn' ? 'Nhập tên món ăn' : 'Enter food name'} 
+      placeholderTextColor={theme==='light'?'#C7C7CD':'#A3A3A3'}
+      value={name} onChangeText={name=>setName(name)}/>
+      <TextInput style={[styles.textInput, {color: theme==='light'?"#000":"#fff", borderColor: theme==='light'?"#000":"#fff"}]} 
+      placeholder={language === 'vn' ? 'Nhập calories' : 'Enter calories'} 
+      placeholderTextColor={theme==='light'?'#C7C7CD':'#A3A3A3'}
+      value={calories} onChangeText={calories=>setCalories(calories)}/>
+      <TextInput style={[styles.textInput, {color: theme==='light'?"#000":"#fff", borderColor: theme==='light'?"#000":"#fff"}]} 
+      placeholder={language === 'vn' ? 'Nhập khối lượng phần ăn' : 'Enter serving size'} 
+      placeholderTextColor={theme==='light'?'#C7C7CD':'#A3A3A3'}
+      value={baseAmount} onChangeText={baseAmount=>setBaseAmount(baseAmount)}/>
+      <View style={{alignItems: 'center', flexDirection: 'row', marginStart: 20, borderColor: theme==='light'?"#000":"#fff", borderWidth: 1, borderRadius: 13, width: "90%"}}>
+        <Text style={{fontSize: 17, marginStart: 3, color: theme==='light'?'#000':'#fff'}}>{language === 'vn' ? 'Chọn đơn vị: ' : 'Choose unit:'}</Text>
       <Picker
         selectedValue={unit}
-        style={{ width: 170 }}
+        dropdownIconColor = {theme === 'light'? '#000':'#fff'}
+        style={{ height: 50, width: 170, alignSelf: 'center', color: theme === 'light'? '#000' : '#fff'}}
         onValueChange={(itemValue, itemIndex) => setUnit(itemValue)}
       >
         <Picker.Item label="g" value="g" />
@@ -163,17 +174,17 @@ const DetailFoodScreen = ({route, navigation}) => {
         <Picker.Item label="piece" value="piece" />
       </Picker>
       </View>
-      <View style={{alignItems: 'center', marginStart: 20, borderColor: '#000', borderWidth: 1, borderRadius: 13, width: "90%", marginTop: 10}}>
+      <View style={{alignItems: 'center', marginStart: 20, borderColor: theme==='light'?"#000":"#fff", borderWidth: 1, borderRadius: 13, width: "90%", marginTop: 10}}>
       <View>
         
       {(image == null)?<Image source={{uri: imageTemp}} style={styles.image}/> : <Image source={{uri: image.path}} style={styles.image}/>}
                       
         {(image==null)?null:<TouchableOpacity style={{position:'absolute', marginLeft: -15, marginTop: 5}} onPress={()=> setImage(null)}>
-          <Image style={styles.icon} source={{uri: 'https://static.vecteezy.com/system/resources/previews/018/887/462/original/signs-close-icon-png.png'}}></Image> 
+          <Image style={styles.icon} source={{uri: 'https://static.vecteezy.com/system/resources/previews/018/887/462/original/signs-close-icon-png.png'}}/> 
           
         </TouchableOpacity>}
         </View>    
-        <Text style={{fontSize: 13}}>{language === 'vn' ? 'Thêm hình ảnh' : 'Add image'}</Text>          
+        <Text style={{fontSize: 13, color: theme === 'light'? '#000' : '#fff'}}>{language === 'vn' ? 'Thêm hình ảnh' : 'Add image'}</Text>          
           <TouchableOpacity style={{marginTop: 10, marginBottom: 5, marginLeft: 'auto', marginRight: 10}} onPress={(event) => {
             setPopoverAnchor(event.nativeEvent.target);
             setPopoverVisible(true);
@@ -211,30 +222,25 @@ const DetailFoodScreen = ({route, navigation}) => {
                 </TouchableOpacity>
             </View>
       </Popover>   
-      
       </View>
 
 )
 }
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center'
-  },
   text: {
     fontSize: 17
   },
-    image: {
-      width: 100,
-      height: 100,
-      marginTop: 15,
-      
-    },
-    icon: {
-      width: 25,
-      height: 25,
-      
-    },
+  image: {
+    width: 100,
+    height: 100,
+    marginTop: 15,
+    
+  },
+  icon: {
+    width: 25,
+    height: 25,
+    
+  },
     
     popover:{
     backgroundColor: 'white', 

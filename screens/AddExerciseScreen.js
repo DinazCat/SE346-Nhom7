@@ -6,7 +6,7 @@ import { useNavigation } from "@react-navigation/native";
 import moment from "moment";
 import { AuthContext } from '../navigation/AuthProvider';
 import LanguageContext from "../context/LanguageContext";
-
+import ThemeContext from "../context/ThemeContext";
 
 import PopFoodAmount from "./PopFoodAmount";
 const exercises = [
@@ -49,7 +49,7 @@ const exercises = [
     name: 'Badminton', 
     calories: '222'},
   {
-    image: 'https://cdn-icons-png.flaticon.com/512/346/346736.png', 
+    image: 'https://static.vecteezy.com/system/resources/previews/013/396/214/original/baseball-ball-icon-png.png', 
     name: 'Baseball', 
     calories: '197'},
   {
@@ -57,7 +57,7 @@ const exercises = [
     name: 'Basketball', 
     calories: '271'},
   {
-    image: 'https://cdn-icons-png.flaticon.com/512/4907/4907493.png', 
+    image: 'https://cdn-icons-png.flaticon.com/512/2548/2548440.png', 
     name: 'Bench Press', 
     calories: '123'},
   {
@@ -81,11 +81,11 @@ const exercises = [
     name: 'Weight Training', 
     calories: '123'},
   {
-    image: 'https://cdn-icons-png.flaticon.com/512/3180/3180255.png', 
+    image: 'https://static.vecteezy.com/system/resources/previews/016/772/785/non_2x/mountain-biking-illustration-with-cycling-down-the-mountains-for-sports-leisure-and-healthy-lifestyle-in-flat-cartoon-hand-drawn-templates-vector.jpg', 
     name: 'Bicycling Mountain', 
     calories: '370'},
   {
-    image: 'https://static.thenounproject.com/png/22639-200.png', 
+    image: 'https://bikeles.com/wp-content/uploads/2022/09/recumbent.jpg', 
     name: 'Bicycling Recumbent', 
     calories: '148'},
   {
@@ -110,8 +110,9 @@ const AddExerciseScreen = (props) => {
   const [textSearch, onChangeTextSearch] = useState('');//nhớ để . là số thập phân
   
   //modal
-  const [visible, setVisible] = React.useState(false);
+  const [visible, setVisible] = useState(false);
   const language = useContext(LanguageContext);
+  const theme = useContext(ThemeContext);
   const addExercise = () => {
     
       if (textInput==""){
@@ -154,12 +155,13 @@ const AddExerciseScreen = (props) => {
   return (
     <View styles={{flex:1}}>
       <View style={{flexDirection:'row', marginTop: 10, marginHorizontal: 10, alignItems: 'center'}}>
-      <Icon name={'search'} size={25}/>
+      <Icon name={'search'} size={25} color={theme==='light'?'#000':'#fff'}/>
         <TextInput
-        style={[styles.textInput, {marginStart: 7, fontSize: 17}]}
+        style={[styles.textInput, {marginStart: 7, fontSize: 17, color: theme==='light'?"#000":"#fff", borderColor: theme==='light'?"#000":"#fff"}]}
         value={textSearch}
         onChangeText={onChangeTextSearch}
         placeholder={language === 'vn' ? 'Tìm kiếm bài tập' : 'Search excercise'}
+        placeholderTextColor={theme==='light'?'#BABABA':'#A3A3A3'}
         />
         </View>
         <PopFoodAmount visible={visible}>
@@ -184,7 +186,7 @@ const AddExerciseScreen = (props) => {
           </View>
         </View>
         <View style={{flexDirection: 'row'}}>
-        <TextInput style={[styles.textInput, {width: 240}]} value={textInput} onChangeText={textInput  =>onChangeTextInput(textInput)}/>
+        <TextInput style={[styles.textInput, {width: 240}]} autoFocus={true} value={textInput} onChangeText={textInput  =>onChangeTextInput(textInput)}/>
         <Text style={styles.text}>min</Text>
         </View>
         <TouchableOpacity style={styles.button} onPress={()=>addExercise()}>
@@ -196,11 +198,11 @@ const AddExerciseScreen = (props) => {
               }
               renderItem={({item}) => (
                 <TouchableOpacity  onPress={() => ShowAddAmount(item)}>
-                  <View style={{alignItems: 'center', flexDirection: 'row', marginHorizontal: 15, marginVertical: 3, borderBottomWidth: 2, borderBottomColor: '#000000', paddingBottom: 5, flex: 1}}>
+                  <View style={{alignItems: 'center', flexDirection: 'row', marginHorizontal: 15, marginVertical: 3, borderBottomWidth: 2, borderBottomColor: theme==='light'? '#000': '#fff', paddingBottom: 5, flex: 1}}>
                       <Image source = {{uri: item.image}} style={{width: 40,
         height: 40,
         resizeMode: 'stretch'}}/>
-                      <Text style={{fontSize: 18, width: 200, marginStart: 3}}>{item.name}</Text>
+                      <Text style={{fontSize: 18, width: 200, marginStart: 3, color: theme==='light'?"#000":"#fff"}}>{item.name}</Text>
                       <Text style={{marginLeft:'auto', fontSize: 16, color: '#2960D2'}}>{item.calories} cal/h</Text>
                   </View>
 

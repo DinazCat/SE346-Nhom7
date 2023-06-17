@@ -9,7 +9,7 @@ import LanguageContext from '../context/LanguageContext';
 import ThemeContext from '../context/ThemeContext';
 
 const StatisticsHeightScreen = () => {
-    const {user} = useContext(AuthContext);
+  const {user} = useContext(AuthContext);
   const listDaysOneWeek =  Array(7).fill().map((item, index)=>moment(new Date()).subtract(6 - index, 'd'));
   const listDaysOneMonth =  Array(31).fill().map((item, index)=>moment(new Date()).subtract(30 - index, 'd'));
   const listDaysOneYear =  Array(13).fill().map((item, index)=>moment(new Date()).subtract(12 - index, 'M'));
@@ -132,10 +132,11 @@ const StatisticsHeightScreen = () => {
     );
   }
 return(
-<View style={[styles.container, {backgroundColor: theme === 'light'? '#FFFFFF' : '#9B9B9B'}]}>
+<View style={[styles.container, {backgroundColor: theme === 'light'? '#FFFFFF' : '#1A1A1A'}]}>
 <Picker
         selectedValue={selectedValue}
-        style={{ height: 50, width: 150, alignSelf: 'center'}}
+        dropdownIconColor = {theme === 'light'? '#000':'#fff'}
+        style={{ height: 50, width: 150, alignSelf: 'center', color: theme === 'light'? '#000' : '#fff'}}
         onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}
       >
        <Picker.Item label={language === 'vn'? "1 tuần": "1 week"} value="1 week"/>
@@ -157,11 +158,11 @@ return(
             width={Dimensions.get('window').width - 16}
             height={220}
             chartConfig={{
-              backgroundColor: theme === 'light'? '#FFFFFF' : '#9B9B9B',
-              backgroundGradientFrom: theme === 'light'? '#FFFFFF' : '#9B9B9B',
-              backgroundGradientTo: theme === 'light'? '#FFFFFF' : '#9B9B9B',
+              backgroundColor: theme === 'light'? '#FFFFFF' : '#1A1A1A',
+              backgroundGradientFrom: theme === 'light'? '#FFFFFF' : '#1A1A1A',
+              backgroundGradientTo: theme === 'light'? '#FFFFFF' : '#1A1A1A',
               decimalPlaces: 2,
-              color: (opacity = 1) => `rgba(0, 0, 255, ${opacity})`,
+              color: (opacity = 1) => `rgba(3, 200, 255, ${opacity})`,
               style: {
                 borderRadius: 16,
               },
@@ -187,11 +188,11 @@ return(
             width={Dimensions.get('window').width - 16}
             height={220}
             chartConfig={{
-              backgroundColor: theme === 'light'? '#FFFFFF' : '#9B9B9B',
-              backgroundGradientFrom: theme === 'light'? '#FFFFFF' : '#9B9B9B',
-              backgroundGradientTo: theme === 'light'? '#FFFFFF' : '#9B9B9B',
+              backgroundColor: theme === 'light'? '#FFFFFF' : '#1A1A1A',
+              backgroundGradientFrom: theme === 'light'? '#FFFFFF' : '#1A1A1A',
+              backgroundGradientTo: theme === 'light'? '#FFFFFF' : '#1A1A1A',
               decimalPlaces: 2,
-              color: (opacity = 1) => `rgba(0, 0, 255, ${opacity})`,
+              color: (opacity = 1) => `rgba(3, 200, 255, ${opacity})`,
               style: {
                 borderRadius: 16,
               },
@@ -216,11 +217,11 @@ return(
             width={Dimensions.get('window').width - 16}
             height={220}
             chartConfig={{
-              backgroundColor: theme === 'light'? '#FFFFFF' : '#9B9B9B',
-              backgroundGradientFrom: theme === 'light'? '#FFFFFF' : '#9B9B9B',
-              backgroundGradientTo: theme === 'light'? '#FFFFFF' : '#9B9B9B',
+              backgroundColor: theme === 'light'? '#FFFFFF' : '#1A1A1A',
+              backgroundGradientFrom: theme === 'light'? '#FFFFFF' : '#1A1A1A',
+              backgroundGradientTo: theme === 'light'? '#FFFFFF' : '#1A1A1A',
               decimalPlaces: 2,
-              color: (opacity = 1) => `rgba(0, 0, 255, ${opacity})`,
+              color: (opacity = 1) => `rgba(3, 200, 255, ${opacity})`,
               style: {
                 borderRadius: 16,
               },
