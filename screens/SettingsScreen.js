@@ -19,6 +19,10 @@ const SettingsScreen = ({navigation}) => {
   const [isPopoverThemeVisible, setPopoverThemeVisible] = useState(false);
   const [popoverThemeAnchor, setPopoverThemeAnchor] = useState(null);
 
+  const changeGoal = () => {
+    navigation.navigate('ChangeGoal');
+  }
+
   const handleLanguageChange = async (newLanguage) => {
     if (language !== newLanguage){
       try {
@@ -69,6 +73,10 @@ const SettingsScreen = ({navigation}) => {
         <TouchableOpacity style={styles.btnContainer} onPress={() => logout()}>
           <Ionicons name='log-out-outline' size={27} color={theme === 'light'? '#000000' : '#FFFFFF'}/>
           <Text style={[styles.btnText, {color: theme === 'light'? '#000000' : '#FFFFFF'}]}>{language === 'vn' ? 'Đăng xuất' : 'Log Out'}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.btnContainer} onPress={changeGoal}>
+          <Image source={{uri: 'https://cdn-icons-png.flaticon.com/512/184/184101.png'}} style={{width: 25, height: 25}}/>
+          <Text style={[styles.btnText, {color: theme === 'light'? '#000000' : '#FFFFFF'}]}>{language === 'vn' ? 'Thay đổi mục tiêu' : 'Change goal'}</Text>
         </TouchableOpacity>
         
         <Popover

@@ -3,7 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SettingNoti from '../screens/SettingNoti';
 import SettingsScreen from '../screens/SettingsScreen';
 import EditProfileScreen from '../screens/EditProfileScreen';
-
+import ChangeGoalScreen from '../screens/ChangeGoalScreen';
 const Stack = createNativeStackNavigator();
 export default function SettingStack() {
     return (
@@ -11,6 +11,7 @@ export default function SettingStack() {
                 <Stack.Screen name='Setting' component={SettingsScreen} options={{ header: () => null }}/>
                 <Stack.Screen name='settingNoti' component={SettingNoti} options={{ header: () => null }}/>
                 <Stack.Screen name='editProfileScreen' component={EditProfileScreen} options={{ header: () => null }}/>
+                <Stack.Screen name='ChangeGoal' component={ChangeGoalScreen} options={{ header: () => null }}/>
             </Stack.Navigator>
     );
   };

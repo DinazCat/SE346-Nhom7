@@ -33,7 +33,7 @@ const TabsNavigator = () => {
         name="Home"
         component={HomeStack}
         options={{
-          
+          unmountOnBlur: true,
           tabBarItemStyle: {
             height: 0,
           },
@@ -55,6 +55,7 @@ const TabsNavigator = () => {
         name="Statistics"
         component={StatisticsScreen}
         options={{
+          unmountOnBlur: true,
           tabBarItemStyle: {
             height: 0,
           },

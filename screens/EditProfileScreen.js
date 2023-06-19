@@ -14,7 +14,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Feather from 'react-native-vector-icons/Feather';
 import FormButton from '../components/FormButton';
-
+import { Picker } from '@react-native-picker/picker';
 import { requestCameraPermission, requestStoragePermission } from '../utils/Permission';
 const EditProfileScreen = () => {
   const {user, logout} = useContext(AuthContext);
@@ -25,7 +25,7 @@ const EditProfileScreen = () => {
   const [height, setHeight] = useState('');
   const [weight, setWeight] = useState('');
   const [age, setAge] = useState('');
-
+  const [sex, setSex] = useState();
   const language = useContext(LanguageContext);
   const theme = useContext(ThemeContext);
   useEffect(() => {
@@ -96,47 +96,65 @@ const EditProfileScreen = () => {
         setHeight(documentSnapshot.data().height);
         setWeight(documentSnapshot.data().weight);
         setAge(documentSnapshot.data().age);
+        setSex(documentSnapshot.data().sex)
       }
     });
   }
-  const updateHeightWeightAgeDiary = async() => {
-    
-    try{
-      return Promise.all(()=>{firestore()
-      .collection('bmiDiary')
-      .where('userId', '==', user.uid)
-      .onSnapshot((querySnapshot)=>{
-        let arr = [];
-        querySnapshot.forEach(doc =>{
-          const {height, time, weight, age, activityLevel, goal, sex, weeklyGoal} = doc.data();
-          arr.push({height: height, time: time, id: doc.id, weight: weight, age: age, activityLevel: activityLevel, goal: goal, sex: sex, weeklyGoal: weeklyGoal})
-          
-        })
-        let arrSort = arr.sort((a,b)=>a.time - b.time);
-        let item = arrSort[arrSort.length - 1];
-        if (new Date(item.time._seconds * 1000).getFullYear() == new Date().getFullYear() && new Date(item.time._seconds * 1000).getMonth() == new Date().getMonth() && new Date(item.time._seconds * 1000).getDate() == new Date().getDate() ){
-          firestore().collection('bmiDiary').doc(item.id).delete().then(() => {});
-        }
-          firestore().collection('bmiDiary').add({
-            bmr: CaloriesNeedToBurn(age, height, weight, item.activityLevel, item.goal, item.sex, item.weeklyGoal),
-            userId: user.uid,
-            age: age,
-            height: height,
-            weight: weight,
-            sex: item.sex,
-            goal: item.goal,
-            weeklyGoal: item.weeklyGoal,
-            activityLevel: item.activityLevel,
-            time: firestore.Timestamp.fromDate(new Date()),
-          });
-        
-        
-      })})
-     
-    } catch(e){
-      console.log(e);
-    }
   
+
+const updateHeightWeightAgeDiary = async () => {
+  
+  return new Promise((resolve, reject) => {
+  const unsubscribe = firestore()
+  .collection('bmiDiary')
+  .where('userId', '==', user.uid)
+  .onSnapshot((querySnapshot)=>{
+    let arr = [];
+    querySnapshot.forEach(doc =>{
+      const {time, activityLevel, goal, sex, weeklyGoal} = doc.data();
+      arr.push({time: time, id: doc.id, activityLevel: activityLevel, goal: goal, sex: sex, weeklyGoal: weeklyGoal})
+      
+    })
+    let arrSort = arr.sort((a,b)=>a.time - b.time);
+    let item = arrSort[arrSort.length - 1];
+      resolve(item);
+    },
+    (error) => {
+      console.log(error);
+      reject([]);
+    }
+  );
+  return () => unsubscribe();
+});
+};
+
+const updateBmr = async() => {
+  const item = await updateHeightWeightAgeDiary();
+  if (new Date(item.time._seconds * 1000).getFullYear() == new Date().getFullYear() && new Date(item.time._seconds * 1000).getMonth() == new Date().getMonth() && new Date(item.time._seconds * 1000).getDate() == new Date().getDate() ){
+    firestore().collection('bmiDiary').doc(item.id).update({
+      bmr: CaloriesNeedToBurn(age, height, weight, item.activityLevel, item.goal, sex, item.weeklyGoal),
+      age: age,
+      height: height,
+      weight: weight,
+      sex: sex,
+      time: firestore.Timestamp.fromDate(new Date()),
+    });
+  }
+  else{
+    firestore().collection('bmiDiary').add({
+      bmr: CaloriesNeedToBurn(age, height, weight, item.activityLevel, item.goal, sex, item.weeklyGoal),
+      userId: user.uid,
+      age: age,
+      height: height,
+      weight: weight,
+      sex: sex,
+      goal: item.goal,
+      weeklyGoal: item.weeklyGoal,
+      activityLevel: item.activityLevel,
+      time: firestore.Timestamp.fromDate(new Date()),
+    });
+  }
+
 }
 
   const getUserData = async () => {
@@ -163,10 +181,11 @@ const EditProfileScreen = () => {
       await firestore().collection('bmi').doc(user.uid).update({
         height: height,
         weight: weight,
-        age: age
+        age: age,
+        sex: sex
       }
       )
-      updateHeightWeightAgeDiary();
+      await updateBmr();
       await firestore()
       .collection('users')
       .doc(user.uid)
@@ -420,6 +439,22 @@ const EditProfileScreen = () => {
             style={[styles.textInput, {height: 40, color: theme==='light'?'#000':'#fff'}]}
           />
         </View>
+        
+
+        <View style={[styles.action, {height:60}]}>
+          <FontAwesome name="intersex" color={theme==='light'?'#000':'#fff'} size={25} />
+          {sex?<Picker
+        selectedValue={sex}
+        dropdownIconColor = {theme === 'light'? '#000':'#fff'}
+        style={{width: 210, alignSelf: 'center', color: theme === 'light'? '#000' : '#fff'}}
+        onValueChange={(itemValue, itemIndex) => setSex(itemValue)}
+        placeholder={language === 'vn' ? 'Chọn giới tính' : 'Choose sex'}
+        placeholderTextColor={theme==='light'?'#BABABA':'#A3A3A3'}
+      >
+        <Picker.Item label="Female" value="Female" />
+        <Picker.Item label="Male" value="Male" />
+      </Picker>:null}
+        </View>
         <View style={styles.action}>
         <MaterialCommunityIcons name="scale-bathroom" color={theme==='light'?'#000':'#fff'} size={20} />
           <TextInput
@@ -432,8 +467,6 @@ const EditProfileScreen = () => {
             style={[styles.textInput, {color: theme==='light'?'#000':'#fff'}]}
           />
         </View>
-
-
         <View style={styles.action}>
           <MaterialCommunityIcons name="human-male-height" color={theme==='light'?'#000':'#fff'} size={25} />
           <TextInput
@@ -460,6 +493,7 @@ const EditProfileScreen = () => {
             style={[styles.textInput, {color: theme==='light'?'#000':'#fff'}]}
           />
         </View>
+        
 
         <FormButton title={language === 'vn' ? 'Cập nhật' : 'Update'} onPress={handleUpdate}/>
       </Animated.View>
