@@ -23,7 +23,7 @@ const StatisticsHeightScreen = () => {
     try{
       await firestore()
       .collection('bmiDiary')
-      .where('id', '==', user.uid)
+      .where('userId', '==', user.uid)
       .onSnapshot((querySnapshot)=>{
         let arr = [];
         let arrHeight = [];
@@ -54,7 +54,7 @@ const StatisticsHeightScreen = () => {
     try{
       await firestore()
       .collection('bmiDiary')
-      .where('id', '==', user.uid)
+      .where('userId', '==', user.uid)
       .onSnapshot((querySnapshot)=>{
         let arr = [];
         let arrHeight = [];
@@ -85,7 +85,7 @@ const StatisticsHeightScreen = () => {
     try{
       await firestore()
       .collection('bmiDiary')
-      .where('id', '==', user.uid)
+      .where('userId', '==', user.uid)
       .onSnapshot((querySnapshot)=>{
         let arr = [];
         let arrHeight = [];

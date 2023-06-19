@@ -182,7 +182,7 @@ const HomeScreen = ({navigation}) => {
     try{
       firestore()
       .collection('bmiDiary')
-      .where('id', '==', user.uid)
+      .where('userId', '==', user.uid)
       .onSnapshot((querySnapshot)=>{
         let arr = [];
         let arrTemp = [];

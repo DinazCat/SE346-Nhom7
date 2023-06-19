@@ -23,7 +23,7 @@ const StatisticsWeightScreen = () => {
     try{
       await firestore()
       .collection('bmiDiary')
-      .where('id', '==', user.uid)
+      .where('userId', '==', user.uid)
       .onSnapshot((querySnapshot)=>{
         let arr = [];
         let arrWeight = [];
@@ -54,7 +54,7 @@ const StatisticsWeightScreen = () => {
     try{
       await firestore()
       .collection('bmiDiary')
-      .where('id', '==', user.uid)
+      .where('userId', '==', user.uid)
       .onSnapshot((querySnapshot)=>{
         let arr = [];
         let arrWeight = [];
@@ -85,7 +85,7 @@ const StatisticsWeightScreen = () => {
     try{
       await firestore()
       .collection('bmiDiary')
-      .where('id', '==', user.uid)
+      .where('userId', '==', user.uid)
       .onSnapshot((querySnapshot)=>{
         let arr = [];
         let arrWeight = [];

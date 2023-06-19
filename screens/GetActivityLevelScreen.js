@@ -77,7 +77,7 @@ const GetActivityLevelScreen = ({navigation, route}) => {
 
     firestore().collection('bmiDiary').add({
       bmr: bmr,
-      id: user.uid,
+      userId: user.uid,
       age: route.params.age,
       height: route.params.height,
       weight: route.params.weight,

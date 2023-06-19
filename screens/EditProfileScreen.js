@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity,ImageBackground, TextInput, Alert} from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity,ImageBackground, TextInput, Alert, Image} from 'react-native'
 import React, {useEffect, useContext, useState} from 'react';
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
@@ -22,11 +22,122 @@ const EditProfileScreen = () => {
   const [uploading, setUploading] = useState(false);
   const [transferred, setTransferred] = useState(0);
   const [userData, setUserData] = useState(null);
+  const [height, setHeight] = useState('');
+  const [weight, setWeight] = useState('');
+  const [age, setAge] = useState('');
+
   const language = useContext(LanguageContext);
   const theme = useContext(ThemeContext);
   useEffect(() => {
+    getHeightWeightAge();
     getUserData();
   }, []);
+  const CaloriesNeedToBurn = (age, height, weight, activityLevel, goal, sex, weeklyGoal)=>{
+    let bmr = 0;
+    if (sex == 'Male'){
+      bmr = 10 * parseInt(weight) + 6.25 * parseInt(height) - 5 * parseInt(age) + 5;
+    }
+    else {
+      bmr = 10 * parseInt(weight) + 6.25 * parseInt(height) - 5 * parseInt(age) - 161;
+    }
+    switch (activityLevel){
+      case "Not very active":
+        bmr = (bmr * 1.2).toFixed();
+        break;
+      case "Lightly active":
+        bmr = (bmr * 1.375).toFixed();
+        break;
+      case "Moderate":
+        bmr = (bmr * 1.55).toFixed();
+        break;
+      case "Active":
+        bmr = (bmr * 1.725).toFixed();
+        break;
+      case "Very active":
+        bmr = (bmr * 1.9).toFixed();
+        break;
+    }
+    switch (weeklyGoal){
+      case "0.25":
+          if (goal == "Lose weight"){
+            bmr -= 250;
+          }
+          else {
+            bmr += 250;
+          }
+          break;
+      case "0.5":
+          if (goal == "Lose weight"){
+            bmr -= 500;
+          }
+          else {
+            bmr += 500;
+          }
+          break;
+      case "1":
+          if (goal == "Lose weight"){
+            bmr -= 1000;
+          }
+          else {
+            bmr += 1000;
+          }
+          break;
+  }
+    return bmr;
+  }
+
+  const getHeightWeightAge = () => {
+    firestore()
+    .collection('bmi')
+    .doc(user.uid)
+    .get()
+    .then(documentSnapshot => {
+      if (documentSnapshot.exists) {
+        setHeight(documentSnapshot.data().height);
+        setWeight(documentSnapshot.data().weight);
+        setAge(documentSnapshot.data().age);
+      }
+    });
+  }
+  const updateHeightWeightAgeDiary = async() => {
+    
+    try{
+      return Promise.all(()=>{firestore()
+      .collection('bmiDiary')
+      .where('userId', '==', user.uid)
+      .onSnapshot((querySnapshot)=>{
+        let arr = [];
+        querySnapshot.forEach(doc =>{
+          const {height, time, weight, age, activityLevel, goal, sex, weeklyGoal} = doc.data();
+          arr.push({height: height, time: time, id: doc.id, weight: weight, age: age, activityLevel: activityLevel, goal: goal, sex: sex, weeklyGoal: weeklyGoal})
+          
+        })
+        let arrSort = arr.sort((a,b)=>a.time - b.time);
+        let item = arrSort[arrSort.length - 1];
+        if (new Date(item.time._seconds * 1000).getFullYear() == new Date().getFullYear() && new Date(item.time._seconds * 1000).getMonth() == new Date().getMonth() && new Date(item.time._seconds * 1000).getDate() == new Date().getDate() ){
+          firestore().collection('bmiDiary').doc(item.id).delete().then(() => {});
+        }
+          firestore().collection('bmiDiary').add({
+            bmr: CaloriesNeedToBurn(age, height, weight, item.activityLevel, item.goal, item.sex, item.weeklyGoal),
+            userId: user.uid,
+            age: age,
+            height: height,
+            weight: weight,
+            sex: item.sex,
+            goal: item.goal,
+            weeklyGoal: item.weeklyGoal,
+            activityLevel: item.activityLevel,
+            time: firestore.Timestamp.fromDate(new Date()),
+          });
+        
+        
+      })})
+     
+    } catch(e){
+      console.log(e);
+    }
+  
+}
 
   const getUserData = async () => {
 
@@ -49,6 +160,13 @@ const EditProfileScreen = () => {
     }
     
     try{
+      await firestore().collection('bmi').doc(user.uid).update({
+        height: height,
+        weight: weight,
+        age: age
+      }
+      )
+      updateHeightWeightAgeDiary();
       await firestore()
       .collection('users')
       .doc(user.uid)
@@ -65,6 +183,7 @@ const EditProfileScreen = () => {
           'Your Profile has been updated successfully.'
         );
       });
+      
     } catch(e){
       console.log(e);
     };
@@ -302,44 +421,46 @@ const EditProfileScreen = () => {
           />
         </View>
         <View style={styles.action}>
-          <Feather name="phone" color={theme==='light'?'#000':'#fff'} size={20} />
+        <MaterialCommunityIcons name="scale-bathroom" color={theme==='light'?'#000':'#fff'} size={20} />
           <TextInput
-            placeholder="Phone"
+            placeholder="Weight"
             placeholderTextColor={theme==='light'?'#BABABA':'#A3A3A3'}
             keyboardType="number-pad"
             autoCorrect={false}
-            value={userData ? userData.phone : ''}
-            onChangeText={(txt) => setUserData({...userData, phone: txt})}
+            value={weight}
+            onChangeText={(weight) => setWeight(weight)}
+            style={[styles.textInput, {color: theme==='light'?'#000':'#fff'}]}
+          />
+        </View>
+
+
+        <View style={styles.action}>
+          <MaterialCommunityIcons name="human-male-height" color={theme==='light'?'#000':'#fff'} size={25} />
+          <TextInput
+            placeholder="Height"
+            placeholderTextColor={theme==='light'?'#BABABA':'#A3A3A3'}
+            autoCorrect={false}
+            value={height}
+            onChangeText={(height) => setHeight(height)}
             style={[styles.textInput, {color: theme==='light'?'#000':'#fff'}]}
           />
         </View>
 
         <View style={styles.action}>
-          <FontAwesome name="globe" color={theme==='light'?'#000':'#fff'} size={21} />
+          <Image
+            source={{uri: 'https://cdn-icons-png.flaticon.com/512/5541/5541575.png'}}
+            style={{width: 25, height: 25}}
+          />
           <TextInput
-            placeholder="Country"
+            placeholder="Age"
             placeholderTextColor={theme==='light'?'#BABABA':'#A3A3A3'}
             autoCorrect={false}
-            value={userData ? userData.country : ''}
-            onChangeText={(txt) => setUserData({...userData, country: txt})}
+            value={age}
+            onChangeText={(age) => setAge(age)}
             style={[styles.textInput, {color: theme==='light'?'#000':'#fff'}]}
           />
         </View>
-        <View style={styles.action}>
-          <MaterialCommunityIcons
-            name="map-marker-outline"
-            color={theme==='light'?'#000':'#fff'}
-            size={24}
-          />
-          <TextInput
-            placeholder="City"
-            placeholderTextColor={theme==='light'?'#BABABA':'#A3A3A3'}
-            autoCorrect={false}
-            value={userData ? userData.city : ''}
-            onChangeText={(txt) => setUserData({...userData, city: txt})}
-            style={[styles.textInput, {color: theme==='light'?'#000':'#fff'}]}
-          />
-        </View>
+
         <FormButton title={language === 'vn' ? 'Cập nhật' : 'Update'} onPress={handleUpdate}/>
       </Animated.View>
     </View>

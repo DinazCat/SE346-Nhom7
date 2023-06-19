@@ -261,11 +261,11 @@ const DetailHomeScreen = ({route, navigation}) => {
           console.log(e);
         }
       }
-      const closeRow = (index) => {
-        if(prevOpenedRow && prevOpenedRow !== row[index]){
+      const closeRow = (index, item) => {
+        if(prevOpenedRow && prevOpenedRow !== row[item.id]){
           prevOpenedRow.close();
         }
-        prevOpenedRow = row[index];
+        prevOpenedRow = row[item.id];
       }
       
  return (
@@ -281,7 +281,7 @@ const DetailHomeScreen = ({route, navigation}) => {
       <Text style={{marginLeft: 'auto', color: theme==='light'?"#000":"#fff", fontWeight: 'bold', fontSize: 17}}>{(breakfast +  lunch + dinner + snacks> 0)? breakfast +  lunch + dinner + snacks+" cals": ''}</Text>
     </View>
     <ScrollView>
-    <View style={{flexDirection: 'row', marginHorizontal: 15, marginTop: 7, marginBottom: 10}}>
+    <View style={{flexDirection: 'row', marginHorizontal: 15, marginTop: 3, marginBottom: 10}}>
       <Text style={{color: theme==='light'?"#000":"#fff", fontWeight: 'bold', fontSize: 17}}>{language==='vn'?'Buổi sáng':'Breakfast'}</Text>
       <Text style={{marginLeft: 'auto', color: theme==='light'?"#000":"#fff", fontWeight: 'bold', fontSize: 17}}>{(breakfast> 0)? breakfast+" cals": ''}</Text>
     </View>
@@ -289,14 +289,14 @@ const DetailHomeScreen = ({route, navigation}) => {
                     return(  
                       <GestureHandlerRootView key={index}>
                       <Swipeable 
-                      ref={ref => row[index] = ref}
+                      ref={ref => row[item.id] = ref}
                       renderRightActions={()=>{return(
                         <View style={{flexDirection: 'row'}}>
                           <TouchableOpacity style={{backgroundColor: '#D436F0', justifyContent: 'space-around'}}>
     <Text style={{color: "#000", width: 70, textAlign: 'center'}}>{language==='vn'?"Tất cả":"All"}</Text>
     </TouchableOpacity>
     <TouchableOpacity style={{backgroundColor: 'red', justifyContent: 'space-around'}} onPress={()=>{
-      row[index].close();
+      row[item.id].close();
       deleteFoodsDiary(item)
       }}>
       <Text style={{color: "#000", width: 70, textAlign: 'center'}}>{language==='vn'?"Xóa":"Delete"}</Text>
@@ -305,7 +305,7 @@ const DetailHomeScreen = ({route, navigation}) => {
       <Text style={{color: "#000", width: 70, textAlign: 'center'}}>{language==='vn'?"Chọn":"Select"}</Text>
     </TouchableOpacity>
   </View>
-                )}}  onSwipeableWillOpen={()=> closeRow(index)}
+                )}}  onSwipeableWillOpen={()=> closeRow(index, item)}
                 >
                         
                         <View style={{alignItems: 'center', flexDirection: 'row', paddingHorizontal: 10, paddingVertical: 3, paddingBottom: 5, backgroundColor: '#CCC', borderBottomColor: '#fff', borderBottomWidth: 2}}>
@@ -332,14 +332,14 @@ const DetailHomeScreen = ({route, navigation}) => {
                     return(  
                       <GestureHandlerRootView key={index}>
                       <Swipeable 
-                      ref={ref => row[index] = ref}
+                      ref={ref => row[item.id] = ref}
                       renderRightActions={()=>{return(
                         <View style={{flexDirection: 'row'}}>
                           <TouchableOpacity style={{backgroundColor: '#D436F0', justifyContent: 'space-around'}}>
     <Text style={{color: "#000", width: 70, textAlign: 'center'}}>{language==='vn'?"Tất cả":"All"}</Text>
     </TouchableOpacity>
     <TouchableOpacity style={{backgroundColor: 'red', justifyContent: 'space-around'}} onPress={()=>{
-      row[index].close();
+      row[item.id].close();
       deleteFoodsDiary(item)
       }}>
       <Text style={{color: "#000", width: 70, textAlign: 'center'}}>{language==='vn'?"Xóa":"Delete"}</Text>
@@ -348,7 +348,7 @@ const DetailHomeScreen = ({route, navigation}) => {
       <Text style={{color: "#000", width: 70, textAlign: 'center'}}>{language==='vn'?"Chọn":"Select"}</Text>
     </TouchableOpacity>
   </View>
-                )}}  onSwipeableWillOpen={()=> closeRow(index)}
+                )}}  onSwipeableWillOpen={()=> closeRow(index, item)}
                 >
                         
                         <View style={{alignItems: 'center', flexDirection: 'row', paddingHorizontal: 10, paddingVertical: 3, paddingBottom: 5, backgroundColor: '#CCC', borderBottomColor: '#fff', borderBottomWidth: 2}}>
@@ -374,14 +374,14 @@ const DetailHomeScreen = ({route, navigation}) => {
                     return(  
                       <GestureHandlerRootView key={index}>
                       <Swipeable 
-                      ref={ref => row[index] = ref}
+                      ref={ref => row[item.id] = ref}
                       renderRightActions={()=>{return(
                         <View style={{flexDirection: 'row'}}>
                           <TouchableOpacity style={{backgroundColor: '#D436F0', justifyContent: 'space-around'}}>
     <Text style={{color: "#000", width: 70, textAlign: 'center'}}>{language==='vn'?"Tất cả":"All"}</Text>
     </TouchableOpacity>
     <TouchableOpacity style={{backgroundColor: 'red', justifyContent: 'space-around'}} onPress={()=>{
-      row[index].close();
+      row[item.id].close();
       deleteFoodsDiary(item)
       }}>
       <Text style={{color: "#000", width: 70, textAlign: 'center'}}>{language==='vn'?"Xóa":"Delete"}</Text>
@@ -390,7 +390,7 @@ const DetailHomeScreen = ({route, navigation}) => {
       <Text style={{color: "#000", width: 70, textAlign: 'center'}}>{language==='vn'?"Chọn":"Select"}</Text>
     </TouchableOpacity>
   </View>
-                )}}  onSwipeableWillOpen={()=> closeRow(index)}
+                )}}  onSwipeableWillOpen={()=> closeRow(index, item)}
                 >
                         
                         <View style={{alignItems: 'center', flexDirection: 'row', paddingHorizontal: 10, paddingVertical: 3, paddingBottom: 5, backgroundColor: '#CCC', borderBottomColor: '#fff', borderBottomWidth: 2}}>
@@ -416,14 +416,14 @@ const DetailHomeScreen = ({route, navigation}) => {
                     return(  
                       <GestureHandlerRootView key={index}>
                       <Swipeable 
-                      ref={ref => row[index] = ref}
+                      ref={ref => row[item.id] = ref}
                       renderRightActions={()=>{return(
                         <View style={{flexDirection: 'row'}}>
                           <TouchableOpacity style={{backgroundColor: '#D436F0', justifyContent: 'space-around'}}>
     <Text style={{color: "#000", width: 70, textAlign: 'center'}}>{language==='vn'?"Tất cả":"All"}</Text>
     </TouchableOpacity>
     <TouchableOpacity style={{backgroundColor: 'red', justifyContent: 'space-around'}} onPress={()=>{
-      row[index].close();
+      row[item.id].close();
       deleteFoodsDiary(item)
       }}>
       <Text style={{color: "#000", width: 70, textAlign: 'center'}}>{language==='vn'?"Xóa":"Delete"}</Text>
@@ -432,7 +432,7 @@ const DetailHomeScreen = ({route, navigation}) => {
       <Text style={{color: "#000", width: 70, textAlign: 'center'}}>{language==='vn'?"Chọn":"Select"}</Text>
     </TouchableOpacity>
   </View>
-                )}}  onSwipeableWillOpen={()=> closeRow(index)}
+                )}}  onSwipeableWillOpen={()=> closeRow(index, item)}
                 >
                         
                         <View style={{alignItems: 'center', flexDirection: 'row', paddingHorizontal: 10, paddingVertical: 3, paddingBottom: 5, backgroundColor: '#CCC', borderBottomColor: '#fff', borderBottomWidth: 2}}>
@@ -459,14 +459,14 @@ const DetailHomeScreen = ({route, navigation}) => {
                     return(  
                       <GestureHandlerRootView key={index}>
                       <Swipeable 
-                      ref={ref => row[index] = ref}
+                      ref={ref => row[item.id] = ref}
                       renderRightActions={()=>{return(
                         <View style={{flexDirection: 'row'}}>
                           <TouchableOpacity style={{backgroundColor: '#D436F0', justifyContent: 'space-around'}}>
     <Text style={{color: "#000", width: 70, textAlign: 'center'}}>{language==='vn'?"Tất cả":"All"}</Text>
     </TouchableOpacity>
     <TouchableOpacity style={{backgroundColor: 'red', justifyContent: 'space-around'}} onPress={()=>{
-      row[index].close();
+      row[item.id].close();
       deleteWater(item)
       }}>
       <Text style={{color: "#000", width: 70, textAlign: 'center'}}>{language==='vn'?"Xóa":"Delete"}</Text>
@@ -475,7 +475,7 @@ const DetailHomeScreen = ({route, navigation}) => {
       <Text style={{color: "#000", width: 70, textAlign: 'center'}}>{language==='vn'?"Chọn":"Select"}</Text>
     </TouchableOpacity>
   </View>
-                )}}  onSwipeableWillOpen={()=> closeRow(index)}
+                )}}  onSwipeableWillOpen={()=> closeRow(index, item)}
                 >
                         
                         <View style={{alignItems: 'center', flexDirection: 'row', paddingHorizontal: 10, paddingVertical: 3, paddingBottom: 5, backgroundColor: '#CCC', borderBottomColor: '#fff', borderBottomWidth: 2}}>
@@ -496,20 +496,20 @@ const DetailHomeScreen = ({route, navigation}) => {
                      )}
 <View style={{flexDirection: 'row', marginHorizontal: 15, marginTop: 7, marginBottom: 10}}>
       <Text style={{color: theme==='light'?"#000":"#fff", fontWeight: 'bold', fontSize: 17}}>{language==='vn'?'Nước':'Water'}</Text>
-      <Text style={{marginLeft: 'auto', color: theme==='light'?"#000":"#fff", fontWeight: 'bold', fontSize: 17}}>{(snacks> 0)? water+ ' ml': ''}</Text>
+      <Text style={{marginLeft: 'auto', color: theme==='light'?"#000":"#fff", fontWeight: 'bold', fontSize: 17}}>{(water> 0)? water+ ' ml': ''}</Text>
     </View>
     {waterList?.map((item, index)=>{
                     return(  
                         <GestureHandlerRootView key={index}>
                                                   <Swipeable 
-                                                  ref={ref => row[index] = ref}
+                                                  ref={ref => row[item.id] = ref}
                                                   renderRightActions={()=>{return(
                                                     <View style={{flexDirection: 'row'}}>
                                                       <TouchableOpacity style={{backgroundColor: '#D436F0', justifyContent: 'space-around'}}>
                                 <Text style={{color: "#000", width: 70, textAlign: 'center'}}>{language==='vn'?"Tất cả":"All"}</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity style={{backgroundColor: 'red', justifyContent: 'space-around'}} onPress={()=>{
-                                  row[index].close();
+                                  row[item.id].close();
                                   deleteWater(item)
                                   }}>
                                   <Text style={{color: "#000", width: 70, textAlign: 'center'}}>{language==='vn'?"Xóa":"Delete"}</Text>
@@ -518,7 +518,7 @@ const DetailHomeScreen = ({route, navigation}) => {
                                   <Text style={{color: "#000", width: 70, textAlign: 'center'}}>{language==='vn'?"Chọn":"Select"}</Text>
                                 </TouchableOpacity>
                               </View>
-                                            )}}  onSwipeableWillOpen={()=> closeRow(index)}
+                                            )}}  onSwipeableWillOpen={()=> closeRow(index, item)}
                                             >
                                                     
                                                   <View style={{alignItems: 'center', flexDirection: 'row', paddingHorizontal: 10, paddingVertical: 3, paddingBottom: 5, backgroundColor: '#CCC', borderBottomColor: '#fff', borderBottomWidth: 2}}>
