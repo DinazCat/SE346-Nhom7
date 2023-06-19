@@ -1,17 +1,18 @@
-import {View, Text, StyleSheet, TextInput, Image, TouchableOpacity, FlatList, Alert} from "react-native";
+import {View, Text, StyleSheet, TextInput, Image, TouchableOpacity, FlatList, Alert, ScrollView} from "react-native";
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import firestore from '@react-native-firebase/firestore';
-import React, {useState, useEffect, useContext} from "react";
+import React, {useState, useEffect, useContext, useRef} from "react";
 import moment from "moment";
 import { AuthContext } from '../navigation/AuthProvider';
-import { Picker } from '@react-native-picker/picker';
-import PopFoodAmount from "./PopFoodAmount";
+import { GestureHandlerRootView, Swipeable } from "react-native-gesture-handler";
 import LanguageContext from "../context/LanguageContext";
 import ThemeContext from "../context/ThemeContext";
-import { SwipeListView } from "react-native-swipe-list-view";
+import CheckBox from "@react-native-community/checkbox";
 
 const DetailWaterScreen = ({route, navigation}) => {
     const {user} = useContext(AuthContext);
+    const row = [];
+    let prevOpenedRow;
     const date = (route.params?.time == 'Today')? moment(new Date()).format('DD/MM/YYYY'): route.params?.time;
     const [water, setWater] = useState(0);
     const [waterList, setWaterList] = useState([]);
@@ -27,17 +28,16 @@ const DetailWaterScreen = ({route, navigation}) => {
       navigation.navigate('AddItemScreen', {date: date, page:3})
     }
     
-    const deleteWater = (selectedItem, rowMap) => {
-      let index = waterList.findIndex(item=>item.id === selectedItem.id)
-      rowMap[`${index}`].closeRow();
-        Alert.alert('Delete', 'Do you want to remove ingredient?', [
+    const deleteWater = (item) => {
+      
+        Alert.alert('Delete', 'Do you want to remove water?', [
               {
                 text: 'Cancel',
                 
                 style: 'cancel',
               },
               {text: 'OK', onPress: () => {
-                firestore().collection('water').doc(selectedItem.id).delete().then(() => {});
+                firestore().collection('water').doc(item.id).delete().then(() => {});
               }},
         ]);
     }
@@ -56,7 +56,8 @@ const DetailWaterScreen = ({route, navigation}) => {
               totalWater += parseInt(amount);
               list.push({          
                 id: doc.id,
-                amount: amount
+                amount: amount,
+                isCheck: 'false'
               });
             })
             setWaterList(list);
@@ -67,6 +68,25 @@ const DetailWaterScreen = ({route, navigation}) => {
           console.log(e);
         }
       }
+  
+  const rightSwipe = () => {
+    return (
+      <View style={{flexDirection: 'row'}}>
+        <TouchableOpacity>
+          <Text style={{color: theme==='light'?"#000":"#fff"}}>Delete</Text>
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <Text style={{color: theme==='light'?"#000":"#fff"}}>Select</Text>
+        </TouchableOpacity>
+      </View>
+    )
+  }
+  const closeRow = (index) => {
+    if(prevOpenedRow && prevOpenedRow !== row[index]){
+      prevOpenedRow.close();
+    }
+    prevOpenedRow = row[index];
+  }
       
  return (
   <View style={{backgroundColor: theme==='light'?"#fff":"#000", borderColor: theme==='light'?"#000":"#fff", flex: 1}}>
@@ -80,62 +100,50 @@ const DetailWaterScreen = ({route, navigation}) => {
     <Text style={{color: theme==='light'?"#000":"#fff", fontWeight: 'bold', fontSize: 17}}>{language==='vn'?"Nước":"Water"}</Text>
     <Text style={{marginLeft: 'auto', color: theme==='light'?"#000":"#fff", fontWeight: 'bold', fontSize: 17}}>{(water > 0)? water+" ml": ''}</Text>
   </View>
-  <SwipeListView  
-    useFlatList={true}
-                 data={waterList}
-                 renderItem={({item}) => (
-                   <View style={styles.rowFront}> 
-                   <View style={{alignItems: 'center', flexDirection: 'row', marginHorizontal: 15, marginVertical: 3, paddingBottom: 5}}>
-                      <Image source={require( '../assets/water_.png')} style={{width: 40,
+  
+    <ScrollView>
+    {waterList?.map((item, index)=>{
+                    return(  
+<GestureHandlerRootView key={index}>
+                          <Swipeable 
+                          ref={ref => row[index] = ref}
+                          renderRightActions={()=>{return(
+                            <View style={{flexDirection: 'row'}}>
+                              <TouchableOpacity style={{backgroundColor: '#D436F0', justifyContent: 'space-around'}}>
+        <Text style={{color: "#000", width: 70, textAlign: 'center'}}>{language==='vn'?"Tất cả":"All"}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={{backgroundColor: 'red', justifyContent: 'space-around'}} onPress={()=>{
+          row[index].close();
+          deleteWater(item)
+          }}>
+          <Text style={{color: "#000", width: 70, textAlign: 'center'}}>{language==='vn'?"Xóa":"Delete"}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={{backgroundColor: '#E3912C', justifyContent: 'space-around'}} >
+          <Text style={{color: "#000", width: 70, textAlign: 'center'}}>{language==='vn'?"Chọn":"Select"}</Text>
+        </TouchableOpacity>
+      </View>
+                    )}}  onSwipeableWillOpen={()=> closeRow(index)}
+                    >
+                            
+                          <View style={{alignItems: 'center', flexDirection: 'row', paddingHorizontal: 10, paddingVertical: 3, paddingBottom: 5, backgroundColor: '#CCC', borderBottomColor: '#fff', borderBottomWidth: 2}}>
+
+                          <Image source={require( '../assets/water_.png')} style={{width: 40,
         height: 40,
         resizeMode: 'stretch'}}/>
-                      <View style={{marginLeft:'auto'}}>
+                             <View style={{marginLeft:'auto'}}>
                       <Text style={{marginLeft:'auto', fontSize: 16, color: '#2960D2' }}>{item.amount} ml</Text>
+                      
                       </View>
-                  </View>
-                   </View>
-                 
-                 )}
-                 //
-                 renderHiddenItem={ ({item}, rowMap) => (
-                   <View style={styles.rowBack}>
-               <TouchableOpacity 
-                   style={[styles.backRightBtn, styles.backAll]}
-               >
-                   <Text style={styles.backTextWhite}>{language === 'vn' ? 'Tất cả' : 'All'}</Text>
-               </TouchableOpacity>
-               <TouchableOpacity 
-                   style={[styles.backRightBtn,styles.backSelect]}
-               >
-                   <Text style={styles.backTextWhite}>{language === 'vn' ? 'Chọn' : 'Select'}</Text>
-               </TouchableOpacity>
-               <TouchableOpacity onPress={()=>deleteWater(item, rowMap)}
-                   style={[styles.backRightBtn,styles.backDelete]}
-               >
-                   <Text style={styles.backTextWhite}>{language === 'vn' ? 'Xóa' : 'Delete'}</Text>
-               </TouchableOpacity>
-               
-           </View>
-               )}
-               keyExtractor={(item, index)=>index.toString()}
-                 disableRightSwipe
-                   rightOpenValue={-225}//lấy 75 nhân vs số button cần làm
-                   //previewRowKey={'0'}
-                   previewOpenValue={-40}
-                   previewOpenDelay={3000}
-                   ItemSeparatorComponent={()=> (
-                    <View
-        style={{
-          height: 2,
-          backgroundColor: "#fff",
-        }}
-      />
-                   )}
-                  recalculateHiddenLayout={true} //{nội dung để tick chọn xóa thì đẩy flex ở add screen lên là đc}
-                />
-    
-    
+                      {(item.isCheck==true)?<CheckBox/>:null}
+                      </View>
+                      
+                      </Swipeable>
+                      </GestureHandlerRootView>
+                      )}
+                     )}
 
+
+</ScrollView>
  </View>
 
 )

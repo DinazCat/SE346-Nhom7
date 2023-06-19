@@ -1,4 +1,4 @@
-import {View, Text, StyleSheet, TextInput, Image, TouchableOpacity, FlatList, Alert} from "react-native";
+import {View, Text, StyleSheet, TextInput, Image, TouchableOpacity, Alert} from "react-native";
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import firestore from '@react-native-firebase/firestore';
 import React, {useState, useEffect, useContext} from "react";
@@ -6,6 +6,9 @@ import moment from "moment";
 import { AuthContext } from '../navigation/AuthProvider';
 import { Picker } from '@react-native-picker/picker';
 import PopFoodAmount from "./PopFoodAmount";
+import ThemeContext from "../context/ThemeContext";
+import LanguageContext from "../context/LanguageContext";
+import { GestureHandlerRootView, Swipeable, ScrollView } from "react-native-gesture-handler";
 
 const DetailHomeScreen = ({route, navigation}) => {
     const {user} = useContext(AuthContext);
@@ -22,15 +25,22 @@ const DetailHomeScreen = ({route, navigation}) => {
     const [lunchList, setLunchList] = useState([]);
     const [dinnerList, setDinnerList] = useState([]);
     const [snacksList, setSnacksList] = useState([]);
+    const theme = useContext(ThemeContext)
+    const language= useContext(LanguageContext)
+    const row = [];
+    let prevOpenedRow;
 
     useEffect(() => {
-        getWater(date)
-        getExercise(date)
         getBreakfast(date)
         getLunch(date)
         getDinner(date)
         getSnacks(date)
+        getExercise(date)
+        getWater(date)
     }, []);
+    const back = () => {
+      navigation.goBack();
+    }
     const Add = () => {
       navigation.navigate('AddScreen', {date: date})
     }
@@ -47,7 +57,7 @@ const DetailHomeScreen = ({route, navigation}) => {
         ]);
     }
     const deleteWater = (item) => {
-        Alert.alert('Delete', 'Do you want to remove ingredient?', [
+        Alert.alert('Delete', 'Do you want to remove water?', [
               {
                 text: 'Cancel',
                 
@@ -59,7 +69,7 @@ const DetailHomeScreen = ({route, navigation}) => {
         ]);
     }
     const deleteExercise = (item) => {
-        Alert.alert('Delete', 'Do you want to remove ingredient?', [
+        Alert.alert('Delete', 'Do you want to remove exercise?', [
               {
                 text: 'Cancel',
                 
@@ -251,100 +261,284 @@ const DetailHomeScreen = ({route, navigation}) => {
           console.log(e);
         }
       }
+      const closeRow = (index) => {
+        if(prevOpenedRow && prevOpenedRow !== row[index]){
+          prevOpenedRow.close();
+        }
+        prevOpenedRow = row[index];
+      }
       
- return (<View>
-    <TouchableOpacity>
-    <Text>Return</Text>
-</TouchableOpacity>
-<TouchableOpacity onPress={Add}>
-    <Text>Add</Text>
-    </TouchableOpacity>
-    <Text>Breakfast {breakfast}</Text>
-    
+ return (
+  <View style={{backgroundColor: theme==='light'?"#fff":"#000", borderColor: theme==='light'?"#000":"#fff", flex: 1}}>
+  <TouchableOpacity style={{marginLeft: 15, marginVertical: 5}} onPress={back}>
+    <Icon name={'arrow-left'} size={25} color={theme==='light'?"#000":"#fff"}/>
+  </TouchableOpacity>
+<TouchableOpacity style={{marginLeft:'auto', marginHorizontal: 15, marginBottom: 7}} onPress={Add}>
+  <Icon name={'plus-circle'} size={30} color={'#0AD946'}/>
+  </TouchableOpacity>
+  <View style={{flexDirection: 'row', marginHorizontal: 15, marginBottom: 7}}>
+      <Text style={{color: theme==='light'?"#000":"#fff", fontWeight: 'bold', fontSize: 17}}>{language==='vn'?'Tổng calories tiêu thụ':'Total calories burned'}</Text>
+      <Text style={{marginLeft: 'auto', color: theme==='light'?"#000":"#fff", fontWeight: 'bold', fontSize: 17}}>{(breakfast +  lunch + dinner + snacks> 0)? breakfast +  lunch + dinner + snacks+" cals": ''}</Text>
+    </View>
+    <ScrollView>
+    <View style={{flexDirection: 'row', marginHorizontal: 15, marginTop: 7, marginBottom: 10}}>
+      <Text style={{color: theme==='light'?"#000":"#fff", fontWeight: 'bold', fontSize: 17}}>{language==='vn'?'Buổi sáng':'Breakfast'}</Text>
+      <Text style={{marginLeft: 'auto', color: theme==='light'?"#000":"#fff", fontWeight: 'bold', fontSize: 17}}>{(breakfast> 0)? breakfast+" cals": ''}</Text>
+    </View>
     {breakfastList?.map((item, index)=>{
                     return(  
-                        <View key={index}>
-
-                          <TouchableOpacity onPress={()=>deleteFoodsDiary(item)}>
-                            <Image source={{uri: item.image}} style={styles.tabIcon}/>
-                            <Text>{item.name}</Text>
-                            <Text>{item.amount} {item.unit}</Text>
-                            <Text>{item.calories}</Text>
-                            </TouchableOpacity>
-                        </View>
+                      <GestureHandlerRootView key={index}>
+                      <Swipeable 
+                      ref={ref => row[index] = ref}
+                      renderRightActions={()=>{return(
+                        <View style={{flexDirection: 'row'}}>
+                          <TouchableOpacity style={{backgroundColor: '#D436F0', justifyContent: 'space-around'}}>
+    <Text style={{color: "#000", width: 70, textAlign: 'center'}}>{language==='vn'?"Tất cả":"All"}</Text>
+    </TouchableOpacity>
+    <TouchableOpacity style={{backgroundColor: 'red', justifyContent: 'space-around'}} onPress={()=>{
+      row[index].close();
+      deleteFoodsDiary(item)
+      }}>
+      <Text style={{color: "#000", width: 70, textAlign: 'center'}}>{language==='vn'?"Xóa":"Delete"}</Text>
+    </TouchableOpacity>
+    <TouchableOpacity style={{backgroundColor: '#E3912C', justifyContent: 'space-around'}} >
+      <Text style={{color: "#000", width: 70, textAlign: 'center'}}>{language==='vn'?"Chọn":"Select"}</Text>
+    </TouchableOpacity>
+  </View>
+                )}}  onSwipeableWillOpen={()=> closeRow(index)}
+                >
+                        
+                        <View style={{alignItems: 'center', flexDirection: 'row', paddingHorizontal: 10, paddingVertical: 3, paddingBottom: 5, backgroundColor: '#CCC', borderBottomColor: '#fff', borderBottomWidth: 2}}>
+                      <Image source = {{uri: item.image}} style={{width: 40,
+        height: 40,
+        resizeMode: 'stretch'}}/>
+                      <Text style={{fontSize: 18, width: 200, marginStart: 3}}>{item.name}</Text>
+                      <View style={{marginLeft:'auto'}}>
+                      <Text style={{marginLeft:'auto', fontSize: 16, color: '#2960D2' }}>{item.calories} cals</Text>
+                      <Text style={{marginLeft:'auto', fontSize: 16, color: '#2960D2' }}>{item.amount} {item.unit}</Text>
+                      </View>
+                  </View>
+                  
+                  </Swipeable>
+                  </GestureHandlerRootView>
                       )}
                      )}
 
-    <Text>Lunch {lunch}</Text>
+<View style={{flexDirection: 'row', marginHorizontal: 15, marginTop: 7, marginBottom: 10}}>
+      <Text style={{color: theme==='light'?"#000":"#fff", fontWeight: 'bold', fontSize: 17}}>{language==='vn'?'Buổi trưa':'Lunch'}</Text>
+      <Text style={{marginLeft: 'auto', color: theme==='light'?"#000":"#fff", fontWeight: 'bold', fontSize: 17}}>{(lunch> 0)? lunch+" cals": ''}</Text>
+    </View>
     {lunchList?.map((item, index)=>{
                     return(  
-                        <View key={index}>
-
-                          <TouchableOpacity onPress={()=>deleteFoodsDiary(item)}>
-                            <Image source={{uri: item.image}} style={styles.tabIcon}/>
-                            <Text>{item.name}</Text>
-                            <Text>{item.amount} {item.unit}</Text>
-                            <Text>{item.calories}</Text>
-                            </TouchableOpacity>
-                        </View>
+                      <GestureHandlerRootView key={index}>
+                      <Swipeable 
+                      ref={ref => row[index] = ref}
+                      renderRightActions={()=>{return(
+                        <View style={{flexDirection: 'row'}}>
+                          <TouchableOpacity style={{backgroundColor: '#D436F0', justifyContent: 'space-around'}}>
+    <Text style={{color: "#000", width: 70, textAlign: 'center'}}>{language==='vn'?"Tất cả":"All"}</Text>
+    </TouchableOpacity>
+    <TouchableOpacity style={{backgroundColor: 'red', justifyContent: 'space-around'}} onPress={()=>{
+      row[index].close();
+      deleteFoodsDiary(item)
+      }}>
+      <Text style={{color: "#000", width: 70, textAlign: 'center'}}>{language==='vn'?"Xóa":"Delete"}</Text>
+    </TouchableOpacity>
+    <TouchableOpacity style={{backgroundColor: '#E3912C', justifyContent: 'space-around'}} >
+      <Text style={{color: "#000", width: 70, textAlign: 'center'}}>{language==='vn'?"Chọn":"Select"}</Text>
+    </TouchableOpacity>
+  </View>
+                )}}  onSwipeableWillOpen={()=> closeRow(index)}
+                >
+                        
+                        <View style={{alignItems: 'center', flexDirection: 'row', paddingHorizontal: 10, paddingVertical: 3, paddingBottom: 5, backgroundColor: '#CCC', borderBottomColor: '#fff', borderBottomWidth: 2}}>
+                      <Image source = {{uri: item.image}} style={{width: 40,
+        height: 40,
+        resizeMode: 'stretch'}}/>
+                      <Text style={{fontSize: 18, width: 200, marginStart: 3}}>{item.name}</Text>
+                      <View style={{marginLeft:'auto'}}>
+                      <Text style={{marginLeft:'auto', fontSize: 16, color: '#2960D2' }}>{item.calories} cals</Text>
+                      <Text style={{marginLeft:'auto', fontSize: 16, color: '#2960D2' }}>{item.amount} {item.unit}</Text>
+                      </View>
+                  </View>
+                  
+                  </Swipeable>
+                  </GestureHandlerRootView>
                       )}
                      )}
-
-    <Text>Dinner {dinner}</Text>
+<View style={{flexDirection: 'row', marginHorizontal: 15, marginTop: 7, marginBottom: 10}}>
+      <Text style={{color: theme==='light'?"#000":"#fff", fontWeight: 'bold', fontSize: 17}}>{language==='vn'?'Buổi tối':'Dinner'}</Text>
+      <Text style={{marginLeft: 'auto', color: theme==='light'?"#000":"#fff", fontWeight: 'bold', fontSize: 17}}>{(dinner> 0)? dinner+" cals": ''}</Text>
+    </View>
     {dinnerList?.map((item, index)=>{
                     return(  
-                        <View key={index}>
-
-                          <TouchableOpacity onPress={()=>deleteFoodsDiary(item)}>
-                            <Image source={{uri: item.image}} style={styles.tabIcon}/>
-                            <Text>{item.name}</Text>
-                            <Text>{item.amount} {item.unit}</Text>
-                            <Text>{item.calories}</Text>
-                            </TouchableOpacity>
-                        </View>
+                      <GestureHandlerRootView key={index}>
+                      <Swipeable 
+                      ref={ref => row[index] = ref}
+                      renderRightActions={()=>{return(
+                        <View style={{flexDirection: 'row'}}>
+                          <TouchableOpacity style={{backgroundColor: '#D436F0', justifyContent: 'space-around'}}>
+    <Text style={{color: "#000", width: 70, textAlign: 'center'}}>{language==='vn'?"Tất cả":"All"}</Text>
+    </TouchableOpacity>
+    <TouchableOpacity style={{backgroundColor: 'red', justifyContent: 'space-around'}} onPress={()=>{
+      row[index].close();
+      deleteFoodsDiary(item)
+      }}>
+      <Text style={{color: "#000", width: 70, textAlign: 'center'}}>{language==='vn'?"Xóa":"Delete"}</Text>
+    </TouchableOpacity>
+    <TouchableOpacity style={{backgroundColor: '#E3912C', justifyContent: 'space-around'}} >
+      <Text style={{color: "#000", width: 70, textAlign: 'center'}}>{language==='vn'?"Chọn":"Select"}</Text>
+    </TouchableOpacity>
+  </View>
+                )}}  onSwipeableWillOpen={()=> closeRow(index)}
+                >
+                        
+                        <View style={{alignItems: 'center', flexDirection: 'row', paddingHorizontal: 10, paddingVertical: 3, paddingBottom: 5, backgroundColor: '#CCC', borderBottomColor: '#fff', borderBottomWidth: 2}}>
+                      <Image source = {{uri: item.image}} style={{width: 40,
+        height: 40,
+        resizeMode: 'stretch'}}/>
+                      <Text style={{fontSize: 18, width: 200, marginStart: 3}}>{item.name}</Text>
+                      <View style={{marginLeft:'auto'}}>
+                      <Text style={{marginLeft:'auto', fontSize: 16, color: '#2960D2' }}>{item.calories} cals</Text>
+                      <Text style={{marginLeft:'auto', fontSize: 16, color: '#2960D2' }}>{item.amount} {item.unit}</Text>
+                      </View>
+                  </View>
+                  
+                  </Swipeable>
+                  </GestureHandlerRootView>
                       )}
                      )}
-    <Text>Snacks {snacks}</Text>
+    <View style={{flexDirection: 'row', marginHorizontal: 15, marginTop: 7, marginBottom: 10}}>
+      <Text style={{color: theme==='light'?"#000":"#fff", fontWeight: 'bold', fontSize: 17}}>{language==='vn'?'Ăn vặt':'Snacks'}</Text>
+      <Text style={{marginLeft: 'auto', color: theme==='light'?"#000":"#fff", fontWeight: 'bold', fontSize: 17}}>{(snacks> 0)? snacks+" cals": ''}</Text>
+    </View>
     {snacksList?.map((item, index)=>{
                     return(  
-                        <View key={index}>
-
-                          <TouchableOpacity onPress={()=>deleteFoodsDiary(item)}>
-                            <Image source={{uri: item.image}} style={styles.tabIcon}/>
-                            <Text>{item.name}</Text>
-                            <Text>{item.amount} {item.unit}</Text>
-                            <Text>{item.calories}</Text>
-                            </TouchableOpacity>
-                        </View>
+                      <GestureHandlerRootView key={index}>
+                      <Swipeable 
+                      ref={ref => row[index] = ref}
+                      renderRightActions={()=>{return(
+                        <View style={{flexDirection: 'row'}}>
+                          <TouchableOpacity style={{backgroundColor: '#D436F0', justifyContent: 'space-around'}}>
+    <Text style={{color: "#000", width: 70, textAlign: 'center'}}>{language==='vn'?"Tất cả":"All"}</Text>
+    </TouchableOpacity>
+    <TouchableOpacity style={{backgroundColor: 'red', justifyContent: 'space-around'}} onPress={()=>{
+      row[index].close();
+      deleteFoodsDiary(item)
+      }}>
+      <Text style={{color: "#000", width: 70, textAlign: 'center'}}>{language==='vn'?"Xóa":"Delete"}</Text>
+    </TouchableOpacity>
+    <TouchableOpacity style={{backgroundColor: '#E3912C', justifyContent: 'space-around'}} >
+      <Text style={{color: "#000", width: 70, textAlign: 'center'}}>{language==='vn'?"Chọn":"Select"}</Text>
+    </TouchableOpacity>
+  </View>
+                )}}  onSwipeableWillOpen={()=> closeRow(index)}
+                >
+                        
+                        <View style={{alignItems: 'center', flexDirection: 'row', paddingHorizontal: 10, paddingVertical: 3, paddingBottom: 5, backgroundColor: '#CCC', borderBottomColor: '#fff', borderBottomWidth: 2}}>
+                      <Image source = {{uri: item.image}} style={{width: 40,
+        height: 40,
+        resizeMode: 'stretch'}}/>
+                      <Text style={{fontSize: 18, width: 200, marginStart: 3}}>{item.name}</Text>
+                      <View style={{marginLeft:'auto'}}>
+                      <Text style={{marginLeft:'auto', fontSize: 16, color: '#2960D2' }}>{item.calories} cals</Text>
+                      <Text style={{marginLeft:'auto', fontSize: 16, color: '#2960D2' }}>{item.amount} {item.unit}</Text>
+                      </View>
+                  </View>
+                  
+                  </Swipeable>
+                  </GestureHandlerRootView>
                       )}
                      )}
-    <Text>Water {water}</Text>
-    {waterList?.map((item, index)=>{
-                    return(  
-                        <View key={index}>
-
-                          <TouchableOpacity onPress={()=>deleteWater(item)}>
-                            <Image source={require( '../assets/water_.png')} style={styles.tabIcon}/>
-                            <Text>{item.amount} ml</Text>
-                            </TouchableOpacity>
-                        </View>
-                      )}
-                     )}
-    <Text>Exercise {exercise}</Text>
+     
+     <View style={{flexDirection: 'row', marginHorizontal: 15, marginTop: 7, marginBottom: 10}}>
+      <Text style={{color: theme==='light'?"#000":"#fff", fontWeight: 'bold', fontSize: 17}}>{language==='vn'?'Thể dục':'Exercise'}</Text>
+      <Text style={{marginLeft: 'auto', color: theme==='light'?"#000":"#fff", fontWeight: 'bold', fontSize: 17}}>{(exercise> 0)? exercise+" cals": ''}</Text>
+    </View>
     {exerciseList?.map((item, index)=>{
                     return(  
-                        <View key={index}>
-
-                          <TouchableOpacity onPress={()=>deleteExercise(item)}>
-                            <Image source={{uri: item.image}} style={styles.tabIcon}/>
-                            <Text>{item.name}</Text>
-                            <Text>{item.amount} min</Text>
-                            <Text>{item.calories}</Text>
-                            </TouchableOpacity>
-                        </View>
+                      <GestureHandlerRootView key={index}>
+                      <Swipeable 
+                      ref={ref => row[index] = ref}
+                      renderRightActions={()=>{return(
+                        <View style={{flexDirection: 'row'}}>
+                          <TouchableOpacity style={{backgroundColor: '#D436F0', justifyContent: 'space-around'}}>
+    <Text style={{color: "#000", width: 70, textAlign: 'center'}}>{language==='vn'?"Tất cả":"All"}</Text>
+    </TouchableOpacity>
+    <TouchableOpacity style={{backgroundColor: 'red', justifyContent: 'space-around'}} onPress={()=>{
+      row[index].close();
+      deleteWater(item)
+      }}>
+      <Text style={{color: "#000", width: 70, textAlign: 'center'}}>{language==='vn'?"Xóa":"Delete"}</Text>
+    </TouchableOpacity>
+    <TouchableOpacity style={{backgroundColor: '#E3912C', justifyContent: 'space-around'}} >
+      <Text style={{color: "#000", width: 70, textAlign: 'center'}}>{language==='vn'?"Chọn":"Select"}</Text>
+    </TouchableOpacity>
+  </View>
+                )}}  onSwipeableWillOpen={()=> closeRow(index)}
+                >
+                        
+                        <View style={{alignItems: 'center', flexDirection: 'row', paddingHorizontal: 10, paddingVertical: 3, paddingBottom: 5, backgroundColor: '#CCC', borderBottomColor: '#fff', borderBottomWidth: 2}}>
+                        
+                      <Image source = {{uri: item.image}} style={{width: 40,
+        height: 40,
+        resizeMode: 'stretch'}}/>
+                      <Text style={{fontSize: 18, width: 200, marginStart: 3}}>{item.name}</Text>
+                      <View style={{marginLeft:'auto'}}>
+                      <Text style={{marginLeft:'auto', fontSize: 16, color: '#2960D2' }}>{item.calories} cals</Text>
+                      <Text style={{marginLeft:'auto', fontSize: 16, color: '#2960D2' }}>{item.amount} {language==='vn'?"phút":"Exercise"}</Text>
+                      </View>
+                  </View>
+                  
+                  </Swipeable>
+                  </GestureHandlerRootView>
                       )}
                      )}
-
+<View style={{flexDirection: 'row', marginHorizontal: 15, marginTop: 7, marginBottom: 10}}>
+      <Text style={{color: theme==='light'?"#000":"#fff", fontWeight: 'bold', fontSize: 17}}>{language==='vn'?'Nước':'Water'}</Text>
+      <Text style={{marginLeft: 'auto', color: theme==='light'?"#000":"#fff", fontWeight: 'bold', fontSize: 17}}>{(snacks> 0)? water+ ' ml': ''}</Text>
+    </View>
+    {waterList?.map((item, index)=>{
+                    return(  
+                        <GestureHandlerRootView key={index}>
+                                                  <Swipeable 
+                                                  ref={ref => row[index] = ref}
+                                                  renderRightActions={()=>{return(
+                                                    <View style={{flexDirection: 'row'}}>
+                                                      <TouchableOpacity style={{backgroundColor: '#D436F0', justifyContent: 'space-around'}}>
+                                <Text style={{color: "#000", width: 70, textAlign: 'center'}}>{language==='vn'?"Tất cả":"All"}</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={{backgroundColor: 'red', justifyContent: 'space-around'}} onPress={()=>{
+                                  row[index].close();
+                                  deleteWater(item)
+                                  }}>
+                                  <Text style={{color: "#000", width: 70, textAlign: 'center'}}>{language==='vn'?"Xóa":"Delete"}</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={{backgroundColor: '#E3912C', justifyContent: 'space-around'}} >
+                                  <Text style={{color: "#000", width: 70, textAlign: 'center'}}>{language==='vn'?"Chọn":"Select"}</Text>
+                                </TouchableOpacity>
+                              </View>
+                                            )}}  onSwipeableWillOpen={()=> closeRow(index)}
+                                            >
+                                                    
+                                                  <View style={{alignItems: 'center', flexDirection: 'row', paddingHorizontal: 10, paddingVertical: 3, paddingBottom: 5, backgroundColor: '#CCC', borderBottomColor: '#fff', borderBottomWidth: 2}}>
+                        
+                                                  <Image source={require( '../assets/water_.png')} style={{width: 40,
+                                height: 40,
+                                resizeMode: 'stretch'}}/>
+                                                     <View style={{marginLeft:'auto'}}>
+                                              <Text style={{marginLeft:'auto', fontSize: 16, color: '#2960D2' }}>{item.amount} ml</Text>
+                                              
+                                              </View>
+                                             
+                                              </View>
+                                              
+                                              </Swipeable>
+                                              </GestureHandlerRootView>
+                      )}
+                     )}
+    
+</ScrollView>
  </View>
 
 )

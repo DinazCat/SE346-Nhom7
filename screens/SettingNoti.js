@@ -138,14 +138,14 @@ const SettingNoti = ({navigation}) => {
         <Text style={[styles.textfont,{marginTop:20, color: theme === 'light'? '#000' : '#fff'}]}>{language === 'vn' ?"Gửi tôi thông báo khi: ":"Send me a push notification when:"}</Text>
         <View style={styles.row}>
             <Text style={[styles.textfont,{width:"90%"}]}> {language === 'vn' ?"Ai đó bắt đầu theo dõi tôi":"Someone starts following me"}</Text>    
-            <CheckBox
+            <CheckBox 
         value={isChecked1} 
         onValueChange={toggleCheckBox1} 
       />     
         </View>
         <View style={styles.row}>
             <Text style={[styles.textfont,{width:"90%"}]}> {language === 'vn' ?"Ai đó thích bài viết của tôi":"Someone likes my post"}</Text>    
-            <CheckBox
+            <CheckBox 
         value={isChecked2} 
         onValueChange={toggleCheckBox2}
       />     
