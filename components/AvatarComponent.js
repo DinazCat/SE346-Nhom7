@@ -57,35 +57,71 @@ const AvatarComponent = ({item, onUserPress, onFollowsChange}) => {
         if (!flag) {
           tempFollowers.push(auth().currentUser.uid)
           firestore().collection('Notification').add({
-            PostownerId: userId,
+            PostownerId: item.id,
             guestId: auth().currentUser.uid,
             guestName: auth().currentUser.displayName,
             guestImg:auth().currentUser.photoURL,
             classify:'Follow',
             time:firestore.Timestamp.fromDate(new Date()),
-            text: auth().currentUser.displayName+' đang theo dõi bạn.',
+            text: auth().currentUser.displayName+' are following you.',
             postid: '',
             Read:'no',
     
           });
-          SendNoti(auth().currentUser.displayName+' đang theo dõi bạn.', userId);
+          firestore()
+          .collection('NotificationSetting')
+          .doc(userId)
+          .get()
+          .then((doc)=>
+          {
+            if (doc.exists) {
+              const data = doc.data();
+              try {
+                const gt = data.follow;
+                if (gt === true) {
+                  SendNoti(
+                    auth().currentUser.displayName + ' are following you.',
+                    userId,
+                  );
+                }
+              } catch {}
+            }
+          });      
         }                    
     } 
     else {
       tempFollowers.push(auth().currentUser.uid);
       firestore().collection('Notification').add({
-        PostownerId: userId,
+        PostownerId: item.id,
         guestId: auth().currentUser.uid,
         guestName: auth().currentUser.displayName,
         guestImg:auth().currentUser.photoURL,
         classify:'Follow',
         time:firestore.Timestamp.fromDate(new Date()),
-        text: auth().currentUser.displayName+' đang theo dõi bạn.',
+        text: auth().currentUser.displayName+' are following you.',
         postid: '',
         Read:'no',
 
       });
-      SendNoti(auth().currentUser.displayName+' đang theo dõi bạn.',userId);
+      firestore()
+      .collection('NotificationSetting')
+      .doc(userId)
+      .get()
+      .then((doc)=>
+      {
+        if (doc.exists) {
+          const data = doc.data();
+          try {
+            const gt = data.follow;
+            if (gt === true) {
+              SendNoti(
+                auth().currentUser.displayName + ' are following you.',
+                userId,
+              );
+            }
+          } catch {}
+        }
+      });      
     }
 
     firestore()

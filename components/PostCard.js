@@ -62,7 +62,7 @@ const PostCard = ({item, onUserPress, onCommentPress,onImagePress,deletePost,edi
                 guestImg:auth().currentUser.photoURL,
                 classify:'Like',
                 time:firestore.Timestamp.fromDate(new Date()),
-                text: auth().currentUser.displayName+' đã thích bài viết của bạn về món ăn: '+ item.postFoodName,
+                text: auth().currentUser.displayName+' liked your post about food: '+ item.postFoodName,
                 postid: item.postId,
                 Read:'no',
       
@@ -79,7 +79,7 @@ const PostCard = ({item, onUserPress, onCommentPress,onImagePress,deletePost,edi
                       if (gt === true) {
                         SendNoti(
                           auth().currentUser.displayName +
-                            ' đã thích bài viết của bạn về món ăn: ' +
+                            ' liked your post about food: ' +
                             item.postFoodName,
                           item.userId,
                         );
@@ -101,11 +101,11 @@ const PostCard = ({item, onUserPress, onCommentPress,onImagePress,deletePost,edi
             guestImg:auth().currentUser.photoURL,
             classify:'Like',
             time:firestore.Timestamp.fromDate(new Date()),
-            text: auth().currentUser.displayName+' đã thích bài viết của bạn về món ăn: '+ item.postFoodName,
+            text: auth().currentUser.displayName+' liked your post about food: '+ item.postFoodName,
             postid: item.postId,
             Read:'no',
   
-          });}
+          });
           firestore()
                 .collection('NotificationSetting')
                 .doc(item.userId)
@@ -118,7 +118,7 @@ const PostCard = ({item, onUserPress, onCommentPress,onImagePress,deletePost,edi
                       if (gt === true) {
                         SendNoti(
                           auth().currentUser.displayName +
-                            ' đã thích bài viết của bạn về món ăn: ' +
+                            ' liked your post about food: ' +
                             item.postFoodName,
                           item.userId,
                         );
@@ -126,7 +126,7 @@ const PostCard = ({item, onUserPress, onCommentPress,onImagePress,deletePost,edi
                     } catch {}
                   }
                 });
-             // }
+              }
         }
     
         firestore()

@@ -74,7 +74,7 @@ const CommentScreen = ({navigation}) => {
         guestImg:auth().currentUser.photoURL,
         classify:'Cmt',
         time:firestore.Timestamp.fromDate(new Date()),
-        text: auth().currentUser.displayName+' đã bình luận bài viết của bạn về món ăn: '+ route.params.Foodname,
+        text: auth().currentUser.displayName+' commented on your post about the dish: '+ route.params.Foodname,
         postid: route.params?.postId,
         Read:'no',
 
@@ -91,7 +91,7 @@ const CommentScreen = ({navigation}) => {
               if (gt === true) {
                 SendNoti(
                   auth().currentUser.displayName +
-                    ' đã bình luận bài viết của bạn về món ăn: ' +
+                    ' commented on your post about the dish: ' +
                     route.params.Foodname,
                   route.params.postOwner,
                 );

@@ -49,7 +49,7 @@ export default function FeedsScreen({navigation}) {
             postFoodSummary: postFoodSummary,
             total:total, Calories:Calories, Prep:Prep, Cooking:Cooking, hashtags:hashtags,
             postImg: postImg,
-            liked: true,
+           // liked: true,
             likes: likes,
             comments: comments,
             liked: false,
@@ -417,6 +417,8 @@ export default function FeedsScreen({navigation}) {
 
   const sheetRef = React.createRef();
   const fall = new Animated.Value(1);
+
+  
   return (
     <View style={{backgroundColor: theme === 'light'? '#FFFFFF' : '#000000', flex: 1}}>
       <BottomSheet
@@ -441,7 +443,7 @@ export default function FeedsScreen({navigation}) {
             <TouchableOpacity onPress={() => {sheetRef.current.snapTo(0)}}>
                 <Ionicons name={'filter-outline'} style={[styles.ButtonSearch, {color: theme === 'light'? '#000000' : '#FFFFFF'}]}/>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => {navigation.push("nofiScreen"), setmark(false)}}>
+            <TouchableOpacity onPress={() => {setmark(false),navigation.push("nofiScreen")}}>
             <View>
                 <Ionicons name={'notifications-outline'} style={[styles.ButtonSearch, {color: theme === 'light'? '#000000' : '#FFFFFF'}]}/>
               {(mark)&&<FontAwesome name="circle" style={styles.smallcircle}/>}
@@ -469,7 +471,7 @@ export default function FeedsScreen({navigation}) {
           renderItem={({item}) => (
             <PostCard
               item={item}
-              onUserPress={() => navigation.navigate('profileScreen', {userId: item.userId, listp:posts, onGoback: (items) => setPosts(items)})}
+              onUserPress={() => navigation.navigate('profileScreen')}
               onCommentPress={() => navigation.navigate('commentScreen', {
                 postId: item.postId,
                 Foodname: item.postFoodName,

@@ -149,7 +149,7 @@ const ProfileScreen = ({navigation, route}) => {
           guestImg:auth().currentUser.photoURL,
           classify:'Follow',
           time:firestore.Timestamp.fromDate(new Date()),
-          text: auth().currentUser.displayName+' đang theo dõi bạn.',
+          text: auth().currentUser.displayName+' are following you.',
           postid: '',
           Read:'no',
 
@@ -166,7 +166,7 @@ const ProfileScreen = ({navigation, route}) => {
                 const gt = data.follow;
                 if (gt === true) {
                   SendNoti(
-                    auth().currentUser.displayName + ' đang theo dõi bạn.',
+                    auth().currentUser.displayName + ' are following you.',
                     userId,
                   );
                 }
@@ -184,7 +184,7 @@ const ProfileScreen = ({navigation, route}) => {
         guestImg:auth().currentUser.photoURL,
         classify:'Follow',
         time:firestore.Timestamp.fromDate(new Date()),
-        text: auth().currentUser.displayName+' đang theo dõi bạn.',
+        text: auth().currentUser.displayName+' are following you.',
         postid: '',
         Read:'no',
 
@@ -201,7 +201,7 @@ const ProfileScreen = ({navigation, route}) => {
                 const gt = data.follow;
                 if (gt === true) {
                   SendNoti(
-                    auth().currentUser.displayName + ' đang theo dõi bạn.',
+                    auth().currentUser.displayName + ' are following you.',
                     userId,
                   );
                 }
@@ -266,14 +266,12 @@ const ProfileScreen = ({navigation, route}) => {
     .collection('posts')
     .doc(id)
     .delete()
-    .then(()=>{Alert.alert('Post deleted')})
+    .then(()=>{Alert.alert('Post deleted','This post has been permanently deleted')})
     .catch(e=>console.log("error when delete: "+e))
   }
   deletepost = id => {
     const filteredData = posts.filter(item => item.postId !== id);
     setPosts(filteredData);
-    const filterlistP = (route.params.listp).filter( item => item.postId !== id);
-    route.params.onGoback(filterlistP);
     firestore().collection('posts')
     .doc(id)
     .get()
@@ -283,6 +281,8 @@ const ProfileScreen = ({navigation, route}) => {
         const {postImg} = documentSnapshot.data();
         if(postImg != null)
         {
+          if(postImg.length == 0) deleteP(id);
+          else
           for(let i = 0; i<postImg.length; i++)
           {
             const storageRef = storage().refFromURL(postImg[i]);

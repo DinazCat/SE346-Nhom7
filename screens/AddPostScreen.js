@@ -89,7 +89,7 @@ export default AddPostScreen= function({navigation}) {
      }, []);
     function allowPost()
     {
-      if(FoodName !== '' && Cal !== '') 
+      if(FoodName !== '' && Cal !== '' && Prep !=='' && Cookingtime !== '' && Total !== '' && defaultRating !== 0 && Ingredient.length>0 && Making !== '') 
       {
         return true;
       }
@@ -121,6 +121,13 @@ export default AddPostScreen= function({navigation}) {
       });
     };
     const submitPost = async() => {
+      if(allowPost() == false){
+        Alert.alert(
+          'Note',
+          'For a relatively complete post, please enter all the information in the marked place.'
+        );
+        return;
+      }
       try {
         for(let i = 0; i < image.length; i++)
         {
@@ -168,7 +175,7 @@ export default AddPostScreen= function({navigation}) {
             guestImg:auth().currentUser.photoURL,
             classify:'post',
             time:firestore.Timestamp.fromDate(new Date()),
-            text: auth().currentUser.displayName+' đã đăng 1 bài viết về món ăn: '+ FoodName,
+            text: auth().currentUser.displayName+' posted about food: '+ FoodName,
             postid: docRef.id,
             Read:'no',
   
@@ -183,7 +190,7 @@ export default AddPostScreen= function({navigation}) {
               try {
                 const gt = data.post;
                 if (gt === true) {
-                  SendNoti( auth().currentUser.displayName+' đã đăng 1 bài viết về món ăn: '+ FoodName, followers[i]);
+                  SendNoti( auth().currentUser.displayName+' posted about food: '+ FoodName, followers[i]);
                 }
               } catch {}
             }
@@ -407,7 +414,7 @@ export default AddPostScreen= function({navigation}) {
            <View style={[styles.TextBox, {borderColor:theme === 'light'? '#000' : '#fff'}]}>
            <Icon name={"pencil-alt"} style={{ color: "#FFCC00", fontSize: 30, marginLeft:340,position:"absolute" }} />
            <ScrollView>
-             <Text style={[styles.TextStyle,{marginTop:20, color: theme === 'light'? '#000' : '#fff'}]}>{language === 'vn' ? 'Tên món ăn: ' : 'Food name: '}</Text>
+             <Text style={[styles.TextStyle,{marginTop:20, color: theme === 'light'? '#000' : '#fff'}]}>{language === 'vn' ? 'Tên món ăn: * ' : 'Food name: * '}</Text>
            <TextInput
              style={{fontSize: 16, 
                 marginLeft: 3, 
@@ -419,10 +426,10 @@ export default AddPostScreen= function({navigation}) {
              value={FoodName}
              onChangeText={TextChangeFoodName}
            />
-            <Text style={[styles.TextStyle,{marginTop:20, width: 150, color: theme === 'light'? '#000' : '#fff'}]}>{language === 'vn' ? 'Độ khó' : 'Difficulty level'}</Text>
+            <Text style={[styles.TextStyle,{marginTop:20, width: 150, color: theme === 'light'? '#000' : '#fff'}]}>{language === 'vn' ? 'Độ khó *' : 'Difficulty level *'}</Text>
             <CustomRatingBar/>
             <View style={styles.InputBox}>
-            <Text  style={[styles.TextStyle,{width: 120, color: theme === 'light'? '#000' : '#fff'}]}>{language === 'vn' ? 'Tổng phần: ' : 'Total: '}</Text>
+            <Text  style={[styles.TextStyle,{width: 120, color: theme === 'light'? '#000' : '#fff'}]}>{language === 'vn' ? 'Tổng phần: * ' : 'Total: * '}</Text>
             <TextInput
              style={[styles.InputStyle,{color: theme === 'light'? '#000' : '#fff', borderBottomColor:theme === 'light'? '#000' : '#fff'}]}
              value={Total}
@@ -432,7 +439,7 @@ export default AddPostScreen= function({navigation}) {
             </View>
             
             <View style={styles.InputBox}>
-            <Text style={[styles.TextStyle,{width: 120, color: theme === 'light'? '#000' : '#fff'}]}>Calories:</Text>
+            <Text style={[styles.TextStyle,{width: 120, color: theme === 'light'? '#000' : '#fff'}]}>Calories: *</Text>
            <TextInput
              style={[styles.InputStyle,{color: theme === 'light'? '#000' : '#fff',borderBottomColor:theme === 'light'? '#000' : '#fff'}]}
              value={Cal}
@@ -441,7 +448,7 @@ export default AddPostScreen= function({navigation}) {
             <Text style={{fontSize: 16, color: theme === 'light'? '#000' : '#fff'}}>cals/serving</Text>
             </View>
             <View style={styles.InputBox}>
-            <Text style={[styles.TextStyle,{width: 120, color: theme === 'light'? '#000' : '#fff'}]}>{language === 'vn' ? 'Thời gian chuẩn bị: ' : 'Prep time: '}</Text>
+            <Text style={[styles.TextStyle,{width: 120, color: theme === 'light'? '#000' : '#fff'}]}>{language === 'vn' ? 'Thời gian chuẩn bị: *' : 'Prep time: *'}</Text>
            <TextInput
              style={[styles.InputStyle,{color: theme === 'light'? '#000' : '#fff', borderBottomColor:theme === 'light'? '#000' : '#fff'}]}
              value={Prep}
@@ -449,7 +456,7 @@ export default AddPostScreen= function({navigation}) {
            />
             </View>
             <View style={styles.InputBox}>
-            <Text style={[styles.TextStyle,{width: 120, color: theme === 'light'? '#000' : '#fff'}]}>{language === 'vn' ? 'Thời gian nấu: ' : 'Cooking time: '}</Text>
+            <Text style={[styles.TextStyle,{width: 120, color: theme === 'light'? '#000' : '#fff'}]}>{language === 'vn' ? 'Thời gian nấu: *' : 'Cooking time: *'}</Text>
            <TextInput
              style={[styles.InputStyle,{color: theme === 'light'? '#000' : '#fff', borderBottomColor:theme === 'light'? '#000' : '#fff'}]}
              value={Cookingtime}
@@ -486,7 +493,7 @@ export default AddPostScreen= function({navigation}) {
            <View style={[styles.TextBox, {borderColor:theme === 'light'? '#000' : '#fff'}]}>
             <ScrollView>
             <View style={{flexDirection:'row'}}>
-            <Text style={[styles.TextStyle,{marginTop:20, color:theme === 'light'? '#000' : '#fff'}]}>{language === 'vn' ? 'Các nguyên liệu cần có?' : 'What ingredients are there?'}</Text>
+            <Text style={[styles.TextStyle,{marginTop:20, color:theme === 'light'? '#000' : '#fff'}]}>{language === 'vn' ? 'Các nguyên liệu cần có? *' : 'What ingredients are there? *'}</Text>
            <TouchableOpacity onPress={()=>{
              const newData = [
                 ...Ingredient,
@@ -511,7 +518,7 @@ export default AddPostScreen= function({navigation}) {
         renderItem={({item})=><Item itemI={item} />}
         keyExtractor={(item, index) => index.toString()}
          />
-       <Text style={[styles.TextStyle,{marginTop:20, color:theme === 'light'? '#000' : '#fff'}]}>{language === 'vn' ? 'Công thức làm món ăn này là gì?' : 'Give me the recipe of your food'}</Text>
+       <Text style={[styles.TextStyle,{marginTop:20, color:theme === 'light'? '#000' : '#fff'}]}>{language === 'vn' ? 'Công thức làm món ăn này là gì? *' : 'Give me the recipe of your food *'}</Text>
            <TextInput
            multiline={true}
              style={{fontSize: 16, 
