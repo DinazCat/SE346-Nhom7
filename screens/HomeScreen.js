@@ -5,27 +5,33 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import firestore from '@react-native-firebase/firestore';
 import { AuthContext } from "../navigation/AuthProvider";
 import { useNavigation } from "@react-navigation/native";
+import { useSelector } from "react-redux";
+import { setTime, setBaseGoal, setExercise } from "../store/CaloriesDiarySlice";
+import { useDispatch } from "react-redux";
 import LanguageContext from "../context/LanguageContext";
 import ThemeContext from "../context/ThemeContext";
-import moment from 'moment';
+import moment, { lang } from 'moment';
 const HomeScreen = ({navigation}) => {
   const {user} = useContext(AuthContext);
   const language = useContext(LanguageContext);
-  const [baseGoal, setBaseGoal] = useState(0);
-  const [exercise, setExercise] = useState(0);
+  const baseGoal = useSelector((state)=>state.CaloriesDiary.baseGoal);
+  const [meal, setMeal] = useState(0);
+  const exercise = useSelector((state)=>state.CaloriesDiary.exercise);
   const [water, setWater] = useState(0);
   const [breakfast, setBreakfast] = useState(0);
   const [lunch, setLunch] = useState(0);
   const [dinner, setDinner] = useState(0);
   const [snacks, setSnacks] = useState(0);
-  const [remaining, setRemaining] = useState(0);
+  const remaining = parseInt(baseGoal)+parseInt(exercise)-parseInt(meal);
   const [isOver, setIsOver] = useState('Remaining');
-  const [date, setDate] = useState(new Date());
   const [show, setShow] = useState(false);
-  const [time, setTime] = useState('Today');
+  
+  const dispatch = useDispatch();
+  const time = useSelector((state)=>state.CaloriesDiary.time)
+  const [date, setDate] = useState(time=='Today'? new Date(): new Date(moment(time, 'DD/MM/YYYY')));
   const theme = useContext(ThemeContext);
   //View All
-  const viewAll = () => {
+  const viewAllMeal = () => {
     navigation.navigate("DetailHomeScreen", {time: time})
   }
   const takeNote = () => {
@@ -42,13 +48,10 @@ const HomeScreen = ({navigation}) => {
   }
   
   useEffect(() => {
-    getBaseGoal(new Date());
-    getExercise(moment(new Date()).format('DD/MM/YYYY'))
-    getWater(moment(new Date()).format('DD/MM/YYYY'))
-    getBreakfast(moment(new Date()).format('DD/MM/YYYY'))
-    getLunch(moment(new Date()).format('DD/MM/YYYY'))
-    getDinner(moment(new Date()).format('DD/MM/YYYY'))
-    getSnacks(moment(new Date()).format('DD/MM/YYYY'))
+    getBaseGoal(time=='Today'? new Date(): new Date(moment(time, 'DD/MM/YYYY')));
+    getExercise(time=='Today'? moment(new Date()).format('DD/MM/YYYY'): time)
+    getMeal(time=='Today'? moment(new Date()).format('DD/MM/YYYY'): time)
+    getWater(time=='Today'? moment(new Date()).format('DD/MM/YYYY'): time)
     
     //setRemaining(parseInt(baseGoal)+parseInt(exercise)-parseInt(breakfast)- parseInt(snacks)- parseInt(lunch)-parseInt(dinner));
    }, []);
@@ -85,98 +88,56 @@ const HomeScreen = ({navigation}) => {
           const {calories} = doc.data();
           totalExercise += parseInt(calories);
         })
-        setExercise(totalExercise);
+        dispatch(setExercise(totalExercise));
         
       })
-     
+      
     } catch(e){
       console.log(e);
     }
   }
-  const getBreakfast = (date)=> {
+  const getMeal = (date) => {
     try{
       firestore()
       .collection('foodsDiary')
       .where("userId", '==', user.uid)
       .where("time", '==', date)
-      .where("mealType", '==', 'Breakfast')
       .onSnapshot((querySnapshot)=>{
         let totalBreakfast = 0;
-        querySnapshot.forEach(doc =>{
-          const {calories} = doc.data();
-          totalBreakfast += parseInt(calories);
-        })
-        setBreakfast(totalBreakfast);
-        
-      })
-     
-    } catch(e){
-      console.log(e);
-    }
-  }
-  const getLunch = (date)=> {
-    try{
-      firestore()
-      .collection('foodsDiary')
-      .where("userId", '==', user.uid)
-      .where("time", '==', date)
-      .where("mealType", '==', 'Lunch')
-      .onSnapshot((querySnapshot)=>{
         let totalLunch = 0;
-        querySnapshot.forEach(doc =>{
-          const {calories} = doc.data();
-          totalLunch += parseInt(calories);
-        })
-        setLunch(totalLunch);
-        
-      })
-     
-    } catch(e){
-      console.log(e);
-    }
-  }
-  const getDinner = (date)=> {
-    try{
-      firestore()
-      .collection('foodsDiary')
-      .where("userId", '==', user.uid)
-      .where("time", '==', date)
-      .where("mealType", '==', 'Dinner')
-      .onSnapshot((querySnapshot)=>{
         let totalDinner = 0;
-        querySnapshot.forEach(doc =>{
-          const {calories} = doc.data();
-          totalDinner += parseInt(calories);
-        })
-        setDinner(totalDinner);
-        
-      })
-     
-    } catch(e){
-      console.log(e);
-    }
-  }
-  const getSnacks = (date)=> {
-    try{
-      firestore()
-      .collection('foodsDiary')
-      .where("userId", '==', user.uid)
-      .where("time", '==', date)
-      .where("mealType", '==', 'Snacks')
-      .onSnapshot((querySnapshot)=>{
         let totalSnacks = 0;
+        let total = 0;
         querySnapshot.forEach(doc =>{
-          const {calories} = doc.data();
-          totalSnacks += parseInt(calories);
+          const {calories, mealType} = doc.data();
+          total += parseInt(calories);
+          
+          switch(mealType){
+            case 'Breakfast':
+              totalBreakfast += parseInt(calories);
+              break;
+            case 'Lunch':
+              totalLunch += parseInt(calories);
+              break;
+            case 'Dinner':
+              totalDinner += parseInt(calories);
+              break;
+            case 'Snacks':
+              totalSnacks += parseInt(calories);
+              break;
+          }
         })
+        setMeal(total);
+        setBreakfast(totalBreakfast);
+        setLunch(totalLunch);
+        setDinner(totalDinner);
         setSnacks(totalSnacks);
-        
-      })
-     
+    })
     } catch(e){
       console.log(e);
     }
   }
+  
   //get base goal
   const getBaseGoal = (date) => {
     try{
@@ -197,10 +158,10 @@ const HomeScreen = ({navigation}) => {
         let arrSort = arr.sort((a,b)=>a.time - b.time);
         let arrTempSort = arrTemp.sort((a,b)=>a.time - b.time);
         if (arrTempSort.length == 0){
-          setBaseGoal(arrSort[0].bmr);
+          dispatch(setBaseGoal(arrSort[0].bmr));
         }
         else{
-          setBaseGoal(arrTempSort[arrTempSort.length - 1].bmr)
+          dispatch(setBaseGoal(arrTempSort[arrTempSort.length - 1].bmr));
         }
       })
      
@@ -216,26 +177,19 @@ const HomeScreen = ({navigation}) => {
      let tempDate = new Date(currentDate);
      let newDate = new Date();
      if (newDate.getDate() == tempDate.getDate() && newDate.getMonth() == tempDate.getMonth() && tempDate.getFullYear() == newDate.getFullYear()){
-        setTime('Today');
+        dispatch(setTime('Today'));
         getBaseGoal(new Date());
         getExercise(moment(new Date()).format('DD/MM/YYYY'))
+        getMeal(moment(new Date()).format('DD/MM/YYYY'))
         getWater(moment(new Date()).format('DD/MM/YYYY'))
-        getBreakfast(moment(new Date()).format('DD/MM/YYYY'))
-        getLunch(moment(new Date()).format('DD/MM/YYYY'))
-        getDinner(moment(new Date()).format('DD/MM/YYYY'))
-        getSnacks(moment(new Date()).format('DD/MM/YYYY'))
-        
      }
     else {
-      
-      setTime(moment(new Date(currentDate)).format('DD/MM/YYYY'));
+      dispatch(setTime(moment(new Date(currentDate)).format('DD/MM/YYYY')));
       getBaseGoal(new Date(currentDate));
       getExercise(moment(new Date(currentDate)).format('DD/MM/YYYY'))
+      getMeal(moment(new Date(currentDate)).format('DD/MM/YYYY'))
       getWater(moment(new Date(currentDate)).format('DD/MM/YYYY'))
-      getBreakfast(moment(new Date(currentDate)).format('DD/MM/YYYY'))
-      getLunch(moment(new Date(currentDate)).format('DD/MM/YYYY'))
-      getDinner(moment(new Date(currentDate)).format('DD/MM/YYYY'))
-      getSnacks(moment(new Date(currentDate)).format('DD/MM/YYYY'))
+      
     }
  }
  
@@ -259,7 +213,7 @@ const HomeScreen = ({navigation}) => {
                 resizeMode="contain"
                 style={styles.tabIcon}
             />
-            <Text style={[styles.text, {fontWeight: "bold", margin: 5}]}>{time}</Text>
+            <Text style={[styles.text, {fontWeight: "bold", margin: 5}]}>{(time=='Today'&& language==='vn')?'Hôm nay': time}</Text>
           </View>
           </TouchableOpacity>
         </View>
@@ -288,19 +242,19 @@ const HomeScreen = ({navigation}) => {
                   <Text style={[styles.text, {color: '#FFFFFF'}]}>{language === 'vn' ? 'Mục tiêu' : 'Base Goal'}</Text>
                   <Text style={[styles.text, {color: '#FFFFFF', fontWeight: "bold", marginBottom: 10}]}>{baseGoal}</Text>
                   <ProgressCircle
-                    percent={(parseInt(breakfast) + parseInt(snacks) + parseInt(lunch) + parseInt(dinner))/(parseInt(baseGoal)+parseInt(exercise)) * 100}
+                    percent={(parseInt(meal))/(parseInt(baseGoal)+parseInt(exercise)) * 100}
                     radius={70}
                     borderWidth={8}
-                    color={(parseInt(baseGoal)+parseInt(exercise)-parseInt(breakfast)- parseInt(snacks)- parseInt(lunch)-parseInt(dinner) > 0)? '#12CE46' : '#E8142F'}
+                    color={(parseInt(baseGoal) + parseInt(exercise) - parseInt(meal) >= 0)? '#12CE46' : '#E8142F'}
                     shadowColor="#FFFFFF" //phần trăm không chiếm
                     bgColor={theme === 'light'? '#DBDBDB' : '#4E4E4E'} //ở trong vòng tròn
                   >
-                 <Text style={{ fontSize: 16,  color: '#FFFFFF', fontWeight: 'bold'}}>{parseInt(baseGoal)+parseInt(exercise)-parseInt(breakfast)- parseInt(snacks)- parseInt(lunch)-parseInt(dinner)}</Text>
-                 <Text style={{ fontSize: 16, color: '#FFFFFF'}}>{language === 'vn' ? 'Còn lại' : 'Remaining'}</Text>
+                 <Text style={{ fontSize: 16,  color: '#FFFFFF', fontWeight: 'bold'}}>{Math.abs(parseInt(baseGoal)+parseInt(exercise)-parseInt(meal))}</Text>
+                 <Text style={{ fontSize: 16, color: '#FFFFFF'}}>{(parseInt(baseGoal) + parseInt(exercise) - parseInt(meal) >= 0)?(language==='vn'?'Còn lại':'Remaining'):(language==='vn'?'Quá':'Over')}</Text>
                  </ProgressCircle>
   
-                  <TouchableOpacity style={[styles.text, {color: '#FFFFFF', marginTop: 5}]} onPress={viewAll}> 
-                  <Text style={[styles.text, {color: '#FFFFFF', fontWeight: "bold", margin: 5}]}>{language === 'vn' ? 'Xem tất cả' : 'View All'}</Text>
+                  <TouchableOpacity style={[styles.text, {color: '#FFFFFF', marginTop: 5}]} onPress={viewAllMeal}> 
+                  <Text style={[styles.text, {color: '#FFFFFF', fontWeight: "bold", margin: 5}]}>{language === 'vn' ? 'Xem tất cả bữa ăn' : 'View all meal'}</Text>
                    </TouchableOpacity>
                   
                 </View>
@@ -333,12 +287,12 @@ const HomeScreen = ({navigation}) => {
             />
             <Text style={[styles.text, {fontWeight: "bold", color: '#FFFFFF', margin: 5}]}>{language === 'vn' ? 'Phân tích của tôi: ' : 'My analysis: '}</Text>
             {(() => {
-              if (parseInt(baseGoal)+parseInt(exercise)-parseInt(breakfast)- parseInt(snacks) - parseInt(lunch)-parseInt(dinner) < 0){
+              if (parseInt(baseGoal)+parseInt(exercise)-parseInt(meal) < 0){
                 return <Text style={[styles.text, {color: '#FFFFFF'}]}>{language === 'vn' ? 'Vượt quá' : 'Exceeded'}</Text>
               }
               else{
-                if (parseInt(baseGoal)+parseInt(exercise)-parseInt(breakfast)- parseInt(snacks)- parseInt(lunch)-parseInt(dinner) == 0){
-                  return <Text style={[styles.text, {color: '#FFFFFF'}]}>{language === 'vn' ? 'Đủ: ' : 'Met'}</Text>
+                if (parseInt(baseGoal)+parseInt(exercise)-parseInt(meal) == 0){
+                  return <Text style={[styles.text, {color: '#FFFFFF'}]}>{language === 'vn' ? 'Đủ' : 'Met'}</Text>
                 }
                 else{
                   return <Text style={[styles.text, {color: '#FFFFFF'}]}>{language === 'vn' ? 'Thiếu hụt' : 'Decifit'}</Text>

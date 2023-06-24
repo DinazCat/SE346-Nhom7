@@ -325,7 +325,7 @@ const updateBmr = async() => {
     });    
   };
   renderContent = () => (
-    <View style={[styles.panel, {marginLeft:15, backgroundColor: theme === 'light'? '#fff' : '#4E4E4E'}]}>
+    <View style={[styles.panel, {marginLeft:15, backgroundColor: theme === 'light'? '#EAEAEA' : '#4E4E4E'}]}>
       <View style={{alignItems: 'center'}}>
         <Text style={[styles.panelTitle, {color: theme === 'light'? '#000' : '#fff'}]}>Upload Photo</Text>
         <Text style={[styles.panelSubtitle, {color: theme === 'light'? '#000' : '#fff'}]}>Choose Your Profile Picture</Text>
@@ -349,7 +349,7 @@ const updateBmr = async() => {
   );
 
   renderHeader = () => (
-    <View style={[styles.header, {marginLeft:15, backgroundColor: theme === 'light'? '#fff' : '#838383'}]}>
+    <View style={[styles.header, {marginLeft:15, backgroundColor: theme === 'light'? '#EAEAEA' : '#838383'}]}>
       <View style={styles.panelHeader}>
         <View style={styles.panelHandle} />
       </View>

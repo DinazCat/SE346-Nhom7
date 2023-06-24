@@ -5,16 +5,20 @@ import React, {useState, useContext, useEffect} from "react";
 import { SwipeListView } from "react-native-swipe-list-view";
 import { useNavigation } from "@react-navigation/native";
 import moment from "moment";
+import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { AuthContext } from '../navigation/AuthProvider';
 import { Picker } from '@react-native-picker/picker';
 import LanguageContext from "../context/LanguageContext";
 import ThemeContext from "../context/ThemeContext";
-
+import * as Progress from 'react-native-progress';
 import PopFoodAmount from "./PopFoodAmount";
 
 const CustomFoodScreen = (props, {route}) => {
     const navigation = useNavigation();
+    const baseGoal = useSelector((state)=>state.CaloriesDiary.baseGoal);
+  const exercise = useSelector((state)=>state.CaloriesDiary.exercise);
+  const caloriesBudget = parseInt(baseGoal) + parseInt(exercise);
    const language = useContext(LanguageContext)
    const theme = useContext(ThemeContext)
     const {user} = useContext(AuthContext);
@@ -22,12 +26,15 @@ const CustomFoodScreen = (props, {route}) => {
     const [textInput, onChangeTextInput] = useState('');
     const [visible, setVisible] = React.useState(false);//pop to add amount
     const [calories, setCalories] = useState('');
+    const [fat, setFat] = useState('');
+    const [carbs, setCarbs] = useState('');
+    const [protein, setProtein] = useState('');
     const [image, setImage] = useState('');
     const [name, setName] = useState('');
     const [baseAmount, setBaseAmount] = useState('');
     const [unit, setUnit] = useState('');
     const [datas, setDatas] = useState([]);
-    const [selectedValue, setSelectedValue] = useState("Breakfast");//value cho meal types
+    const [selectedValue, setSelectedValue] = useState(props.mealType || "Breakfast");//value cho meal types
     const addCustomFood = () => {
       navigation.navigate('DetailFood');
     }
@@ -40,7 +47,9 @@ const CustomFoodScreen = (props, {route}) => {
       setUnit(selectedItem.unit);
       setName(selectedItem.name);
       setCalories(selectedItem.calories);
-     
+      setProtein(selectedItem.protein);
+      setCarbs(selectedItem.carbs);
+      setFat(selectedItem.fat);
       setVisible(true);
       
     }
@@ -84,6 +93,9 @@ const CustomFoodScreen = (props, {route}) => {
           mealType: selectedValue,
           amount: textInput,
           calories: (parseInt(textInput) * parseInt(calories) / parseInt(baseAmount)).toFixed(),
+          fat: (parseInt(textInput) * parseInt(fat) / parseInt(baseAmount)).toFixed(),
+          protein: (parseInt(textInput) * parseInt(protein) / parseInt(baseAmount)).toFixed(),
+          carbs: (parseInt(textInput) * parseInt(carbs) / parseInt(baseAmount)).toFixed(),
           image: image,
           isCustom: true,
         })
@@ -105,12 +117,15 @@ const CustomFoodScreen = (props, {route}) => {
         .onSnapshot((querySnapshot)=>{
           const list = [];
           querySnapshot.forEach(doc =>{
-            const {image, name, baseAmount, unit, calories} = doc.data();
+            const {image, name, baseAmount, unit, calories, carbs, fat, protein} = doc.data();
             list.push({          
               id: doc.id,
               name: name,
               image: image,
               calories: calories,
+              carbs: carbs,
+              protein: protein,
+              fat: fat,
               baseAmount: baseAmount,
               unit: unit,
               calories: calories
@@ -234,15 +249,36 @@ const CustomFoodScreen = (props, {route}) => {
           <TextInput style={[styles.textInput, {width: 220}]}  value={textInput} onChangeText={textInput =>onChangeTextInput(textInput)}/>
           <Text style={styles.text}>{unit}</Text>
           </View>
+          <View style={{marginVertical:3}}>
+          <View style={{flexDirection: 'row', marginBottom:3}}> 
+          <Text style={{color: '#5ADFC8', marginRight: 5}}>Carbs</Text>
+        <Text>{carbs}g, {(parseInt(carbs)*40000/(caloriesBudget*45)).toFixed()}% {language=='vn'?'của Mục tiêu':'of Target'}</Text>
+        </View>
+        <Progress.Bar progress={parseInt(carbs)*400/(caloriesBudget*45)} width={285} color="#5ADFC8"/>
+        </View>
+        <View style={{marginVertical:3}}>
+          <View style={{flexDirection: 'row', marginBottom:3}}> 
+          <Text style={{color: '#CE65E0', marginRight: 5}}>{language==='vn'?'Chất đạm':'Protein'}</Text>
+        <Text>{protein}g, {(parseInt(protein)*2000/(caloriesBudget)).toFixed()}% {language=='vn'?'của Mục tiêu':'of Target'}</Text>
+        </View>
+        <Progress.Bar progress={parseInt(protein)*20/(caloriesBudget)} width={285} color="#CE65E0"/>
+        </View>
+        <View style={{marginVertical:3}}>
+          <View style={{flexDirection: 'row', marginBottom:3}}> 
+          <Text style={{color: '#E8B51A', marginRight: 5}}>{language==='vn'?'Chất đạm':'Protein'}</Text>
+        <Text>{fat}g, {(parseInt(fat)*90000/(caloriesBudget*35)).toFixed()}% {language=='vn'?'của Mục tiêu':'of Target'}</Text>
+        </View>
+        <Progress.Bar progress={parseInt(fat)*900/(caloriesBudget*35)} width={285} color="#E8B51A"/>
+        </View>
           <Picker
         selectedValue={selectedValue}
         style={{ height: 50, width: 200, marginStart: 10}}
         onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}
       >
-        <Picker.Item label="Breakfast" value="Breakfast" />
-        <Picker.Item label="Lunch" value="Lunch" />
-        <Picker.Item label="Dinner" value="Dinner" />
-        <Picker.Item label="Snacks" value="Snacks" />
+         <Picker.Item label={language==='vn'? 'Buổi sáng': 'Breakfast'} value="Breakfast" />
+        <Picker.Item label={language==='vn'? 'Buổi trưa': 'Lunch'}  value="Lunch" />
+        <Picker.Item label={language==='vn'? 'Buổi tối': 'Dinner'}  value="Dinner" />
+        <Picker.Item label={language==='vn'? 'Ăn vặt': 'Snacks'}  value="Snacks" />
       </Picker>
       <TouchableOpacity style={styles.button} onPress={()=>finishAdd()}>
           <Text style={styles.text}>{language === 'vn' ? 'Thêm' : 'Add'}</Text>

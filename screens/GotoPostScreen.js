@@ -1,13 +1,15 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity, useContext, Modal,alert } from 'react-native'
-import React, { useEffect, useRef, useState } from 'react'
+import { StyleSheet, Text, View, Image, TouchableOpacity, Modal,alert } from 'react-native'
+import React, { useEffect, useRef, useState, useContext } from 'react'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import PostCard from '../components/PostCard';
+import ThemeContext from '../context/ThemeContext';
 export default GotoPostScreen = ({navigation,route}) =>{
     const [item, setitem] = useState()
     const [done, setdone] = useState(false);
+    const theme = useContext(ThemeContext)
     const getPost = () => {
         firestore()
           .collection('posts')
@@ -44,12 +46,14 @@ export default GotoPostScreen = ({navigation,route}) =>{
       }, []);
     
     return(
-        <View style={{flexDirection:'column', backgroundColor:'#EEEEEE'}}>
+      <View style={{flexDirection:'column', backgroundColor: theme === 'light'? '#FFFFFF' : '#000000', flex: 1}}>
+        <View style={{flexDirection:'column'}}>
           <TouchableOpacity onPress={()=> navigation.goBack()}>
-            <Icon name={'arrow-left'} style={{color: 'black', fontSize: 30, padding: 5}} />
+            <Icon name={'arrow-left'} style={{color: theme === 'light'? '#000' : '#fff', fontSize: 30, padding: 5}} />
           </TouchableOpacity>
                 {  (done)&&<PostCard  item={item}/>}
 
+        </View>
         </View>
     )
 }

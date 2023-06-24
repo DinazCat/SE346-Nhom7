@@ -19,6 +19,9 @@ const DetailFoodScreen = ({route, navigation}) => {
   const [calories, setCalories] = useState(route.params?.item.calories||'');
   const [image, setImage] = useState(null);
   const [name, setName] = useState(route.params?.item.name||'');
+  const [fat, setFat] = useState(route.params?.item.fat||'');
+  const [carbs, setCarbs] = useState(route.params?.item.carbs||'');
+  const [protein, setProtein] = useState(route.params?.item.protein||'');
   const imageTemp = (route.params)? route.params?.item.image :'https://cdn-icons-png.flaticon.com/512/2927/2927347.png'
   const [id, setId] = useState(route.params?.item.id)//set route.params...vô trong const trước
   const [uploading, setUploading] = useState(false);
@@ -85,13 +88,15 @@ const DetailFoodScreen = ({route, navigation}) => {
   const saveCustomFood = async() => {
     
     try{
-      
         const imageUrl = await uploadImage(image?.path);
         await firestore().collection('customFoods').add({
         userId:user.uid,
         name: name,
         image: imageUrl,
         calories: calories,
+        carbs: carbs==''?'0':carbs,
+        protein: protein==''?'0':protein,
+        fat: fat==''?'0':fat,
         baseAmount: baseAmount,
         unit: unit
         })
@@ -114,6 +119,9 @@ const DetailFoodScreen = ({route, navigation}) => {
         name: name,
         image: imageUrl,
         calories: calories,
+        carbs: carbs==''?'0':carbs,
+        protein: protein==''?'0':protein,
+        fat: fat==''?'0':fat,
         baseAmount: baseAmount,
         unit: unit
         })
@@ -173,6 +181,25 @@ const DetailFoodScreen = ({route, navigation}) => {
         <Picker.Item label="pieces" value="pieces" />
         <Picker.Item label="piece" value="piece" />
       </Picker>
+      </View>
+
+      <View style={{alignItems: 'center', flexDirection: 'row', marginStart: 20, borderColor: theme==='light'?"#000":"#fff", borderWidth: 1, borderRadius: 13, width: "90%", marginTop:10}}>
+        <Text style={{fontSize: 17, marginStart: 3, color: theme==='light'?'#000':'#fff'}}>Carbs: </Text>
+        <TextInput style={{color: theme==='light'?"#000":"#fff", borderColor: theme==='light'?"#000":"#fff", width: 180, height: 60}} 
+          value={carbs} onChangeText={carbs=>setCarbs(carbs)}/>
+        <Text style={{fontSize: 17, marginStart: 3, color: theme==='light'?'#000':'#fff', marginLeft: 'auto', marginRight: 15}}>g</Text>
+      </View>
+      <View style={{alignItems: 'center', flexDirection: 'row', marginStart: 20, borderColor: theme==='light'?"#000":"#fff", borderWidth: 1, borderRadius: 13, width: "90%", marginTop:10}}>
+        <Text style={{fontSize: 17, marginStart: 3, color: theme==='light'?'#000':'#fff'}}>{language === 'vn' ? 'Chất đạm: ' : 'Protein: '}</Text>
+        <TextInput style={{color: theme==='light'?"#000":"#fff", borderColor: theme==='light'?"#000":"#fff", width: 180, height: 60}} 
+          value={protein} onChangeText={protein=>setProtein(protein)}/>
+        <Text style={{fontSize: 17, marginStart: 3, color: theme==='light'?'#000':'#fff', marginLeft: 'auto', marginRight: 15}}>g</Text>
+      </View>
+      <View style={{alignItems: 'center', flexDirection: 'row', marginStart: 20, borderColor: theme==='light'?"#000":"#fff", borderWidth: 1, borderRadius: 13, width: "90%", marginTop:10}}>
+        <Text style={{fontSize: 17, marginStart: 3, color: theme==='light'?'#000':'#fff'}}>{language === 'vn' ? 'Chất béo: ' : 'Fat: '}</Text>
+        <TextInput style={{color: theme==='light'?"#000":"#fff", borderColor: theme==='light'?"#000":"#fff", width: 180, height: 60, fontSize: 17}} 
+           value={fat} onChangeText={fat=>setFat(fat)}/>
+        <Text style={{fontSize: 17, marginStart: 3, color: theme==='light'?'#000':'#fff', marginLeft: 'auto', marginRight: 15}}>g</Text>
       </View>
       <View style={{alignItems: 'center', marginStart: 20, borderColor: theme==='light'?"#000":"#fff", borderWidth: 1, borderRadius: 13, width: "90%", marginTop: 10}}>
       <View>

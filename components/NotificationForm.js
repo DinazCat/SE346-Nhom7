@@ -1,11 +1,13 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity, useContext, Modal,alert,TextInput } from 'react-native'
-import React, { useEffect, useRef, useState } from 'react'
+import { StyleSheet, Text, View, Image, TouchableOpacity, Modal,alert,TextInput } from 'react-native'
+import React, { useEffect, useRef, useState, useContext } from 'react'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import ThemeContext from '../context/ThemeContext';
 const NotificationForm = ({item,action,Remove}) =>
 {
+    const theme = useContext(ThemeContext);
     // const Delete = ()=>{
     //     console.log('aaaa')
     // firestore()
@@ -20,11 +22,11 @@ const NotificationForm = ({item,action,Remove}) =>
     //   },[])
       
     return(
-        <TouchableOpacity style={styles.container} onPress={action}>
+        <TouchableOpacity style={[styles.container, {backgroundColor: theme === 'light'? '#fff' : '#4E4E4E'}]} onPress={action}>
               <Image style={styles.UserImage} source={{uri: item.GImg}}/>
               <View style={{flexDirection:'column', width:300}}>
-                <Text multiline={true} style={styles.TextStyle}>{item.Mess}</Text>
-                <Text  style={styles.TextStyle}>{item.Time}</Text>
+                <Text multiline={true} style={[styles.TextStyle, {color: theme === 'light'? '#000' : '#fff'}]}>{item.Mess}</Text>
+                <Text style={[styles.TextStyle, {color: theme === 'light'? '#000' : '#fff'}]}>{item.Time}</Text>
               </View>
             <TouchableOpacity style={styles.DeleteButton} onPress={Remove}>
                 <Icon name={'times-circle'}  />

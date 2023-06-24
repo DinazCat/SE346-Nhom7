@@ -171,7 +171,7 @@ const updateBmr = async() => {
       <TouchableOpacity onPress={cancel}>
         <Text style={[styles.text, {color: theme === 'light' ?'#fff': '#2AE371'}]}>{language === 'vn' ? 'Hủy' : 'Cancel'}</Text>
       </TouchableOpacity>
-      <Text style={{fontSize: 23, color: '#fff', fontWeight: 'bold', textAlign: 'center', width: 250}}>{language === 'vn' ? 'Chi tiết thức ăn' : 'Food detail'}</Text>
+      <Text style={{fontSize: 23, color: '#fff', fontWeight: 'bold', textAlign: 'center', width: 250}}>{language === 'vn' ? 'Thay đổi mục tiêu' : 'Change goal'}</Text>
       
       <TouchableOpacity onPress={save}>
         <Text style={[styles.text, {color: theme === 'light' ?'#fff': '#2AE371'}]}>{language === 'vn' ? 'Lưu' : 'Save'}</Text>
@@ -220,7 +220,7 @@ const updateBmr = async() => {
       >
         <Picker.Item label={goal+" 0,25 kg per week"} value="0.25" />
         <Picker.Item label={goal+" 0,5 kg per week"} value="0.5" />
-        <Picker.Item label={goal+" 0,25 kg per week"} value="1" />
+        <Picker.Item label={goal+" 1 kg per week"} value="1" />
         
       </Picker>: null}
       

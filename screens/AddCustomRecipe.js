@@ -20,9 +20,11 @@ const AddCustomRecipe = ({route}) => {
   const dispatch = useDispatch();
   const IngredientList= useSelector((state) => state.IngredientList.value);
   const totalCalories = useSelector((state) => state.IngredientList.totalCalories);
+  const totalFat = useSelector((state)=>state.IngredientList.totalFat);
+  const totalCarbs = useSelector((state)=>state.IngredientList.totalCarbs);
+  const totalProtein = useSelector((state)=>state.IngredientList.totalProtein);
   const isEdit = useSelector((state) => state.IngredientList.isEdit);
   const imageTemp = (route.params)? route.params?.item.image :'https://cdn-icons-png.flaticon.com/512/2927/2927347.png'
-  //mấy cái để http bà có thể tìm ảnh khác dể dô cho đẹp nha
   
   const navigation = useNavigation();
   //thông tin textinput của customFood
@@ -122,6 +124,9 @@ const AddCustomRecipe = ({route}) => {
       name: name || '',
       image: imageUrl,
       calories: totalCalories || '',
+      carbs: totalCarbs || '',
+      protein: totalProtein || '',
+      fat: totalFat || '',
       prepTime: prepTime || '',
       cookingTime: cookingTime || '',
       receipt: receipt|| '',
@@ -150,6 +155,9 @@ const AddCustomRecipe = ({route}) => {
         name: name,
         image: imageUrl,
         calories: totalCalories,
+        fat: totalFat,
+        carbs: totalCarbs,
+        protein: totalProtein,
         prepTime: prepTime,
         cookingTime: cookingTime,
         receipt: receipt,
@@ -227,7 +235,7 @@ const AddCustomRecipe = ({route}) => {
                      
                      <View style={styles.split}/>
                      <View >
-                     <Text style={[styles.PostTitle, {color: '#CE3E3E'}]}>Ingredients</Text>
+                     <Text style={[styles.PostTitle, {color: '#CE3E3E'}]}>{language === 'vn' ? 'Nguyên liệu' : 'Ingredient'}</Text>
                      <TouchableOpacity style={{marginLeft:'auto', marginHorizontal: 15, marginBottom: 7}} onPress={()=>addIngredient()}>
                      <Icon name={'plus-circle'} size={30} color={'#0AD946'}/>
                      </TouchableOpacity>
@@ -253,6 +261,22 @@ const AddCustomRecipe = ({route}) => {
                       )}
                      )}
             </View>
+            <View style={styles.split}/>
+            <View >
+                     <Text style={[styles.PostTitle, {color: '#5AC30D'}]}>{language === 'vn' ? 'Hàm lượng dinh dưỡng' : 'Macro'}</Text>
+                     <View style={{flexDirection: 'row', marginHorizontal: 20, marginVertical: 2}}>
+                         <Text style={{fontSize: 16, color: theme==='light'?"#000":"#fff", fontWeight: 'bold'}}>Carbs</Text>
+                         <Text style={{marginLeft:'auto', fontSize: 16, color: theme==='light'?"#000":"#fff"}}>{totalCarbs} g</Text>
+                      </View>
+                      <View style={{flexDirection: 'row', marginHorizontal: 20, marginVertical: 2}}>
+                         <Text style={{fontSize: 16, color: theme==='light'?"#000":"#fff", fontWeight: 'bold'}}>Fat</Text>
+                         <Text style={{marginLeft:'auto', fontSize: 16, color: theme==='light'?"#000":"#fff"}}>{totalFat} g</Text>
+                      </View>
+                      <View style={{flexDirection: 'row', marginHorizontal: 20, marginVertical: 2}}>
+                         <Text style={{fontSize: 16, color: theme==='light'?"#000":"#fff", fontWeight: 'bold'}}>Protein</Text>
+                         <Text style={{marginLeft:'auto', fontSize: 16, color: theme==='light'?"#000":"#fff"}}>{totalProtein} g</Text>
+                      </View>
+                     </View>
             <View style={styles.split}/>
             <View style={{alignItems: 'center', backgroundColor: theme==='light'?'#DBDBDB' : '#4E4E4E', borderRadius: 13, marginHorizontal: 10, marginTop: 10}}>
             <View>

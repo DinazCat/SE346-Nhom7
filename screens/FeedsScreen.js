@@ -319,7 +319,7 @@ export default function FeedsScreen({navigation}) {
   }
 
   renderContent = () => (
-    <View style={[styles.panel, {backgroundColor: theme === 'light'? '#fff' : '#4E4E4E'}]}>
+    <View style={[styles.panel, {backgroundColor: theme === 'light'? '#EAEAEA' : '#838383'}]}>
       <View style={{alignItems: 'center'}}>
         <Text style={[styles.panelSubtitle, {color: theme === 'light'? '#000' : '#fff'}]}>{language === 'vn' ? 'Lọc bằng' : 'Filter by'}</Text>
       </View>    
@@ -408,7 +408,7 @@ export default function FeedsScreen({navigation}) {
   );
 
   renderHeader = () => (
-    <View style={[styles.header, {backgroundColor: theme === 'light'? '#fff' : '#838383'}]}>
+    <View style={[styles.header, {backgroundColor: theme === 'light'? '#EAEAEA' : '#838383'}]}>
       <View style={styles.panelHeader}>
         <View style={styles.panelHandle} />
       </View>

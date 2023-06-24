@@ -4,6 +4,7 @@ import StapleFoodScreen from "./StapleFoodScreen";
 import CustomRecipeScreen from "./CustomRecipeScreen";
 import CustomFoodScreen from "./CustomFoodScreen";
 import { useNavigation } from "@react-navigation/native";
+import { useSelector } from "react-redux";
 import moment from "moment";
 import AddWater from "./AddWater";
 import AddExerciseScreen from "./AddExerciseScreen";
@@ -16,7 +17,8 @@ const AddScreen = ({route}) => {
   const theme = useContext(ThemeContext);
   const language = useContext(LanguageContext);
   const [page, setPage] = useState(3);
-  const date = route.params?.date || moment(new Date()).format('DD/MM/YYYY');
+  const time = useSelector((state)=>state.CaloriesDiary.time);
+  const date = route.params?.date || (time=='Today'? moment(new Date()).format('DD/MM/YYYY'): time);
   const isNavigation = (route.params)? true:false;
   const back = () => {
     navigation.goBack();

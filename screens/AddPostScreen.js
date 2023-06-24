@@ -525,6 +525,7 @@ export default AddPostScreen= function({navigation}) {
                 marginLeft: 3, 
                 borderBottomColor:theme === 'light'? '#000' : '#fff', 
                 alignSelf:'center',
+                color:theme === 'light'? '#000' : '#fff',
                 borderBottomWidth:1, 
                 width:"90%", }}
                 value={Making}
@@ -538,6 +539,7 @@ export default AddPostScreen= function({navigation}) {
                 borderBottomColor:theme === 'light'? '#000' : '#fff', 
                 alignSelf:'center',
                 borderBottomWidth:1, 
+                color:theme === 'light'? '#000' : '#fff',
                 width:"90%", }}
                 value={Summary}
              onChangeText={TextChangeSummary}

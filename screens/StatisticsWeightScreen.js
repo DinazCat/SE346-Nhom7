@@ -163,7 +163,7 @@ return(
               backgroundGradientFrom: theme === 'light'? '#FFFFFF' : '#1A1A1A',
               backgroundGradientTo: theme === 'light'? '#FFFFFF' : '#1A1A1A',
               decimalPlaces: 2,
-              color: (opacity = 1) => `rgba(3, 200, 255, ${opacity})`,
+              color: (opacity = 1) => `rgba(42, 227, 113, ${opacity})`,
               style: {
                 borderRadius: 16,
               },
@@ -195,7 +195,7 @@ return(
               backgroundGradientFrom: theme === 'light'? '#FFFFFF' : '#1A1A1A',
               backgroundGradientTo: theme === 'light'? '#FFFFFF' : '#1A1A1A',
               decimalPlaces: 2,
-              color: (opacity = 1) => `rgba(3, 200, 255, ${opacity})`,
+              color: (opacity = 1) => `rgba(42, 227, 113, ${opacity})`,
               style: {
                 borderRadius: 16,
                 
@@ -228,7 +228,7 @@ return(
               backgroundGradientFrom: theme === 'light'? '#FFFFFF' : '#1A1A1A',
               backgroundGradientTo: theme === 'light'? '#FFFFFF' : '#1A1A1A',
               decimalPlaces: 2,
-              color: (opacity = 1) => `rgba(3, 200, 255, ${opacity})`,
+              color: (opacity = 1) => `rgba(42, 227, 113, ${opacity})`,
               style: {
                 borderRadius: 16,
               },

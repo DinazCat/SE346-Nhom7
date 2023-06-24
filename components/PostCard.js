@@ -328,7 +328,7 @@ const PostCard = ({item, onUserPress, onCommentPress,onImagePress,deletePost,edi
         </View>
         <View style={{flexDirection:"row"}}>
         <Text style={[styles.PostTitle, {color: theme === 'light'? '#000000' : '#FFFFFF'}]}>{language === 'vn' ? 'Tên món ăn: ' : 'Food name:'}</Text>
-        <Text style={styles.PostText}>{item.postFoodName}</Text>
+        <Text style={[styles.PostText, {color: theme === 'light'? '#000000' : '#FFFFFF'}]}>{item.postFoodName}</Text>
         </View> 
         <View style={{flexDirection:"row"}}>
         <Text style={[styles.PostTitle, {color: theme === 'light'? '#000000' : '#FFFFFF'}]}>{language === 'vn' ? 'Độ khó' : 'Difficulty Level'}</Text>

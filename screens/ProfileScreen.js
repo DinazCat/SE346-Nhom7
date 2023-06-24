@@ -337,19 +337,19 @@ const ProfileScreen = ({navigation, route}) => {
 
         <View style={styles.userInfoWrapper}>
           <TouchableOpacity onPress={() => {setSelectedTab(0)}}>
-            <View style={[styles.userInfoItem, {backgroundColor: selectedTab == 0 ? '#D3FBB8' : '#fff'}]}>
+            <View style={[styles.userInfoItem, {backgroundColor: selectedTab == 0 ? '#D3FBB8' : (theme==='light'?'#fff': '#000')}]}>
               <Text style={styles.userInfoTitle}>{posts.length}</Text>
               <Text style={styles.userInfoSubTitle}>{language === 'vn' ? 'Bài viết' : 'Posts'}</Text>
             </View>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => {setSelectedTab(1)}}>
-            <View style={[styles.userInfoItem, {backgroundColor: selectedTab == 1 ? '#FAF7A8' : '#fff'}]}>
+            <View style={[styles.userInfoItem, {backgroundColor: selectedTab == 1 ? '#FAF7A8' : (theme==='light'?'#fff': '#000')}]}>
               <Text style={styles.userInfoTitle}>{profileData ? profileData.followers.length : 0}</Text>
               <Text style={styles.userInfoSubTitle}>{language === 'vn' ? 'Người theo dõi' : 'Followers'}</Text>
             </View>
           </TouchableOpacity>  
           <TouchableOpacity onPress={() => {setSelectedTab(2)}}>
-            <View style={[styles.userInfoItem, {backgroundColor: selectedTab == 2 ? '#e05c5c' : '#fff'}]}>
+            <View style={[styles.userInfoItem, {backgroundColor: selectedTab == 2 ? '#e05c5c' : (theme==='light'?'#fff': '#000')}]}>
               <Text style={styles.userInfoTitle}>{profileData ? profileData.following.length : 0}</Text>
               <Text style={styles.userInfoSubTitle}>{language === 'vn' ? 'Đang theo dõi' : 'Following'}</Text>
             </View>
@@ -451,6 +451,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 5,
+    color: '#666',
     textAlign: 'center',
   },
   userInfoSubTitle: {

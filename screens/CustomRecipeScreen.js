@@ -22,8 +22,6 @@ const CustomRecipeScreen = () => {
   const [calories, setCalories] = useState('');
   const [image, setImage] = useState('');
   const [name, setName] = useState('');
-  const [selectedValue, setSelectedValue] = useState("Breakfast");//value cho meal types
-  
   const [textInput, onChangeTextInput] = useState('');
 
   //const [selectedItem, setSelectedItem] = useState(null);
@@ -55,7 +53,7 @@ const CustomRecipeScreen = () => {
     //có thể bị vướng id do navigation lại mất
     let index = datas.findIndex(item=>item.id === selectedItem.id)
     rowMap[`${index}`].closeRow();
-    dispatch(Edit(true, selectedItem.ingredients, selectedItem.calories));
+    dispatch(Edit(true, selectedItem.ingredients, selectedItem.calories, selectedItem.fat, selectedItem.carbs, selectedItem.protein));
     navigation.navigate('AddCustomRecipe', {item: selectedItem});
   }
   const Share = (selectedItem, rowMap)=>{
@@ -83,12 +81,15 @@ const CustomRecipeScreen = () => {
       .onSnapshot((querySnapshot)=>{
         const list = [];
         querySnapshot.forEach(doc =>{
-          const {image, name, calories, cookingTime, ingredients, prepTime, receipt} = doc.data();
+          const {image, name, calories, cookingTime, ingredients, prepTime, receipt, carbs, protein, fat} = doc.data();
           list.push({          
             id: doc.id,
             name: name,
             image: image,
             calories: calories,
+            carbs: carbs,
+            protein: protein,
+            fat: fat,
             cookingTime: cookingTime,
             prepTime: prepTime,
             receipt: receipt,

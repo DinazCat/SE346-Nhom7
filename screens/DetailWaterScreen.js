@@ -10,6 +10,7 @@ import ThemeContext from "../context/ThemeContext";
 import CheckBox from "@react-native-community/checkbox";
 
 const DetailWaterScreen = ({route, navigation}) => {
+    const [isAll, setIsAll] = useState(false);
     const {user} = useContext(AuthContext);
     const row = [];
     let prevOpenedRow;
@@ -57,7 +58,7 @@ const DetailWaterScreen = ({route, navigation}) => {
               list.push({          
                 id: doc.id,
                 amount: amount,
-                isCheck: 'false'
+                isCheck: false
               });
             })
             setWaterList(list);
@@ -80,6 +81,43 @@ const DetailWaterScreen = ({route, navigation}) => {
         </TouchableOpacity>
       </View>
     )
+  }
+
+  const all = (index, selectedItem) => {
+    row[index].close();
+    let temp = waterList;
+    temp.map(item=> {
+      item.isCheck = true;
+    })
+    let tempList = [];
+    temp.map(item=>{
+      tempList.push(item);
+    })
+    setWaterList(tempList);
+  }
+  const deleteSelectedItems = () => {
+    waterList.map(item=>{
+      if (item.isCheck == true)
+        firestore().collection('water').doc(item.id).delete().then(() => {});
+    })
+  }
+  const none = () => {
+    let temp = waterList;
+    temp.map(item=> {
+      item.isCheck = false;
+    })
+    let tempList = [];
+    temp.map(item=>{
+      tempList.push(item);
+    })
+    setWaterList(tempList);
+  }
+  const closeAll = ()=> {
+    setIsAll(false);
+    none();
+  }
+  const move = () => {
+    
   }
   const closeRow = (index) => {
     if(prevOpenedRow && prevOpenedRow !== row[index]){
@@ -134,7 +172,20 @@ const DetailWaterScreen = ({route, navigation}) => {
                       <Text style={{marginLeft:'auto', fontSize: 16, color: '#2960D2' }}>{item.amount} ml</Text>
                       
                       </View>
-                      {(item.isCheck==true)?<CheckBox/>:null}
+                      {isAll?<CheckBox
+                      value={item.isCheck}
+                      onValueChange={(value)=>{
+                        let temp = waterList.map(val=>{
+                          if(val.id == item.id){
+                            return{...val, isCheck:value}
+                          }
+                          else{
+                            return val;
+                          }
+                        })
+                        setWaterList(temp);
+                      }}
+                      />:null}
                       </View>
                       
                       </Swipeable>
