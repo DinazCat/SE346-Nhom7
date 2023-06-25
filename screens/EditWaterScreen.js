@@ -5,33 +5,33 @@ import { useNavigation } from "@react-navigation/native";
 import { AuthContext } from '../navigation/AuthProvider';
 import LanguageContext from "../context/LanguageContext";
 import ThemeContext from "../context/ThemeContext";
-
-const AddWater = (props) => {
+import Icon from 'react-native-vector-icons/FontAwesome5';
+const EditWaterScreen = ({route}) => {
     const navigation = useNavigation();
     const{user} = useContext(AuthContext);
-    const[water, setWater] = useState('');
+    const[water, setWater] = useState(route.params?.item.amount);
     const language = useContext(LanguageContext);
-    const theme = useContext(ThemeContext)
+    const theme = useContext(ThemeContext);
+    const back = () => {
+        navigation.goBack();
+      }
     const saveWater = async() => {
         if (water==""){
             //just space
         }
         else{
-            if(props.isNavigation){
-                navigation.goBack();
-            }
-            await firestore().collection('water').add({
-                userId: user.uid,
-                time: props.date,
-                amount: water,
-                isChecked: false
+            navigation.goBack();
+            firestore().collection('water').doc(route.params?.item.id).update({
+                amount: water
             })
-            
-            setWater('');
         }
     }
     return (
-        <View style={[styles.container]}>
+        <View style={{backgroundColor: theme==='light'?"#fff":"#000", borderColor: theme==='light'?"#000":"#fff", flex: 1}}>
+  <TouchableOpacity style={{marginLeft: 15, marginVertical: 5}} onPress={back}>
+    <Icon name={'arrow-left'} size={25} color={theme==='light'?"#000":"#fff"}/>
+  </TouchableOpacity>
+  <View style={[styles.container]}>
                 <Image style={styles.img} source={require( '../assets/water_.png')}/>
                 <View style={{flexDirection: 'row', marginStart: 46}}>
                 <TextInput 
@@ -42,12 +42,13 @@ const AddWater = (props) => {
                 </View>
             <TouchableOpacity style={styles.button}
             onPress={saveWater}>
-                <Text style={[styles.text, {color: "#fff"}]}> {language === 'vn' ? 'Thêm' : 'Add'}</Text>
+                <Text style={[styles.text, {color: "#fff"}]}> {language === 'vn' ? 'Lưu' : 'Save'}</Text>
             </TouchableOpacity>
+            </View>
         </View>
     )
 }
-export default AddWater;
+export default EditWaterScreen;
 
 const styles = StyleSheet.create({
     container: {

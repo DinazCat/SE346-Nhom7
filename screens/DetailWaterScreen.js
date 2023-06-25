@@ -3,32 +3,41 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import firestore from '@react-native-firebase/firestore';
 import React, {useState, useEffect, useContext, useRef} from "react";
 import moment from "moment";
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { AuthContext } from '../navigation/AuthProvider';
 import { GestureHandlerRootView, Swipeable } from "react-native-gesture-handler";
 import LanguageContext from "../context/LanguageContext";
 import ThemeContext from "../context/ThemeContext";
 import CheckBox from "@react-native-community/checkbox";
-
+import PopFoodAmount from "./PopFoodAmount";
 const DetailWaterScreen = ({route, navigation}) => {
+    const [isOpen, setOpen] = useState(false);
     const [isAll, setIsAll] = useState(false);
+    const [isUpdate, setIsUpdate] = useState(false);
+    const [visible, setVisible] = React.useState(false);
+    const [show, setShow] = useState(false);
     const {user} = useContext(AuthContext);
     const row = [];
     let prevOpenedRow;
-    const date = (route.params?.time == 'Today')? moment(new Date()).format('DD/MM/YYYY'): route.params?.time;
+    const [time, setTime] = useState((route.params?.time == 'Today')? moment(new Date()).format('DD/MM/YYYY'): route.params?.time);
+    const tempTime = (route.params?.time == 'Today')? moment(new Date()).format('DD/MM/YYYY'): route.params?.time
+    const [date, setDate] = useState(route.params?.time == 'Today'? new Date(): new Date(moment(route.params?.time, 'DD/MM/YYYY')));
     const [water, setWater] = useState(0);
     const [waterList, setWaterList] = useState([]);
     const language = useContext(LanguageContext);
     const theme = useContext(ThemeContext)
     useEffect(() => {
-        getWater(date)
+        getWater(tempTime)
     }, []);
     const back = () => {
       navigation.goBack();
+      none();
     }
     const Add = () => {
-      navigation.navigate('AddItemScreen', {date: date, page:3})
+      navigation.navigate('AddItemScreen', {date: tempTime, page:3})
+      none();
     }
-    
+  
     const deleteWater = (item) => {
       
         Alert.alert('Delete', 'Do you want to remove water?', [
@@ -42,7 +51,14 @@ const DetailWaterScreen = ({route, navigation}) => {
               }},
         ]);
     }
-    
+    const onChange = (event, selectedDate) => {
+      const currentDate = selectedDate || date;
+       setShow(false);
+       setDate(currentDate);
+       setTime(moment(new Date(currentDate)).format('DD/MM/YYYY'));
+        
+      
+   }
     const getWater = (date)=> {
         try{
           firestore()
@@ -52,17 +68,21 @@ const DetailWaterScreen = ({route, navigation}) => {
           .onSnapshot((querySnapshot)=>{
             let totalWater = 0;
             let list= [];
+            let checkList = [];
             querySnapshot.forEach(doc =>{
-              const {amount} = doc.data();
+              const {amount, isChecked} = doc.data();
+              if (!isChecked) checkList.push(isChecked);
               totalWater += parseInt(amount);
               list.push({          
                 id: doc.id,
                 amount: amount,
-                isCheck: false
+                isChecked: isChecked
               });
             })
             setWaterList(list);
             setWater(totalWater);
+            if(checkList.length > 0) setIsAll(true);
+              else setIsAll(false);
           })
          
         } catch(e){
@@ -70,54 +90,103 @@ const DetailWaterScreen = ({route, navigation}) => {
         }
       }
   
-  const rightSwipe = () => {
-    return (
-      <View style={{flexDirection: 'row'}}>
-        <TouchableOpacity>
-          <Text style={{color: theme==='light'?"#000":"#fff"}}>Delete</Text>
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Text style={{color: theme==='light'?"#000":"#fff"}}>Select</Text>
-        </TouchableOpacity>
-      </View>
-    )
+  const edit = (item) => {
+    navigation.navigate("EditWater", {item:item})
   }
+  const all = async(index) => {
+    if(index >= 0) row[index].close();
+    setOpen(true);
+    //setIsAll(false)
+    const usersQuerySnapshot = await firestore().collection('water')
+    .where("userId", '==', user.uid)
+    .where("time", '==', tempTime).get();
+    const batch = firestore().batch();
+    usersQuerySnapshot.forEach(documentSnapshot => {
+      batch.update(documentSnapshot.ref, {"isChecked": true});
+    });
+    return batch.commit();
+  }
+  const deleteSelectedItems = async() => {
+    const usersQuerySnapshot = await firestore().collection('water')
+    .where("userId", '==', user.uid)
+    .where("time", '==', tempTime)
+    .where("isChecked", '==', true).get();
+    const batch = firestore().batch();
+    usersQuerySnapshot.forEach(documentSnapshot => {
+      batch.delete(documentSnapshot.ref);
+    });
 
-  const all = (index, selectedItem) => {
-    row[index].close();
-    let temp = waterList;
-    temp.map(item=> {
-      item.isCheck = true;
-    })
-    let tempList = [];
-    temp.map(item=>{
-      tempList.push(item);
-    })
-    setWaterList(tempList);
+    return batch.commit();
   }
-  const deleteSelectedItems = () => {
-    waterList.map(item=>{
-      if (item.isCheck == true)
-        firestore().collection('water').doc(item.id).delete().then(() => {});
-    })
+  const none = async() => {
+    //setIsAll(false);
+    const usersQuerySnapshot = await firestore().collection('water')
+    .where("userId", '==', user.uid)
+    .where("time", '==', tempTime).get();
+    const batch = firestore().batch();
+    usersQuerySnapshot.forEach(documentSnapshot => {
+      batch.update(documentSnapshot.ref, {"isChecked": false});
+    });
+
+    return batch.commit();
+    
   }
-  const none = () => {
-    let temp = waterList;
-    temp.map(item=> {
-      item.isCheck = false;
-    })
-    let tempList = [];
-    temp.map(item=>{
-      tempList.push(item);
-    })
-    setWaterList(tempList);
-  }
-  const closeAll = ()=> {
-    setIsAll(false);
+  const close = ()=> {
+    setOpen(false);
     none();
   }
+  const select = (item, index) => {
+    row[index].close();
+    firestore().collection('water').doc(item.id).update({
+      isChecked : true
+    })
+    setOpen(true);
+  }
   const move = () => {
-    
+    setIsUpdate(true);
+    setDate((route.params?.time == 'Today'? new Date(): new Date(moment(route.params?.time, 'DD/MM/YYYY'))))
+    setTime((route.params?.time == 'Today')? moment(new Date()).format('DD/MM/YYYY'): route.params?.time)
+    setVisible(true);
+  }
+  const finishMove = async() => {
+    setVisible(false);
+    const usersQuerySnapshot = await firestore().collection('water')
+    .where("userId", '==', user.uid)
+    .where("time", '==', tempTime)
+    .where("isChecked", '==', true).get();
+    const batch = firestore().batch();
+    usersQuerySnapshot.forEach(documentSnapshot => {
+      batch.update(documentSnapshot.ref, {"isChecked": false, "time": time});
+    });
+
+    return batch.commit();
+  }
+  const copy = () => {
+    setIsUpdate(false);
+    setDate((route.params?.time == 'Today'? new Date(): new Date(moment(route.params?.time, 'DD/MM/YYYY'))))
+    setTime((route.params?.time == 'Today')? moment(new Date()).format('DD/MM/YYYY'): route.params?.time)
+    setVisible(true);
+  }
+  const finishCopy = async() => {
+    setVisible(false);
+    const usersQuerySnapshot = await firestore().collection('water')
+    .where("userId", '==', user.uid)
+    .where("time", '==', tempTime)
+    .where("isChecked", '==', true).get();
+    const batch = firestore().batch();
+    usersQuerySnapshot.forEach(documentSnapshot => {
+      const data = documentSnapshot.data();
+      const waterRef = firestore().collection('water')
+      const id = waterRef.doc().id
+      batch.set(waterRef.doc(id), {
+        userId: user.uid,
+        time: time,
+        amount: data.amount,
+        isChecked: false
+      })
+    });
+
+    return batch.commit();
   }
   const closeRow = (index) => {
     if(prevOpenedRow && prevOpenedRow !== row[index]){
@@ -139,15 +208,21 @@ const DetailWaterScreen = ({route, navigation}) => {
     <Text style={{marginLeft: 'auto', color: theme==='light'?"#000":"#fff", fontWeight: 'bold', fontSize: 17}}>{(water > 0)? water+" ml": ''}</Text>
   </View>
   
-    <ScrollView>
+    <ScrollView> 
     {waterList?.map((item, index)=>{
                     return(  
 <GestureHandlerRootView key={index}>
                           <Swipeable 
+                          
                           ref={ref => row[index] = ref}
-                          renderRightActions={()=>{return(
+                          renderRightActions={()=>{
+                            if(isOpen){
+                              return <View></View>
+                            }
+                            return(
+                              
                             <View style={{flexDirection: 'row'}}>
-                              <TouchableOpacity style={{backgroundColor: '#D436F0', justifyContent: 'space-around'}}>
+                              <TouchableOpacity style={{backgroundColor: '#D436F0', justifyContent: 'space-around'}} onPress={()=>all(index)}>
         <Text style={{color: "#000", width: 70, textAlign: 'center'}}>{language==='vn'?"Tất cả":"All"}</Text>
         </TouchableOpacity>
         <TouchableOpacity style={{backgroundColor: 'red', justifyContent: 'space-around'}} onPress={()=>{
@@ -156,15 +231,15 @@ const DetailWaterScreen = ({route, navigation}) => {
           }}>
           <Text style={{color: "#000", width: 70, textAlign: 'center'}}>{language==='vn'?"Xóa":"Delete"}</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={{backgroundColor: '#E3912C', justifyContent: 'space-around'}} >
+        <TouchableOpacity style={{backgroundColor: '#E3912C', justifyContent: 'space-around'}} onPress={()=>select(item, index)}>
           <Text style={{color: "#000", width: 70, textAlign: 'center'}}>{language==='vn'?"Chọn":"Select"}</Text>
         </TouchableOpacity>
       </View>
                     )}}  onSwipeableWillOpen={()=> closeRow(index)}
                     >
-                            
+                            <TouchableOpacity onPress={()=>edit(item)} delayPressIn={300}>
                           <View style={{alignItems: 'center', flexDirection: 'row', paddingHorizontal: 10, paddingVertical: 3, paddingBottom: 5, backgroundColor: '#CCC', borderBottomColor: '#fff', borderBottomWidth: 2}}>
-
+                          
                           <Image source={require( '../assets/water_.png')} style={{width: 40,
         height: 40,
         resizeMode: 'stretch'}}/>
@@ -172,22 +247,19 @@ const DetailWaterScreen = ({route, navigation}) => {
                       <Text style={{marginLeft:'auto', fontSize: 16, color: '#2960D2' }}>{item.amount} ml</Text>
                       
                       </View>
-                      {isAll?<CheckBox
-                      value={item.isCheck}
+                      {isOpen?<CheckBox
+                      value={item.isChecked}
                       onValueChange={(value)=>{
-                        let temp = waterList.map(val=>{
-                          if(val.id == item.id){
-                            return{...val, isCheck:value}
-                          }
-                          else{
-                            return val;
-                          }
-                        })
-                        setWaterList(temp);
-                      }}
+                          firestore().collection('water').doc(item.id).update({
+                            isChecked : value
+                          })
+                          
+                        }
+                      }
                       />:null}
-                      </View>
                       
+                      </View>
+                      </TouchableOpacity>
                       </Swipeable>
                       </GestureHandlerRootView>
                       )}
@@ -195,41 +267,138 @@ const DetailWaterScreen = ({route, navigation}) => {
 
 
 </ScrollView>
+{isOpen?<View style={{backgroundColor: theme === 'light'? '#EAEAEA' : '#838383', flexDirection: 'row', justifyContent: 'center', padding: 10}}>
+{isAll?<TouchableOpacity onPress={all}>
+  <View style={{alignItems: 'center', width: 80}}>
+  <Image
+    source={{uri: 'https://static-00.iconduck.com/assets.00/select-all-icon-512x512-h7e41rpz.png'}}
+    style={{height: 25, width: 25}}
+  />
+    <Text style={styles.text}>{language==='vn'?'Tất cả': 'All'}</Text>
+  </View>
+</TouchableOpacity>:
+<TouchableOpacity onPress={none}>
+<View style={{alignItems: 'center', width: 80}}> 
+  <Image
+    source={{uri: 'https://static-00.iconduck.com/assets.00/select-all-icon-512x512-h7e41rpz.png'}}
+    style={{height: 25, width: 25}}
+  />
+  <Text style={styles.text}>{language==='vn'?'Bỏ chọn tất cả': 'None'}</Text>
+  </View>
+</TouchableOpacity>}
+
+<TouchableOpacity onPress={copy}>
+<View style={{alignItems: 'center', width: 80}}>
+  <Image
+    source={{uri: 'https://files.softicons.com/download/toolbar-icons/mono-general-icons-2-by-custom-icon-design/png/512x512/copy.png'}}
+    style={{height: 25, width: 25}}
+  />
+  <Text style={styles.text}>Copy</Text>
+  </View>
+</TouchableOpacity>
+<TouchableOpacity onPress={move}>
+<View style={{alignItems: 'center', width: 80}}>
+  <Image
+    source={{uri: 'https://cdn-icons-png.flaticon.com/512/6469/6469436.png'}}
+    style={{height: 25, width: 25}}
+  />
+  <Text style={styles.text}>Move</Text>
+  </View>
+</TouchableOpacity>
+<TouchableOpacity onPress={deleteSelectedItems}>
+<View style={{alignItems: 'center', width: 80}}> 
+  <Image
+    source={{uri: 'https://cdn-icons-png.flaticon.com/512/3405/3405244.png'}}
+    style={{height: 25, width: 25}}
+  />
+  <Text style={styles.text}>Delete</Text>
+  </View>
+</TouchableOpacity>
+<TouchableOpacity onPress={close}>
+<View style={{alignItems: 'center', marginLeft: 10}}>
+  <Image
+    source={{uri: 'https://cdn0.iconfinder.com/data/icons/pixel-perfect-at-24px-volume-3/24/5003-512.png'}}
+    style={{height: 20, width: 20}}
+  />
+  </View>
+</TouchableOpacity>
+</View>:null}
+    <PopFoodAmount visible={visible}>
+      <View style={{alignItems: 'center', justifyContent: 'center'}}>
+      <View style={styles.header}>
+              <TouchableOpacity onPress={() => setVisible(false)}>
+                <Image
+                  source={{uri: 'https://static.vecteezy.com/system/resources/previews/018/887/462/original/signs-close-icon-png.png'}}
+                  style={{height: 30, width: 30}}
+                />
+              </TouchableOpacity>
+            </View>
+            <View style={styles.container}>
+        {show && (
+        <DateTimePicker
+          value={date}
+          mode={'date'}
+          display='default'
+          onChange={onChange}
+        />
+      )}
+          <TouchableOpacity onPress={()=>setShow(true)}>
+          <View style={{flexDirection: 'row', alignItems: "center", justifyContent: "center", paddingVertical: 10, marginHorizontal: 25}}>
+            <Text style={[styles.text, {fontWeight: "bold", fontSize: 18}]}>{(time=='Today'&& language==='vn')?'Hôm nay': time}</Text>
+            <Image
+                source={require("../assets/calendar.png")}
+                resizeMode="contain"
+                style={[styles.tabIcon, {marginLeft: 5}]}
+            />
+          </View>
+          </TouchableOpacity>
+        </View>
+      {isUpdate?<TouchableOpacity style={styles.button} onPress={finishMove}>
+        <Text style={styles.textBtn}>{language === 'vn' ? 'Chuyển' : 'Move'}</Text>
+      </TouchableOpacity>:<TouchableOpacity style={styles.button} onPress={finishCopy}>
+        <Text style={styles.textBtn}>{language === 'vn' ? 'Sao chép' : 'Copy'}</Text>
+      </TouchableOpacity>}
+      </View> 
+    </PopFoodAmount>
  </View>
 
 )
 }
 const styles = StyleSheet.create({
-  rowBack: {
-    alignItems: 'center',
-    flex: 1,
-    flexDirection: 'row',
-    paddingLeft: 15,
-  },
-  backRightBtn: {
-    alignItems: 'center',
-    bottom: 0,
+  text: {
+    fontSize: 15,
+    textAlign: 'center',
+    color: '#84D07D',
+},
+  header: {
+    width: '100%',
+    alignItems: 'flex-end',
     justifyContent: 'center',
-    position: 'absolute',
-    top: 0,
-    width: 75,
   },
-  backAll: {
-    backgroundColor: 'red',
-    right:150,
+  tabIcon: {
+    width: 25,
+    height: 25,
   },
-  backSelect: {
-  backgroundColor: '#D436F0',
-  right: 75,
+  container: {
+    margin: 5,
+    borderWidth: 1, 
+    borderRadius: 5, 
   },
-  backDelete:{
-  backgroundColor: '#E3912C',
-  right: 0,
+  textBtn: {
+    padding: 10,
+    fontSize: 18,
+    height: 50,
+    textAlign: 'center',
   },
-  rowFront: {
-  backgroundColor: '#CCC',
-  justifyContent: 'center',
-  flex: 1
+  button: {
+    marginTop: 15,
+    borderRadius: 20,
+    width: '40%',
+    padding: 5,
+    backgroundColor: '#2AE371',
+    alignSelf: 'center'
   },
   });
+  
+  
 export default DetailWaterScreen;

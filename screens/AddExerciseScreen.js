@@ -128,7 +128,7 @@ const AddExerciseScreen = (props) => {
         image: image,
         amount: textInput,
         name: name,
-        isDelete: false,
+        isChecked: false,
         calories: (parseFloat(textInput) * parseInt(calories) / 60).toFixed(),
         
         

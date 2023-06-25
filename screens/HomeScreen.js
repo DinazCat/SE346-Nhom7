@@ -10,7 +10,7 @@ import { setTime, setBaseGoal, setExercise } from "../store/CaloriesDiarySlice";
 import { useDispatch } from "react-redux";
 import LanguageContext from "../context/LanguageContext";
 import ThemeContext from "../context/ThemeContext";
-import moment, { lang } from 'moment';
+import moment from 'moment';
 const HomeScreen = ({navigation}) => {
   const {user} = useContext(AuthContext);
   const language = useContext(LanguageContext);
@@ -22,8 +22,8 @@ const HomeScreen = ({navigation}) => {
   const [lunch, setLunch] = useState(0);
   const [dinner, setDinner] = useState(0);
   const [snacks, setSnacks] = useState(0);
-  const remaining = parseInt(baseGoal)+parseInt(exercise)-parseInt(meal);
-  const [isOver, setIsOver] = useState('Remaining');
+  //const remaining = parseInt(baseGoal)+parseInt(exercise)-parseInt(meal);
+  //const [isOver, setIsOver] = useState('Remaining');
   const [show, setShow] = useState(false);
   
   const dispatch = useDispatch();

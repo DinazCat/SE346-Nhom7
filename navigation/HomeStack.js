@@ -16,7 +16,7 @@ import IngredientScreen from '../screens/IngredientScreen';
 import AddPostScreen from '../screens/AddPostScreen';
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native'
 import ThemeContext from '../context/ThemeContext';
-
+import EditWaterScreen from '../screens/EditWaterScreen';
 const Stack = createNativeStackNavigator();
 export default function HomeStack({navigation, route}) {
     const theme = useContext(ThemeContext);
@@ -32,6 +32,7 @@ export default function HomeStack({navigation, route}) {
             getFocusedRouteNameFromRoute(route) === 'AddItemScreen' ||
             getFocusedRouteNameFromRoute(route) === 'AddCustomRecipe' ||
             getFocusedRouteNameFromRoute(route) === 'TakeNoteScreen' ||
+            getFocusedRouteNameFromRoute(route) === 'EditWater' ||
             getFocusedRouteNameFromRoute(route) === 'AddFoodScreen') {
             navigation.setOptions({tabBarStyle: {display: 'none'}});
         }else {
@@ -54,6 +55,7 @@ export default function HomeStack({navigation, route}) {
                 <Stack.Screen name='AddPostScreen' component={AddPostScreen} options={{ header: () => null }}/>
                 <Stack.Screen name='IngredientScreen' component={IngredientScreen} options={{ header: () => null }}/>
                 <Stack.Screen name='TakeNoteScreen' component={TakeNoteScreen} options={{ header: () => null }}/>
+                <Stack.Screen name='EditWater' component={EditWaterScreen} options={{ header: () => null }}/>
             </Stack.Navigator>
     );
   };
