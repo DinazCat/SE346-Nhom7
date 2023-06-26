@@ -172,12 +172,18 @@ const StapleFoodScreen = (props) => {
         unit: unit,
         mealType: selectedValue,
         amount: textSearch,
-        carbs: carbs,
-        fat: fat,
-        protein: protein,
+        carbs: (parseInt(textSearch) * parseInt(carbs) / parseInt(baseAmount)).toFixed(),
+        fat: (parseInt(textSearch) * parseInt(fat) / parseInt(baseAmount)).toFixed(),
+        protein: (parseInt(textSearch) * parseInt(protein) / parseInt(baseAmount)).toFixed(),
+        baseFat: fat,
+        baseCarbs: carbs,
+        baseProtein: protein,
+        baseAmount: baseAmount,
+        baseCalories: calories,
         calories: (parseInt(textSearch) * parseInt(calories) / parseInt(baseAmount)).toFixed(),
         image: image,
-        isCustom: false
+        isCustom: false,
+        isChecked: false
       })
       if(props.isNavigation){
         navigation.goBack();

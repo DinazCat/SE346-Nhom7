@@ -92,11 +92,17 @@ const CustomFoodScreen = (props, {route}) => {
           unit: unit,
           mealType: selectedValue,
           amount: textInput,
+          baseAmount: baseAmount,
+          baseCalories: calories,
+          baseFat: fat,
+          baseCarbs: carbs,
+          baseProtein: protein,
           calories: (parseInt(textInput) * parseInt(calories) / parseInt(baseAmount)).toFixed(),
           fat: (parseInt(textInput) * parseInt(fat) / parseInt(baseAmount)).toFixed(),
           protein: (parseInt(textInput) * parseInt(protein) / parseInt(baseAmount)).toFixed(),
           carbs: (parseInt(textInput) * parseInt(carbs) / parseInt(baseAmount)).toFixed(),
           image: image,
+          isChecked: false,
           isCustom: true,
         })
         if(props.isNavigation){

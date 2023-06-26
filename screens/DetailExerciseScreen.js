@@ -132,6 +132,7 @@ const DetailExerciseScreen = ({route, navigation}) => {
         userId: user.uid,
         time: time,
         image: data.image,
+        baseAmount: data.baseAmount,
         amount: data.amount,
         name: data.name,
         calories: data.calories,
@@ -140,6 +141,9 @@ const DetailExerciseScreen = ({route, navigation}) => {
     });
 
     return batch.commit();
+  }
+  const edit = (item) => {
+    navigation.navigate("EditExercise", {item:item})
   }
   const closeRow = (index) => {
     if(prevOpenedRow && prevOpenedRow !== row[index]){
@@ -172,7 +176,7 @@ const DetailExerciseScreen = ({route, navigation}) => {
             let list= [];
             let checkList = [];
             querySnapshot.forEach(doc =>{
-              const {calories, image, name, amount, isChecked} = doc.data();
+              const {calories, image, name, amount, isChecked, baseCalories} = doc.data();
               if (!isChecked) checkList.push(isChecked);
               totalExercise += parseInt(calories);
               list.push({          
@@ -182,6 +186,7 @@ const DetailExerciseScreen = ({route, navigation}) => {
                 image: image,
                 name: name,
                 amount: amount,
+                baseCalories: baseCalories,
                 isChecked: isChecked
               });
 
@@ -238,7 +243,7 @@ const DetailExerciseScreen = ({route, navigation}) => {
       </View>
                     )}}  onSwipeableWillOpen={()=> closeRow(index)}
                     >
-                            
+                            <TouchableOpacity onPress={()=>edit(item)} delayPressIn={300}>
                           <View style={{alignItems: 'center', flexDirection: 'row', paddingHorizontal: 10, paddingVertical: 3, paddingBottom: 5, backgroundColor: '#CCC', borderBottomColor: '#fff', borderBottomWidth: 2}}>
 
                           <Image source = {{uri: item.image}} style={{width: 40,
@@ -262,7 +267,7 @@ const DetailExerciseScreen = ({route, navigation}) => {
                       }
                       />:null}
                       </View>
-                      
+                      </TouchableOpacity>
                       </Swipeable>
                       </GestureHandlerRootView>
                       )}
@@ -373,7 +378,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     textAlign: 'center',
     color: '#84D07D',
-},
+  },
   header: {
     width: '100%',
     alignItems: 'flex-end',
@@ -397,7 +402,7 @@ const styles = StyleSheet.create({
   button: {
     marginTop: 15,
     borderRadius: 20,
-    width: '40%',
+    width: '50%',
     padding: 5,
     backgroundColor: '#2AE371',
     alignSelf: 'center'
