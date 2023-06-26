@@ -10,7 +10,9 @@ const AvatarComponent = ({item, onUserPress, onFollowsChange}) => {
   const [avatar, setAvatar] = useState();
   const [onFollowClick, setOnFollowClick] = useState(false);
   const theme = useContext(ThemeContext)
+
   const getFollowStatus = followers => {
+        
     if(followers == null) return false;
     let status = false;
     if (Array.isArray(followers)) {
@@ -31,7 +33,7 @@ const AvatarComponent = ({item, onUserPress, onFollowsChange}) => {
     .get()
     .then((documentSnapshot) => {
       if( documentSnapshot.exists ) {
-        setAvatar(documentSnapshot.data());
+        setAvatar(documentSnapshot.data());        
       }
     })
   }
@@ -55,7 +57,8 @@ const AvatarComponent = ({item, onUserPress, onFollowsChange}) => {
             }
         } 
         if (!flag) {
-          tempFollowers.push(auth().currentUser.uid)
+          tempFollowers.push(auth().currentUser.uid); 
+
           firestore().collection('Notification').add({
             PostownerId: item.id,
             guestId: auth().currentUser.uid,
@@ -70,7 +73,7 @@ const AvatarComponent = ({item, onUserPress, onFollowsChange}) => {
           });
           firestore()
           .collection('NotificationSetting')
-          .doc(userId)
+          .doc(item.id)
           .get()
           .then((doc)=>
           {
@@ -81,7 +84,7 @@ const AvatarComponent = ({item, onUserPress, onFollowsChange}) => {
                 if (gt === true) {
                   SendNoti(
                     auth().currentUser.displayName + ' are following you.',
-                    userId,
+                    item.id,
                   );
                 }
               } catch {}
@@ -91,6 +94,7 @@ const AvatarComponent = ({item, onUserPress, onFollowsChange}) => {
     } 
     else {
       tempFollowers.push(auth().currentUser.uid);
+
       firestore().collection('Notification').add({
         PostownerId: item.id,
         guestId: auth().currentUser.uid,
@@ -105,7 +109,7 @@ const AvatarComponent = ({item, onUserPress, onFollowsChange}) => {
       });
       firestore()
       .collection('NotificationSetting')
-      .doc(userId)
+      .doc(item.id)
       .get()
       .then((doc)=>
       {
@@ -116,7 +120,7 @@ const AvatarComponent = ({item, onUserPress, onFollowsChange}) => {
             if (gt === true) {
               SendNoti(
                 auth().currentUser.displayName + ' are following you.',
-                userId,
+                item.id,
               );
             }
           } catch {}

@@ -66,6 +66,7 @@ const ProfileScreen = ({navigation, route}) => {
         setProfileData(documentSnapshot.data());
         setFollowers(documentSnapshot.data().followers);
         setFollowing(documentSnapshot.data().following);
+        console.log(followers);
       }
     })
   }
@@ -297,8 +298,10 @@ const ProfileScreen = ({navigation, route}) => {
       
       }
     })
-   
   }
+  const handleCommentChanged = () => {
+    fetchPosts();
+  };
   return (
     <View style={{backgroundColor: theme === 'light'? '#fff' : '#000', flex: 1}}>
       <ScrollView
@@ -318,7 +321,7 @@ const ProfileScreen = ({navigation, route}) => {
             <>
               <TouchableOpacity style={styles.userBtn} onPress={() => onFollow(profileData)}>
                 <Text style={styles.userBtnTxt}>{getFollowStatus(profileData ? profileData.followers : null) ? 
-                  (language === 'vn' ? 'Hủy theo dõi' : 'Unfollow') :
+                  (language === 'vn' ? 'Bỏ theo dõi' : 'Unfollow') :
                   (language === 'vn' ? 'Theo dõi' : 'Follow')}</Text>
               </TouchableOpacity>
             </>
@@ -361,7 +364,15 @@ const ProfileScreen = ({navigation, route}) => {
             <PostCard key={key} item={item} 
             editPost={()=>navigation.push('editPostScreen',{item})}
             deletePost={()=>deletepost(item.postId)}
-            editright={true}/>
+            onUserPress={() => {navigation.navigate('profileScreen', {userId: item.userId})}}
+              onCommentPress={() => navigation.navigate('commentScreen', {
+                postId: item.postId,
+                Foodname: item.postFoodName,
+                postOwner: item.userId,
+                onCommentChanged: handleCommentChanged
+              })}
+              onImagePress={()=>{navigation.navigate('detailScreen',{postId: item.postId})}}
+              editright={false}/>
             ))}
           </>      
         ) : selectedTab == 1 ? (

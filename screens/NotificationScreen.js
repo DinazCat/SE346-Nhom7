@@ -154,7 +154,7 @@ const NotificationScreen = ({navigation}) => {
             marginLeft: 5,
             color: theme === 'light' ? '#000' : '#fff',
           }}>
-          Thông báo
+          {language === 'vn' ? 'Thông báo' : 'Notifications'}
         </Text>
       </View>
       <View style={{height: 1, backgroundColor: '#999999'}} />

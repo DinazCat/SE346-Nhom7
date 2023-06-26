@@ -380,12 +380,13 @@ const styles = StyleSheet.create({
   },
   textinput: {
     width: 330,
-    height: 60,
+    height: 50,
     borderRadius: 20,
     borderColor: 'black',
     borderWidth: 1,
     marginLeft: 10,
     marginTop: 20,
+    fontSize: 16
   },
   ButtonSearch: {
     color: 'gray',
@@ -403,9 +404,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 5,
     textAlign: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 5
   },
   Title: {
-    fontSize: 14,
+    fontSize: 17,
     color: '#666',
     textAlign: 'center',
   },

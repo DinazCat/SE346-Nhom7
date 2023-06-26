@@ -314,7 +314,7 @@ const PostCard = ({item, onUserPress, onCommentPress,onImagePress,deletePost,edi
     <View style={[styles.Container, {backgroundColor: theme === 'light'? '#FFFFFF' : '#000000'}]}>
         <View style={styles.UserInfoContainer}>
             <TouchableOpacity onPress={onUserPress}>
-                <Image style={styles.UserImage} source={{uri: item.userImg}}/>
+                <Image style={styles.UserImage} source={{uri: item.userImg ? item.userImg : 'https://cdn-icons-png.flaticon.com/512/1946/1946429.png'}}/>
             </TouchableOpacity>            
             <View style={styles.UserInfoTextContainer}>
                 <TouchableOpacity onPress={onUserPress}>

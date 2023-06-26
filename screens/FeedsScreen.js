@@ -201,7 +201,7 @@ export default function FeedsScreen({navigation}) {
   ]);
 
   const Hashtags = ({each})=>(
-    <TouchableOpacity style={{backgroundColor:(each.tick)?'#9ACD32':'#E6E6FA', marginLeft:15, marginTop:10, alignItems:'center', borderRadius:15, borderColor:'#8470FF', borderWidth:1, padding: 1, paddingHorizontal:5}}
+    <TouchableOpacity style={{backgroundColor:(each.tick)?'#9ACD32':'#E6E6FA', marginLeft:15, marginTop:10, alignItems:'center', borderRadius:15, borderColor:'#8470FF', borderWidth:1, padding: 1, paddingHorizontal:7, paddingVertical: 4}}
     onPress={()=>{
       const index1 = mainingredient.findIndex(item => item === each);
       if(index1 != -1)
@@ -471,7 +471,7 @@ export default function FeedsScreen({navigation}) {
           renderItem={({item}) => (
             <PostCard
               item={item}
-              onUserPress={() => navigation.navigate('profileScreen')}
+              onUserPress={() => {navigation.navigate('profileScreen', {userId: item.userId})}}
               onCommentPress={() => navigation.navigate('commentScreen', {
                 postId: item.postId,
                 Foodname: item.postFoodName,

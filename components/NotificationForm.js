@@ -23,7 +23,7 @@ const NotificationForm = ({item,action,Remove}) =>
       
     return(
         <TouchableOpacity style={[styles.container, {backgroundColor: theme === 'light'? '#fff' : '#4E4E4E'}]} onPress={action}>
-              <Image style={styles.UserImage} source={{uri: item.GImg}}/>
+              <Image style={styles.UserImage} source={{uri: item.GImg ? item.GImg : 'https://cdn-icons-png.flaticon.com/512/1946/1946429.png'}}/>
               <View style={{flexDirection:'column', width:300}}>
                 <Text multiline={true} style={[styles.TextStyle, {color: theme === 'light'? '#000' : '#fff'}]}>{item.Mess}</Text>
                 <Text style={[styles.TextStyle, {color: theme === 'light'? '#000' : '#fff'}]}>{item.Time}</Text>
@@ -45,6 +45,7 @@ const styles = StyleSheet.create({
         // borderWidth:1,
         backgroundColor:'#F5F5F5',
         alignSelf:'center',
+        paddingHorizontal: 5
     },
     UserImage:{
         width: 40,

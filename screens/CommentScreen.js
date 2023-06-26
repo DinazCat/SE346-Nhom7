@@ -139,7 +139,7 @@ const CommentScreen = ({navigation}) => {
   return (
     <View style={[styles.container, {backgroundColor: theme === 'light'? '#FFFFFF' : '#000000'}]}>
       <View style={styles.headerContainer}>
-        <TouchableOpacity onPress={() => navigation.navigate('feedsScreen')}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
             <Ionicons 
                 name="arrow-back"
                 size={28}

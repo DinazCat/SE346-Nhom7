@@ -16,7 +16,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import FormButton from '../components/FormButton';
 import { Picker } from '@react-native-picker/picker';
 import { requestCameraPermission, requestStoragePermission } from '../utils/Permission';
-const EditProfileScreen = () => {
+const EditProfileScreen = ({navigation}) => {
   const {user, logout} = useContext(AuthContext);
   const [image, setImage] = useState(null);
   const [uploading, setUploading] = useState(false);
@@ -372,10 +372,20 @@ const updateBmr = async() => {
       />
       <Animated.View
         style={{
-          margin: 20,
+          margin: 10,
           opacity: Animated.add(0.1, Animated.multiply(this.fall, 1.0)),
         }}>
-        <View style={{alignItems: 'center'}}>
+      <View style={styles.headerContainer}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Ionicons 
+                name="arrow-back"
+                size={28}
+                backgroundColor='transparent'
+                color={theme === 'light'? '#000' : '#fff'}                          
+                />
+        </TouchableOpacity>     
+      </View>
+        <View style={{alignItems: 'center'}}>     
           <TouchableOpacity onPress={() => this.sheetRef.current.snapTo(0)}>
             <View>
               <ImageBackground
@@ -587,4 +597,9 @@ const styles = StyleSheet.create({
       fontWeight: 'bold',
       color: '#222',
     },
+    headerContainer:{
+      flexDirection: 'row',
+      paddingBottom: 8,
+      marginBottom: 10,
+  },
 })

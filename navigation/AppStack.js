@@ -39,7 +39,16 @@ export default function AppStack() {
       <Stack.Screen 
         name='profileScreen' 
         component={ProfileScreen} 
-        options={{ header: () => null }}
+        options={{ 
+          headerTitle: '',
+          headerBackTitleVisible: false,
+          headerTitleAlign: 'center',
+          headerStyle: {
+            backgroundColor: '#fff',
+            shadowColor: '#fff',
+            elevation: 0,
+          },
+         }}
       />
       <Stack.Screen 
         name='commentScreen' 
@@ -65,14 +74,7 @@ export default function AppStack() {
         name="editProfileScreen"
         component={EditProfileScreen}
         options={{
-          headerTitle: '',
-          headerBackTitleVisible: false,
-          headerTitleAlign: 'center',
-          headerStyle: {
-            backgroundColor: '#fff',
-            shadowColor: '#fff',
-            elevation: 0,
-          },
+          header: () => null
         }}
       />
       <Stack.Screen 

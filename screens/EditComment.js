@@ -4,6 +4,7 @@ import firestore from '@react-native-firebase/firestore';
 import {useRoute} from '@react-navigation/native';
 import LanguageContext from "../context/LanguageContext";
 import ThemeContext from '../context/ThemeContext';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 const EditComment = ({navigation}) => {
     const route = useRoute();
     const item =  route.params.item;
@@ -48,6 +49,17 @@ const EditComment = ({navigation}) => {
     }
   return (
     <View style={[styles.container, {backgroundColor: theme === 'light'? '#FFFFFF' : '#000000'}]}>
+      <View style={styles.headerContainer}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Ionicons 
+                name="arrow-back"
+                size={28}
+                backgroundColor='transparent'
+                color={theme === 'light'? '#000' : '#fff'}                          
+                />
+        </TouchableOpacity>
+        <Text style={[styles.headerText, {color: theme === 'light'? '#000' : '#fff'}]}>{language === 'vn' ? 'Sửa bình luận' : 'Edit comment'}</Text>       
+      </View>
         <View style={styles.cmtContainer}>
             <Image
                 source={{uri: item.profile ? item.profile : 'https://cdn-icons-png.flaticon.com/512/1946/1946429.png'}}
@@ -113,5 +125,17 @@ const styles = StyleSheet.create({
     buttontext:{
         fontSize: 16,
         fontWeight: '600',     
-    }
+    },
+    headerContainer:{
+      flexDirection: 'row',
+      paddingBottom: 8,
+      marginBottom: 5,
+      borderBottomColor: '#DFDCDC',
+      borderBottomWidth: 1,
+  },
+  headerText:{
+    fontSize: 20,
+    marginLeft: 20,
+    color: '#333'
+},
 })
