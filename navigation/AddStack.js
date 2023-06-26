@@ -8,6 +8,8 @@ import DetailFoodScreen from '../screens/DetailFoodScreen';
 import {StyleSheet} from "react-native";
 import {getFocusedRouteNameFromRoute} from '@react-navigation/native'
 import ThemeContext from '../context/ThemeContext';
+import EditFoodScreen from '../screens/EditFoodScreen';
+import EditExerciseScreen from '../screens/EditExerciseScreen';
 const Stack = createNativeStackNavigator();
 export default function AddStack({navigation, route}) {
     const theme = useContext(ThemeContext);
@@ -16,6 +18,8 @@ export default function AddStack({navigation, route}) {
             getFocusedRouteNameFromRoute(route) === 'AddPostScreen' || 
             getFocusedRouteNameFromRoute(route) === 'AddCustomRecipe' ||
             getFocusedRouteNameFromRoute(route) === 'IngredientScreen' ||
+            getFocusedRouteNameFromRoute(route) ==='EditFood' ||
+            getFocusedRouteNameFromRoute(route) ==='EditExercise' ||
             getFocusedRouteNameFromRoute(route) === 'DetailFood') {
             navigation.setOptions({tabBarStyle: {display: 'none'}});
         }else {
@@ -29,6 +33,8 @@ export default function AddStack({navigation, route}) {
                 <Stack.Screen name='AddPostScreen' component={AddPostScreen} options={{ header: () => null }}/>
                 <Stack.Screen name='IngredientScreen' component={IngredientScreen} options={{ header: () => null }}/>
                 <Stack.Screen name='DetailFood' component={DetailFoodScreen} options={{ header: () => null }}/>
+                <Stack.Screen name='EditFood' component={EditFoodScreen} options={{ header: () => null }}/>
+                <Stack.Screen name='EditExercise' component={EditExerciseScreen} options={{ header: () => null }}/>
             </Stack.Navigator>
     );
   };

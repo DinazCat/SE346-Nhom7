@@ -137,75 +137,11 @@ const StapleFoodScreen = (props) => {
   const theme = useContext(ThemeContext);
   const {user} = useContext(AuthContext);
   const navigation = useNavigation();
-  //lưu dữ liệu đồ ăn
-  const [unit, setUnit] = useState();
-  const [baseAmount, setBaseAmount] = useState('');
-  const [calories, setCalories] = useState('');
-  const [fat, setFat] = useState('');
-  const [carbs, setCarbs] = useState('');
-  const [protein, setProtein] = useState('');
-  const [image, setImage] = useState('');
-  const [name, setName] = useState();
-  const [selectedValue, setSelectedValue] = useState(props.mealType || "Breakfast");//value cho meal types
-  const baseGoal = useSelector((state)=>state.CaloriesDiary.baseGoal);
-  const exercise = useSelector((state)=>state.CaloriesDiary.exercise);
-  const caloriesBudget = parseInt(baseGoal) + parseInt(exercise);
   const [textInput, onChangeTextInput] = useState('');//tìm kiếm
-  const [textSearch, onChangeTextSearch] = useState('');//nhập gram
-  
-  //modal
-  const [visible, setVisible] = React.useState(false);
   //add ingredient
-  const isAddIngredient = () => {
-    
-      if (textSearch==""){
-        //just space
-      }
-      else{
-        
-      setVisible(false);
-      //add food and foodDiary
-      firestore().collection('foodsDiary').add({
-        userId: user.uid,
-        time: props.date,
-        name: name,
-        unit: unit,
-        mealType: selectedValue,
-        amount: textSearch,
-        carbs: (parseInt(textSearch) * parseInt(carbs) / parseInt(baseAmount)).toFixed(),
-        fat: (parseInt(textSearch) * parseInt(fat) / parseInt(baseAmount)).toFixed(),
-        protein: (parseInt(textSearch) * parseInt(protein) / parseInt(baseAmount)).toFixed(),
-        baseFat: fat,
-        baseCarbs: carbs,
-        baseProtein: protein,
-        baseAmount: baseAmount,
-        baseCalories: calories,
-        calories: (parseInt(textSearch) * parseInt(calories) / parseInt(baseAmount)).toFixed(),
-        image: image,
-        isCustom: false,
-        isChecked: false
-      })
-      if(props.isNavigation){
-        navigation.goBack();
-      }
-    }
+  const Add = (item) => {
+    navigation.navigate('EditFood', {item:item, isEdit:false, mealType: props.mealType})
   }
-  
-
-  const ShowAddAmount = (item) => {
-    onChangeTextSearch('');
-    setCalories(item.calories);
-    setProtein(item.protein);
-    setCarbs(item.carbs);
-    setFat(item.fat);
-    setBaseAmount(item.baseAmount);
-    setUnit(item.unit);
-    setImage(item.image);
-    setName(item.name);
-    setVisible(true);
-  }
-
-
   
   return (
     <View>
@@ -219,77 +155,13 @@ const StapleFoodScreen = (props) => {
         placeholderTextColor={theme==='light'?'#BABABA':'#A3A3A3'}
         />
         </View>
-        <PopFoodAmount visible={visible}>
-        <View style={{alignItems: 'center'}}>
-          <View style={styles.header}>
-            <TouchableOpacity onPress={() => setVisible(false)}>
-              <Image
-                source={{uri: 'https://static.vecteezy.com/system/resources/previews/018/887/462/original/signs-close-icon-png.png'}}
-                style={{height: 30, width: 30}}
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
-        <View style={{alignItems: 'center', justifyContent:'center', flexDirection: 'row'}}>
-          <Image
-            source={{uri:image}}
-            style={{height: 110, width: 110, marginVertical: 10}}
-          />
-          <View style={{marginStart: 15}}>
-            <Text style={{fontSize: 16, width: 150}}>{name}</Text>
-            <Text style={{fontSize: 16}}>{calories} cals/{(baseAmount!='1')?baseAmount+" ":''}{unit}</Text>
-          </View>
-        </View>
-        <View>
-        <View style={{flexDirection: 'row'}}>
-        <TextInput style={[styles.textInput, {width: 220}]} autoFocus={true} value={textSearch} onChangeText={textSearch  =>onChangeTextSearch(textSearch)}/>
-        <Text style={styles.text}>{unit}</Text>
-        </View>
-        <View style={{marginVertical:3}}>
-          <View style={{flexDirection: 'row', marginBottom:3}}> 
-          <Text style={{color: '#5ADFC8', marginRight: 5}}>Carbs</Text>
-        <Text>{carbs}g, {(parseInt(carbs)*40000/(caloriesBudget*45)).toFixed()}% {language=='vn'?'của Mục tiêu':'of Target'}</Text>
-        </View>
-        <Progress.Bar progress={parseInt(carbs)*400/(caloriesBudget*45)} width={285} color="#5ADFC8"/>
-        </View>
-        <View style={{marginVertical:3}}>
-          <View style={{flexDirection: 'row', marginBottom:3}}> 
-          <Text style={{color: '#CE65E0', marginRight: 5}}>{language==='vn'?'Chất đạm':'Protein'}</Text>
-        <Text>{protein}g, {(parseInt(protein)*2000/(caloriesBudget)).toFixed()}% {language=='vn'?'của Mục tiêu':'of Target'}</Text>
-        </View>
-        <Progress.Bar progress={parseInt(protein)*20/(caloriesBudget)} width={285} color="#CE65E0"/>
-        </View>
-        <View style={{marginVertical:3}}>
-          <View style={{flexDirection: 'row', marginBottom:3}}> 
-          <Text style={{color: '#E8B51A', marginRight: 5}}>{language==='vn'?'Chất béo':'Fat'}</Text>
-        <Text>{fat}g, {(parseInt(fat)*90000/(caloriesBudget*35)).toFixed()}% {language=='vn'?'của Mục tiêu':'of Target'}</Text>
-        </View>
-        <Progress.Bar progress={parseInt(fat)*900/(caloriesBudget*35)} width={285} color="#E8B51A"/>
-        </View>
         
-        <Picker
-        selectedValue={selectedValue}
-        style={{ height: 50, width: 200, marginStart: 10}}
-        onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}
-      >
-        <Picker.Item label={language==='vn'? 'Buổi sáng': 'Breakfast'} value="Breakfast" />
-        <Picker.Item label={language==='vn'? 'Buổi trưa': 'Lunch'}  value="Lunch" />
-        <Picker.Item label={language==='vn'? 'Buổi tối': 'Dinner'}  value="Dinner" />
-        <Picker.Item label={language==='vn'? 'Ăn vặt': 'Snacks'}  value="Snacks" />
-      </Picker>
-
-        </View>
-        <TouchableOpacity style={styles.button} onPress={()=>isAddIngredient()}>
-          <Text style={styles.text}>{language === 'vn' ? 'Thêm' : 'Add'}</Text>
-        </TouchableOpacity>
-        
-      </PopFoodAmount>
       
           <FlatList style={{marginTop: 10, marginBottom: 5}}
               data={stapleFood.filter(item=>item.name.toLowerCase().includes(textInput.toLowerCase()))
               }
               renderItem={({item}) => (
-                <TouchableOpacity  onPress={() => ShowAddAmount(item)}>
+                <TouchableOpacity  onPress={() => Add(item)}>
                   <View style={{alignItems: 'center', flexDirection: 'row', marginHorizontal: 15, marginVertical: 3, paddingBottom: 5, flex: 1}}>
                       <Image source = {{uri: item.image}} style={{width: 40,
         height: 40,

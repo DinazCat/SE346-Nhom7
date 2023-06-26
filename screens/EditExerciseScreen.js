@@ -7,17 +7,21 @@ import moment from "moment";
 import { AuthContext } from '../navigation/AuthProvider';
 import LanguageContext from "../context/LanguageContext";
 import ThemeContext from "../context/ThemeContext";
-
+import { useSelector } from "react-redux";
 const EditExerciseScreen = ({route}) => {
   const {user} = useContext(AuthContext);
   const navigation = useNavigation();
-  const [textInput, onChangeTextInput] = useState(route.params?.item.amount);
+  const [textInput, onChangeTextInput] = useState(route.params?.item.amount||'');
   const language = useContext(LanguageContext);
+  const tempTime = useSelector((state)=>state.CaloriesDiary.time)
+  const time = (tempTime=='Today'? moment(new Date()).format('DD/MM/YYYY'): tempTime)
+  const baseCalories = isEdit? route.params?.item.baseCalories:route.params?.item.calories
+  const isEdit = route.params?.isEdit
   const theme = useContext(ThemeContext);
   const back = () => {
     navigation.goBack();
   }
-  const addExercise = () => {
+  const editExercise = () => {
     
       if (textInput==""){
         //just space
@@ -31,6 +35,28 @@ const EditExerciseScreen = ({route}) => {
         })
     }
   }
+  const addExercise = () => {
+    
+    if (textInput==""){
+      //just space
+      
+    }
+    else{
+      navigation.goBack();
+      firestore().collection('exercise').add({
+        userId: user.uid,
+        time: time,
+        image: route.params?.item.image,
+        amount: textInput,
+        name: route.params?.item.name,
+        isChecked: false,
+        baseCalories: route.params?.item.calories,
+        calories: (parseFloat(textInput) * parseInt(route.params?.item.calories) / 60).toFixed(),
+        
+        
+      })
+  }
+}
   
 
   
@@ -46,16 +72,23 @@ const EditExerciseScreen = ({route}) => {
           />
           <View style={{marginStart: 15}}>
             <Text style={{fontSize: 16, width: 150, color: theme==='light'?"#000":"#fff"}}>{route.params?.item.name}</Text>
-            <Text style={{fontSize: 16, color: theme==='light'?"#000":"#fff"}}>{route.params?.item.baseCalories}cals/h</Text>
+            <Text style={{fontSize: 16, color: theme==='light'?"#000":"#fff"}}>{baseCalories} cals/h</Text>
           </View>
         </View>
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent:'center'}}>
         <TextInput style={[styles.textInput, {width: 270, color: theme==='light'?"#000":"#fff", borderColor: theme==='light'?"#000":"#fff"}]} autoFocus={true} value={textInput} onChangeText={textInput  =>onChangeTextInput(textInput)}/>
         <Text style={[styles.text, {color: theme==='light'?"#000":"#fff"}]}>min</Text>
         </View>
-        <TouchableOpacity style={styles.button} onPress={()=>addExercise()}>
+        <View style={{flexDirection: 'row', marginTop: 15, marginLeft: 45}}>
+        <Text style={{color: theme==='light'?"#000":"#fff", fontSize: 18, fontWeight: 'bold'}}>Calories: </Text>
+        <Text style={{color: theme==='light'?"#000":"#fff", fontSize: 18, width: 165}}>{(parseFloat(textInput==''?'0': textInput) * parseInt(baseCalories) / 60).toFixed()}</Text>
+        <Text style={{color: theme==='light'?"#000":"#fff", fontSize: 18}}> cals</Text>
+        </View>
+        {isEdit?<TouchableOpacity style={styles.button} onPress={()=>editExercise()}>
           <Text style={styles.text}>{language === 'vn' ? 'Lưu' : 'Save'}</Text>
-        </TouchableOpacity>
+        </TouchableOpacity>:<TouchableOpacity style={styles.button} onPress={()=>addExercise()}>
+          <Text style={styles.text}>{language === 'vn' ? 'Lưu' : 'Save'}</Text>
+        </TouchableOpacity>}
           
           </View>
 )
@@ -99,7 +132,6 @@ button: {
   padding: 5,
   backgroundColor: '#2AE371',
   alignSelf: 'center',
-  marginRight: 25
 },
   });
 export default EditExerciseScreen;

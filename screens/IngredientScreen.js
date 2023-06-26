@@ -160,7 +160,10 @@ const IngredientScreen = ({route}) => {
       else{
         
       const resultCalories = (parseInt(textSearch) * parseInt(calories) / parseInt(baseAmount)).toFixed();
-      dispatch(Add(image, name, calories, unit, baseAmount, resultCalories, textSearch, carbs, fat, protein));
+      const _fat = (parseInt(textSearch) * parseInt(fat) / parseInt(baseAmount)).toFixed();
+      const _carbs = (parseInt(textSearch) * parseInt(carbs) / parseInt(baseAmount)).toFixed();
+      const _protein = (parseInt(textSearch) * parseInt(protein) / parseInt(baseAmount)).toFixed();
+      dispatch(Add(image, name, calories, unit, baseAmount, resultCalories, textSearch, _carbs, _fat, _protein));
       navigation.goBack();
     } 
     
@@ -213,11 +216,23 @@ const IngredientScreen = ({route}) => {
         <View style={{alignItems: 'center', justifyContent:'center', flexDirection: 'row'}}>
           <Image
             source={{uri:image}}
-            style={{height: 110, width: 110, marginVertical: 10}}
+            style={{height: 120, width: 120, marginVertical: 10}}
           />
-        <View style={{marginStart: 15}}>
-            <Text style={{fontSize: 16, width: 150}}>{name}</Text>
-            <Text style={{fontSize: 16}}>{calories} cals/{(baseAmount!='1')?baseAmount+" ":''}{unit}</Text>
+        <View style={{marginStart: 15, marginVertical: 5}}>
+            <Text style={{fontSize: 15, width: 150}}>{name}</Text>
+            <Text style={{fontSize: 15}}>{calories} cals/{(baseAmount!='1')?baseAmount+" ":''}{unit}</Text>
+            <View style={{flexDirection: 'row'}}>
+            <Text style={{fontSize: 13, color: '#5ADFC8'}}>Carbs: </Text>
+            <Text style={{fontSize: 13}}>{carbs} g</Text>
+            </View>
+            <View style={{flexDirection: 'row'}}>
+              <Text style={{fontSize: 13, color: '#CE65E0'}}>{language==='vn'?'Chất đạm: ':'Protein: '}</Text>
+              <Text style={{fontSize: 13}}>{protein} g</Text>
+            </View>
+            <View style={{flexDirection: 'row'}}>
+              <Text style={{fontSize: 13, color: '#E8B51A'}}>{language==='vn'?'Chất béo: ':'Fat: '}</Text>
+              <Text style={{fontSize: 13}}>{fat} g</Text>
+            </View>
           </View>
         </View>
         <View style={{flexDirection: 'row'}}>

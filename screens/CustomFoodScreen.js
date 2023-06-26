@@ -23,47 +23,16 @@ const CustomFoodScreen = (props, {route}) => {
    const theme = useContext(ThemeContext)
     const {user} = useContext(AuthContext);
     const [textSearch, onChangeTextSearch] = useState('');
-    const [textInput, onChangeTextInput] = useState('');
-    const [visible, setVisible] = React.useState(false);//pop to add amount
-    const [calories, setCalories] = useState('');
-    const [fat, setFat] = useState('');
-    const [carbs, setCarbs] = useState('');
-    const [protein, setProtein] = useState('');
-    const [image, setImage] = useState('');
-    const [name, setName] = useState('');
-    const [baseAmount, setBaseAmount] = useState('');
-    const [unit, setUnit] = useState('');
     const [datas, setDatas] = useState([]);
-    const [selectedValue, setSelectedValue] = useState(props.mealType || "Breakfast");//value cho meal types
     const addCustomFood = () => {
       navigation.navigate('DetailFood');
     }
     const Add = (selectedItem, rowMap) => {
       let index = datas.findIndex(item=>item.id === selectedItem.id)
       rowMap[`${index}`].closeRow();
-      onChangeTextInput('');
-      setImage(selectedItem.image);
-      setBaseAmount(selectedItem.baseAmount);
-      setUnit(selectedItem.unit);
-      setName(selectedItem.name);
-      setCalories(selectedItem.calories);
-      setProtein(selectedItem.protein);
-      setCarbs(selectedItem.carbs);
-      setFat(selectedItem.fat);
-      setVisible(true);
-      
+      navigation.navigate('EditFood', {item:selectedItem, isEdit:false, mealType: props.mealType})
     }
-    const deleteAll = async() => {
-      //for(let i = 0; i < datas.length; i++){
-        //firestore().collection('customFoods').doc(datas[i].id).delete().then(() => {});
-      //}
-      const customFoodList = await firestore()
-        .collection('customFoods')
-        .where('userId', '==', user.uid)
-        customFoodList.get().then((querySnapshot) => {
-          Promise.all(querySnapshot.docs.map((d) => d.ref.delete()));
-        });
-    }
+    
     const Delete = (selectedItem, rowMap) => {
       let index = datas.findIndex(item=>item.id === selectedItem.id)
       rowMap[`${index}`].closeRow();
@@ -79,38 +48,7 @@ const CustomFoodScreen = (props, {route}) => {
      
       
     }
-    const finishAdd = () => {
-      setVisible(false)
-      if (textInput == ''){
-        
-      }
-      else{
-        firestore().collection('foodsDiary').add({
-          userId: user.uid,
-          name: name,
-          time: props.date,
-          unit: unit,
-          mealType: selectedValue,
-          amount: textInput,
-          baseAmount: baseAmount,
-          baseCalories: calories,
-          baseFat: fat,
-          baseCarbs: carbs,
-          baseProtein: protein,
-          calories: (parseInt(textInput) * parseInt(calories) / parseInt(baseAmount)).toFixed(),
-          fat: (parseInt(textInput) * parseInt(fat) / parseInt(baseAmount)).toFixed(),
-          protein: (parseInt(textInput) * parseInt(protein) / parseInt(baseAmount)).toFixed(),
-          carbs: (parseInt(textInput) * parseInt(carbs) / parseInt(baseAmount)).toFixed(),
-          image: image,
-          isChecked: false,
-          isCustom: true,
-        })
-        if(props.isNavigation){
-          navigation.goBack();
-        }
-      }
-      
-    }
+   
     useEffect(() => {
       fetchCustomFoods();
       
@@ -230,67 +168,7 @@ const CustomFoodScreen = (props, {route}) => {
                 
    </View>
    
-            <PopFoodAmount visible={visible}>
-          <View style={{alignItems: 'center'}}>
-            <View style={styles.header}>
-              <TouchableOpacity onPress={() => setVisible(false)}>
-                <Image
-                  source={{uri: 'https://static.vecteezy.com/system/resources/previews/018/887/462/original/signs-close-icon-png.png'}}
-                  style={{height: 30, width: 30}}
-                />
-              </TouchableOpacity>
-            </View>
-          </View>
-          <View style={{alignItems: 'center', justifyContent:'center', flexDirection: 'row'}}>
-          <Image
-            source={{uri:image}}
-            style={{height: 110, width: 110, marginVertical: 10}}
-          />
-          <View style={{marginStart: 15}}>
-            <Text style={{fontSize: 16, width: 150}}>{name}</Text>
-            <Text style={{fontSize: 16}}>{calories} cals/{(baseAmount!='1')?baseAmount+" ":''}{unit}</Text>
-          </View>
-          </View>
-          <View style={{flexDirection: 'row'}}>
-          <TextInput style={[styles.textInput, {width: 220}]}  value={textInput} onChangeText={textInput =>onChangeTextInput(textInput)}/>
-          <Text style={styles.text}>{unit}</Text>
-          </View>
-          <View style={{marginVertical:3}}>
-          <View style={{flexDirection: 'row', marginBottom:3}}> 
-          <Text style={{color: '#5ADFC8', marginRight: 5}}>Carbs</Text>
-        <Text>{carbs}g, {(parseInt(carbs)*40000/(caloriesBudget*45)).toFixed()}% {language=='vn'?'của Mục tiêu':'of Target'}</Text>
-        </View>
-        <Progress.Bar progress={parseInt(carbs)*400/(caloriesBudget*45)} width={285} color="#5ADFC8"/>
-        </View>
-        <View style={{marginVertical:3}}>
-          <View style={{flexDirection: 'row', marginBottom:3}}> 
-          <Text style={{color: '#CE65E0', marginRight: 5}}>{language==='vn'?'Chất đạm':'Protein'}</Text>
-        <Text>{protein}g, {(parseInt(protein)*2000/(caloriesBudget)).toFixed()}% {language=='vn'?'của Mục tiêu':'of Target'}</Text>
-        </View>
-        <Progress.Bar progress={parseInt(protein)*20/(caloriesBudget)} width={285} color="#CE65E0"/>
-        </View>
-        <View style={{marginVertical:3}}>
-          <View style={{flexDirection: 'row', marginBottom:3}}> 
-          <Text style={{color: '#E8B51A', marginRight: 5}}>{language==='vn'?'Chất đạm':'Protein'}</Text>
-        <Text>{fat}g, {(parseInt(fat)*90000/(caloriesBudget*35)).toFixed()}% {language=='vn'?'của Mục tiêu':'of Target'}</Text>
-        </View>
-        <Progress.Bar progress={parseInt(fat)*900/(caloriesBudget*35)} width={285} color="#E8B51A"/>
-        </View>
-          <Picker
-        selectedValue={selectedValue}
-        style={{ height: 50, width: 200, marginStart: 10}}
-        onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)}
-      >
-         <Picker.Item label={language==='vn'? 'Buổi sáng': 'Breakfast'} value="Breakfast" />
-        <Picker.Item label={language==='vn'? 'Buổi trưa': 'Lunch'}  value="Lunch" />
-        <Picker.Item label={language==='vn'? 'Buổi tối': 'Dinner'}  value="Dinner" />
-        <Picker.Item label={language==='vn'? 'Ăn vặt': 'Snacks'}  value="Snacks" />
-      </Picker>
-      <TouchableOpacity style={styles.button} onPress={()=>finishAdd()}>
-          <Text style={styles.text}>{language === 'vn' ? 'Thêm' : 'Add'}</Text>
-        </TouchableOpacity>
-          
-        </PopFoodAmount>
+            
   
         </View>
                   

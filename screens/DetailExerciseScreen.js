@@ -143,7 +143,7 @@ const DetailExerciseScreen = ({route, navigation}) => {
     return batch.commit();
   }
   const edit = (item) => {
-    navigation.navigate("EditExercise", {item:item})
+    navigation.navigate("EditExercise", {item:item, isEdit:true})
   }
   const closeRow = (index) => {
     if(prevOpenedRow && prevOpenedRow !== row[index]){

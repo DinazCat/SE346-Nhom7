@@ -168,7 +168,7 @@ const DetailMealScreen = ({route, navigation}) => {
     return batch.commit();
   }
   const edit = (item) => {
-    navigation.navigate("EditFood", {item:item})
+    navigation.navigate("EditFood", {item:item, isEdit: true, mealType: item.mealType})
   }
   const closeRow = (index) => {
     if(prevOpenedRow && prevOpenedRow !== row[index]){

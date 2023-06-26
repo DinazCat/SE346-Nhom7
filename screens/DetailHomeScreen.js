@@ -165,7 +165,7 @@ const DetailHomeScreen = ({route, navigation}) => {
     return batch.commit();
   }
   const edit = (item) => {
-    navigation.navigate("EditFood", {item:item})
+    navigation.navigate("EditFood", {item:item, isEdit: true, mealType: item.mealType})
   }
     const deleteFoodsDiary = (item) => {
         Alert.alert('Delete', 'Do you want to remove ingredient?', [

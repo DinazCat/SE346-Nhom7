@@ -113,45 +113,9 @@ const AddExerciseScreen = (props) => {
   const [visible, setVisible] = useState(false);
   const language = useContext(LanguageContext);
   const theme = useContext(ThemeContext);
-  const addExercise = () => {
-    
-      if (textInput==""){
-        //just space
-        
-      }
-      else{
-      setVisible(false);
-      //add food and foodDiary
-      firestore().collection('exercise').add({
-        userId: user.uid,
-        time: props.date,
-        image: image,
-        amount: textInput,
-        name: name,
-        isChecked: false,
-        baseCalories: calories,
-        calories: (parseFloat(textInput) * parseInt(calories) / 60).toFixed(),
-        
-        
-      })
-      if(props.isNavigation){
-        navigation.goBack();
-      }
-    }
-  
-    
+  const addExercise = (item) => {
+    navigation.navigate("EditExercise", {item: item, isEdit: false})
   }
-  
-
-  const ShowAddAmount = (item) => {
-    onChangeTextInput('');
-    setCalories(item.calories);
-    setImage(item.image);
-    setName(item.name);
-    setVisible(true);
-  }
-
-
   
   return (
     <View styles={{flex:1}}>
@@ -165,40 +129,12 @@ const AddExerciseScreen = (props) => {
         placeholderTextColor={theme==='light'?'#BABABA':'#A3A3A3'}
         />
         </View>
-        <PopFoodAmount visible={visible}>
-        <View style={{alignItems: 'center'}}>
-          <View style={styles.header}>
-            <TouchableOpacity onPress={() => setVisible(false)}>
-              <Image
-                source={{uri: 'https://static.vecteezy.com/system/resources/previews/018/887/462/original/signs-close-icon-png.png'}}
-                style={{height: 30, width: 30}}
-              />
-            </TouchableOpacity>
-          </View>
-        </View>
-        <View style={{alignItems: 'center', justifyContent:'center', flexDirection: 'row'}}>
-          <Image
-            source={{uri:image}}
-            style={{height: 110, width: 110, marginVertical: 10}}
-          />
-          <View style={{marginStart: 15}}>
-            <Text style={{fontSize: 16, width: 150}}>{name}</Text>
-            <Text style={{fontSize: 16}}>{calories}cals/h</Text>
-          </View>
-        </View>
-        <View style={{flexDirection: 'row'}}>
-        <TextInput style={[styles.textInput, {width: 240}]} autoFocus={true} value={textInput} onChangeText={textInput  =>onChangeTextInput(textInput)}/>
-        <Text style={styles.text}>min</Text>
-        </View>
-        <TouchableOpacity style={styles.button} onPress={()=>addExercise()}>
-          <Text style={styles.text}>{language === 'vn' ? 'Thêm' : 'Add'}</Text>
-        </TouchableOpacity>
-      </PopFoodAmount>
+        
           <FlatList style={{marginTop: 10}}
               data={exercises.filter(item=>item.name.toLowerCase().includes(textSearch.toLowerCase()))
               }
               renderItem={({item}) => (
-                <TouchableOpacity  onPress={() => ShowAddAmount(item)}>
+                <TouchableOpacity  onPress={() => addExercise(item)}>
                   <View style={{alignItems: 'center', flexDirection: 'row', marginHorizontal: 15, marginVertical: 3, borderBottomWidth: 2, borderBottomColor: theme==='light'? '#000': '#fff', paddingBottom: 5, flex: 1}}>
                       <Image source = {{uri: item.image}} style={{width: 40,
         height: 40,
