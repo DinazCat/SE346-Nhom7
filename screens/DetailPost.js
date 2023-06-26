@@ -69,7 +69,7 @@ export default function DetailPostScreen({navigation,route}) {
             <View style={styles.headerContainer}>
             <View style={styles.UserInfoContainer}>
                         <TouchableOpacity onPress={onUserPress}>
-                            <Image style={styles.UserImage} source={{uri: postData?  postData.userImg : 'https://cdn-icons-png.flaticon.com/512/1946/1946429.png'}}/>
+                            <Image style={styles.UserImage} source={{uri: postData?  postData.userImg ? postData.userImg : 'https://cdn-icons-png.flaticon.com/512/1946/1946429.png' : 'https://cdn-icons-png.flaticon.com/512/1946/1946429.png'}}/>
                         </TouchableOpacity>            
                         <View style={styles.UserInfoTextContainer}>
                             <TouchableOpacity onPress={onUserPress}>

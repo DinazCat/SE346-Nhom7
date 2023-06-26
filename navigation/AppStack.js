@@ -68,7 +68,16 @@ export default function AppStack() {
        <Stack.Screen 
         name='detailScreen' 
         component={DetailPostScreen} 
-        options={{ header: () => null }}
+        options={{ 
+          headerTitle: '',
+          headerBackTitleVisible: false,
+          headerTitleAlign: 'center',
+          headerStyle: {
+            backgroundColor: '#fff',
+            shadowColor: '#fff',
+            elevation: 0,
+          },
+         }}
       />
       <Stack.Screen
         name="editProfileScreen"
