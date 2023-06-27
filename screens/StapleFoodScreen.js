@@ -138,9 +138,10 @@ const StapleFoodScreen = (props) => {
   const {user} = useContext(AuthContext);
   const navigation = useNavigation();
   const [textInput, onChangeTextInput] = useState('');//tìm kiếm
+  const nameScreen = props.nameScreen;
   //add ingredient
   const Add = (item) => {
-    navigation.navigate('EditFood', {item:item, isEdit:false, mealType: props.mealType})
+    navigation.push('EditFood', {item:item, isEdit:false, mealType: props.mealType, nameScreen: nameScreen})
   }
   
   return (

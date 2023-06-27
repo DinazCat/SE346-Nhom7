@@ -42,11 +42,11 @@ const DetailHomeScreen = ({route, navigation}) => {
         getMeal(tempTime);
     }, []);
     const back = () => {
-      navigation.goBack();
+      navigation.navigate('HomeScreen');
       none();
     }
     const Add = () => {
-      navigation.navigate('AddFoodScreen', {date: tempTime})
+      navigation.navigate('AddFoodScreen', {date: tempTime, nameScreen:'DetailHomeScreen'})
       none();
     }
     const onChange = (event, selectedDate) => {
@@ -603,7 +603,7 @@ const DetailHomeScreen = ({route, navigation}) => {
           <View style={{flexDirection: 'row', alignItems: "center", justifyContent: "center", paddingVertical: 10, marginHorizontal: 25}}>
             <Text style={[styles.text, {fontWeight: "bold", fontSize: 18}]}>{(time=='Today'&& language==='vn')?'Hôm nay': time}</Text>
             <Image
-                source={require("../assets/calendar.png")}
+                source={require("../assets/calendar_green.png")}
                 resizeMode="contain"
                 style={[styles.tabIcon, {marginLeft: 5}]}
             />

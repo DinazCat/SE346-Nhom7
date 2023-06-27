@@ -13,9 +13,9 @@ const ChangeGoalScreen = ({route, navigation}) => {
   const {user} = useContext(AuthContext);
   const language = useContext(LanguageContext);
   const theme = useContext(ThemeContext)
-  const [activityLevel, setActivityLevel] = useState();
-  const [goal, setGoal] = useState();
-  const [weelklyGoal, setWeeklyGoal] = useState();
+  const [activityLevel, setActivityLevel] = useState('');
+  const [goal, setGoal] = useState('');
+  const [weeklyGoal, setWeeklyGoal] = useState('');
   useEffect(() => {
     getGoal();
   }, []);
@@ -29,7 +29,7 @@ const ChangeGoalScreen = ({route, navigation}) => {
     .get()
     .then(documentSnapshot => {
       if (documentSnapshot.exists) {
-        setWeeklyGoal(documentSnapshot.data().weeklyGoal);
+        setWeeklyGoal(documentSnapshot.data().weeklyGoal == "0"? '0.25':documentSnapshot.data().weeklyGoal);
         setActivityLevel(documentSnapshot.data().activityLevel);
         setGoal(documentSnapshot.data().goal);
       }
@@ -37,6 +37,7 @@ const ChangeGoalScreen = ({route, navigation}) => {
   }
   const CaloriesNeedToBurn = (age, height, weight, activityLevel, goal, sex, weeklyGoal)=>{
     let bmr = 0;
+    
     if (sex == 'Male'){
       bmr = 10 * parseInt(weight) + 6.25 * parseInt(height) - 5 * parseInt(age) + 5;
     }
@@ -60,32 +61,17 @@ const ChangeGoalScreen = ({route, navigation}) => {
         bmr = (bmr * 1.9).toFixed();
         break;
     }
-    switch (weeklyGoal){
-      case "0.25":
-          if (goal == "Lose weight"){
-            bmr -= 250;
-          }
-          else {
-            bmr += 250;
-          }
-          break;
-      case "0.5":
-          if (goal == "Lose weight"){
-            bmr -= 500;
-          }
-          else {
-            bmr += 500;
-          }
-          break;
-      case "1":
-          if (goal == "Lose weight"){
-            bmr -= 1000;
-          }
-          else {
-            bmr += 1000;
-          }
-          break;
-  }
+    switch(goal){
+      case "Gain weight":
+        bmr = parseInt(bmr) + parseFloat(weeklyGoal) * 1000;
+        break;
+      case "Lose weight":
+        bmr = bmr - parseFloat(weeklyGoal) * 1000;
+        break;
+    }
+    
+  
+  
     return bmr;
   }
   
@@ -118,16 +104,7 @@ const updateGoal = async () => {
 
 const updateBmr = async() => {
   const item = await updateGoal();
-  if (new Date(item.time._seconds * 1000).getFullYear() == new Date().getFullYear() && new Date(item.time._seconds * 1000).getMonth() == new Date().getMonth() && new Date(item.time._seconds * 1000).getDate() == new Date().getDate() ){
-    firestore().collection('bmiDiary').doc(item.id).update({
-      bmr: CaloriesNeedToBurn(item.age, item.height, item.weight, activityLevel, goal, item.sex, weeklyGoal),
-      goal: goal,
-      weelklyGoal: (goal == 'Maintain weight')? '0': weelklyGoal,
-      activityLevel: activityLevel,
-      time: firestore.Timestamp.fromDate(new Date()),
-    });
-  }
-  else{
+  
     firestore().collection('bmiDiary').add({
       bmr: CaloriesNeedToBurn(item.age, item.height, item.weight, activityLevel, goal, item.sex, weeklyGoal),
       userId: user.uid,
@@ -136,21 +113,21 @@ const updateBmr = async() => {
       weight: item.weight,
       sex: item.sex,
       goal: goal,
-      weeklyGoal: (goal == 'Maintain weight')? '0': weelklyGoal,
+      weeklyGoal: (goal == 'Maintain weight')? '0': weeklyGoal,
       activityLevel: activityLevel,
       time: firestore.Timestamp.fromDate(new Date()),
     });
-  }
+  
 
 }
   const save = async() => {
     try{
         
-        
+        await updateBmr();
         await firestore().collection('bmi').doc(user.uid).update({
             goal: goal,
             activityLevel: activityLevel,
-            weeklyGoal: (goal == 'Maintain weight')? '0': weelklyGoal,
+            weeklyGoal: (goal == 'Maintain weight')? '0': weeklyGoal,
           }).then(() => {
             console.log('User Updated!');
             Alert.alert(
@@ -158,7 +135,7 @@ const updateBmr = async() => {
               'Your Profile has been updated successfully.'
             );
           });
-          await updateBmr();
+          
     }
     catch(e){
         console.log(e);
@@ -213,7 +190,7 @@ const updateBmr = async() => {
       <View style={{marginHorizontal: 5, borderColor: theme==='light'?"#000":"#fff", borderWidth: 1, borderRadius: 13, marginTop: 10, height: 85}}>
         <Text style={{fontSize: 17, marginStart: 3, color: theme==='light'?'#000':'#fff'}}>{language === 'vn' ? 'Mục tiêu mỗi tuần: ' : 'Weekly goal:'}</Text>
       {(goal!='Maintain weight' && goal)?<Picker
-        selectedValue={weelklyGoal}
+        selectedValue={weeklyGoal}
         dropdownIconColor = {theme === 'light'? '#000':'#fff'}
         style={{width: 350, alignSelf: 'center', color: theme === 'light'? '#000' : '#fff'}}
         onValueChange={(itemValue, itemIndex) => setWeeklyGoal(itemValue)}

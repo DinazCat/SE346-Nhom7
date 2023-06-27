@@ -5,7 +5,7 @@ import { StyleSheet, Image, Text, View, TextInput, TouchableOpacity } from "reac
 const GetGoalScreen = ({navigation, route}) => {
   return (
     <View style={styles.container}>
-      <Image source={require('../assets/img1.png')} style={styles.img} />
+      <Image source={require('../assets/fox3.png')} style={styles.img} />
       <View style={styles.cont3}>
       <Text style={[styles.title, {marginTop: 20}]}>What is your goal?</Text>
       <View style={styles.cont1}>

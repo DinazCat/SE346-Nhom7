@@ -90,11 +90,11 @@ const AddScreen = ({route}) => {
             {(() => {
         switch (page) {
           case 0:
-            return <StapleFoodScreen date={date} isNavigation={isNavigation}/>;
+            return <StapleFoodScreen date={date} nameScreen='AddAll'/>;
           case 1:
             return <CustomRecipeScreen/>;
           case 2:
-            return <CustomFoodScreen date={date} isNavigation={isNavigation}/>;
+            return <CustomFoodScreen date={date} nameScreen='AddAll'/>;
           case 3:
             return <AddWater date={date} isNavigation={isNavigation}/>;
           case 4:

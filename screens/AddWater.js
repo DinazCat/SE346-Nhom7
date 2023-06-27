@@ -5,12 +5,14 @@ import { useNavigation } from "@react-navigation/native";
 import { AuthContext } from '../navigation/AuthProvider';
 import LanguageContext from "../context/LanguageContext";
 import ThemeContext from "../context/ThemeContext";
+import { useSelector } from "react-redux";
 
 const AddWater = (props) => {
     const navigation = useNavigation();
     const{user} = useContext(AuthContext);
     const[water, setWater] = useState('');
     const language = useContext(LanguageContext);
+    const time = useSelector((state)=>state.CaloriesDiary.time);
     const theme = useContext(ThemeContext)
     const saveWater = async() => {
         if (water==""){
@@ -20,6 +22,9 @@ const AddWater = (props) => {
             if(props.isNavigation){
                 navigation.goBack();
             }
+            else{
+                navigation.navigate('Home', { screen: 'DetailWaterScreen', params: {time: time}})
+            }
             await firestore().collection('water').add({
                 userId: user.uid,
                 time: props.date,
@@ -27,7 +32,6 @@ const AddWater = (props) => {
                 isChecked: false
             })
             
-            setWater('');
         }
     }
     return (

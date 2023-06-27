@@ -114,7 +114,7 @@ const AddExerciseScreen = (props) => {
   const language = useContext(LanguageContext);
   const theme = useContext(ThemeContext);
   const addExercise = (item) => {
-    navigation.navigate("EditExercise", {item: item, isEdit: false})
+    navigation.push("EditExercise", {item: item, isEdit: false})
   }
   
   return (

@@ -19,7 +19,7 @@ const EditFoodScreen = ({route}) => {
   const baseGoal = useSelector((state)=>state.CaloriesDiary.baseGoal);
   const exercise = useSelector((state)=>state.CaloriesDiary.exercise);
   const caloriesBudget = parseInt(baseGoal) + parseInt(exercise);
-  const [textInput, onChangeTextInput] = useState(route.params?.item.amount|'');
+  const [textInput, onChangeTextInput] = useState(route.params?.item.amount||'');
   const tempTime = useSelector((state)=>state.CaloriesDiary.time)
   const time = (tempTime=='Today'? moment(new Date()).format('DD/MM/YYYY'): tempTime)
   const [selectedValue, setSelectedValue] = useState(route.params?.mealType||'Breakfast');
@@ -48,12 +48,11 @@ const EditFoodScreen = ({route}) => {
       navigation.goBack();
     }
   }
-  const Add = () => {
+  const Add = async() => {
     if (textInput==""){
       //just space
     }
     else{
-    navigation.goBack();
     firestore().collection('foodsDiary').add({
       userId: user.uid,
       time: time,
@@ -74,6 +73,17 @@ const EditFoodScreen = ({route}) => {
       isCustom: false,
       isChecked: false
     })
+    if(route.params?.nameScreen == 'DetailMealScreen'){
+      navigation.navigate('Home', { screen: 'DetailMealScreen', params: {time: time, mealType: route.params?.mealType}})
+    }
+    else{
+      if(route.params?.nameScreen == 'AddAll'){
+        navigation.navigate('Home', { screen: 'DetailMealScreen', params: {time: time, mealType: selectedValue}})
+      }
+      else{
+        navigation.navigate('Home', { screen: 'DetailHomeScreen', params: {time: time}})
+      }
+    }
   }
   }
 

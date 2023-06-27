@@ -16,7 +16,7 @@ const GetWeeklyGoalScreen = ({navigation, route}) => {
 
   return (
     <View style={styles.container}>
-      <Image source={require('../assets/img1.png')} style={styles.img} />
+      <Image source={require('../assets/fox4.png')} style={styles.img} />
       <View style={styles.cont3}>
       <Text style={[styles.title, {marginTop: 20}]}>What is your weekly goal?</Text>
       <View style={styles.cont1}>

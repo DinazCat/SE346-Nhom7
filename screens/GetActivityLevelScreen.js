@@ -36,7 +36,7 @@ const GetActivityLevelScreen = ({navigation, route}) => {
             bmr -= 250;
           }
           else {
-            bmr += 250;
+            bmr = parseInt(bmr) + 250;
           }
           break;
       case "0.5":
@@ -44,7 +44,7 @@ const GetActivityLevelScreen = ({navigation, route}) => {
             bmr -= 500;
           }
           else {
-            bmr += 500;
+            bmr = parseInt(bmr) + 500;
           }
           break;
       case "1":
@@ -52,7 +52,7 @@ const GetActivityLevelScreen = ({navigation, route}) => {
             bmr -= 1000;
           }
           else {
-            bmr += 1000;
+            bmr = parseInt(bmr) + 1000;
           }
           break;
   }
@@ -93,7 +93,7 @@ const GetActivityLevelScreen = ({navigation, route}) => {
   
   return (
     <View style={styles.container}>
-      <Image source={require('../assets/img1.png')} style={styles.img} />
+      <Image source={require('../assets/fox5.png')} style={styles.img} />
       <View style={styles.cont3}>
       <Text style={[styles.title, {marginTop: 20}]}>What is your goal?</Text>
       <View style={styles.cont1}>

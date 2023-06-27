@@ -15,9 +15,8 @@ const LoginScreen = ({navigation}) => {
     return (
         <View style={styles.container}>
             <Image style={styles.logo}
-                source={require('../assets/food.png')}
+                source={require('../assets/iconFox1.jpg')}
             />
-            <Text style={styles.text}>Food Blog</Text>
             <FormInput
                 lbValue={email}
                 onChangeText={(userEmail) => setEmail(userEmail)}
@@ -83,12 +82,12 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
       alignItems: 'center',
       padding: 20,
-      paddingTop: 50,
+      paddingTop: 20,
       backgroundColor:'#faf9ad'
     },
     logo: {
-      height: 150,
-      width: 150,
+      height: 300,
+      width: 250,
       resizeMode: 'cover',
     },
     text: {

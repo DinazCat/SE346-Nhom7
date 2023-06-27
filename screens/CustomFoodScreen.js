@@ -23,6 +23,7 @@ const CustomFoodScreen = (props, {route}) => {
    const theme = useContext(ThemeContext)
     const {user} = useContext(AuthContext);
     const [textSearch, onChangeTextSearch] = useState('');
+    const nameScreen = props.nameScreen;
     const [datas, setDatas] = useState([]);
     const addCustomFood = () => {
       navigation.navigate('DetailFood');
@@ -30,7 +31,7 @@ const CustomFoodScreen = (props, {route}) => {
     const Add = (selectedItem, rowMap) => {
       let index = datas.findIndex(item=>item.id === selectedItem.id)
       rowMap[`${index}`].closeRow();
-      navigation.navigate('EditFood', {item:selectedItem, isEdit:false, mealType: props.mealType})
+      navigation.navigate('EditFood', {item:selectedItem, isEdit:false, mealType: props.mealType, nameScreen: nameScreen})
     }
     
     const Delete = (selectedItem, rowMap) => {

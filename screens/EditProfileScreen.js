@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TouchableOpacity,ImageBackground, TextInput, Alert, Image} from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity,ImageBackground, TextInput, Alert, Image, ScrollView} from 'react-native'
 import React, {useEffect, useContext, useState} from 'react';
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
@@ -63,7 +63,7 @@ const EditProfileScreen = ({navigation}) => {
             bmr -= 250;
           }
           else {
-            bmr += 250;
+            bmr = parseInt(bmr) + 250;
           }
           break;
       case "0.5":
@@ -71,7 +71,7 @@ const EditProfileScreen = ({navigation}) => {
             bmr -= 500;
           }
           else {
-            bmr += 500;
+            bmr = parseInt(bmr) + 500;
           }
           break;
       case "1":
@@ -79,7 +79,7 @@ const EditProfileScreen = ({navigation}) => {
             bmr -= 1000;
           }
           else {
-            bmr += 1000;
+            bmr = parseInt(bmr) + 1000;
           }
           break;
   }
@@ -130,17 +130,7 @@ const updateHeightWeightAgeDiary = async () => {
 
 const updateBmr = async() => {
   const item = await updateHeightWeightAgeDiary();
-  if (new Date(item.time._seconds * 1000).getFullYear() == new Date().getFullYear() && new Date(item.time._seconds * 1000).getMonth() == new Date().getMonth() && new Date(item.time._seconds * 1000).getDate() == new Date().getDate() ){
-    firestore().collection('bmiDiary').doc(item.id).update({
-      bmr: CaloriesNeedToBurn(age, height, weight, item.activityLevel, item.goal, sex, item.weeklyGoal),
-      age: age,
-      height: height,
-      weight: weight,
-      sex: sex,
-      time: firestore.Timestamp.fromDate(new Date()),
-    });
-  }
-  else{
+  
     firestore().collection('bmiDiary').add({
       bmr: CaloriesNeedToBurn(age, height, weight, item.activityLevel, item.goal, sex, item.weeklyGoal),
       userId: user.uid,
@@ -153,7 +143,7 @@ const updateBmr = async() => {
       activityLevel: item.activityLevel,
       time: firestore.Timestamp.fromDate(new Date()),
     });
-  }
+  
 
 }
 
@@ -385,6 +375,7 @@ const updateBmr = async() => {
                 />
         </TouchableOpacity>     
       </View>
+      <ScrollView style={{marginBottom: 40}}>
         <View style={{alignItems: 'center'}}>     
           <TouchableOpacity onPress={() => this.sheetRef.current.snapTo(0)}>
             <View>
@@ -506,6 +497,8 @@ const updateBmr = async() => {
         
 
         <FormButton title={language === 'vn' ? 'Cập nhật' : 'Update'} onPress={handleUpdate}/>
+        </ScrollView>
+
       </Animated.View>
     </View>
   )

@@ -11,7 +11,7 @@ import LanguageContext from "../context/LanguageContext";
 const AddFoodScreen = ({route, navigation}) => {
   const [page, setPage] = useState(0);
   const date = route.params?.date || moment(new Date()).format('DD/MM/YYYY');
-  const isNavigation = (route.params)? true:false;
+  const nameScreen = route.params?.nameScreen;
   const mealType = route.params?.mealType;
   const theme = useContext(ThemeContext);
   const language = useContext(LanguageContext)
@@ -51,9 +51,9 @@ const AddFoodScreen = ({route, navigation}) => {
             {(() => {
         switch (page) {
           case 0:
-            return <StapleFoodScreen date={date} isNavigation={isNavigation} mealType={mealType}/>;
+            return <StapleFoodScreen date={date} nameScreen={nameScreen} mealType={mealType}/>;
           case 1:
-            return <CustomFoodScreen date={date} isNavigation={isNavigation} mealType={mealType}/>;
+            return <CustomFoodScreen date={date} nameScreen={nameScreen} mealType={mealType}/>;
           default:
             return null;
         }

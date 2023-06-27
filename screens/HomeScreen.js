@@ -1,5 +1,5 @@
 import React, {useState, useContext, useEffect} from "react";
-import {View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, Alert} from "react-native";
+import {View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, Alert, ImageBackground} from "react-native";
 import ProgressCircle from 'react-native-progress-circle'
 import DateTimePicker from '@react-native-community/datetimepicker';
 import firestore from '@react-native-firebase/firestore';
@@ -14,6 +14,7 @@ import moment from 'moment';
 const HomeScreen = ({navigation}) => {
   const {user} = useContext(AuthContext);
   const language = useContext(LanguageContext);
+  const [bmi, setBmi] = useState('');
   const baseGoal = useSelector((state)=>state.CaloriesDiary.baseGoal);
   const [meal, setMeal] = useState(0);
   const exercise = useSelector((state)=>state.CaloriesDiary.exercise);
@@ -25,26 +26,26 @@ const HomeScreen = ({navigation}) => {
   //const remaining = parseInt(baseGoal)+parseInt(exercise)-parseInt(meal);
   //const [isOver, setIsOver] = useState('Remaining');
   const [show, setShow] = useState(false);
-  
+  const [evaluate, setEvaluate] = useState('');
   const dispatch = useDispatch();
   const time = useSelector((state)=>state.CaloriesDiary.time)
   const [date, setDate] = useState(time=='Today'? new Date(): new Date(moment(time, 'DD/MM/YYYY')));
   const theme = useContext(ThemeContext);
   //View All
   const viewAllMeal = () => {
-    navigation.navigate("DetailHomeScreen", {time: time})
+    navigation.push("DetailHomeScreen", {time: time})
   }
   const takeNote = () => {
     navigation.navigate("TakeNoteScreen", {time: time})
   }
   const viewWater = () => {
-    navigation.navigate('DetailWaterScreen', {time: time})
+    navigation.push('DetailWaterScreen', {time: time})
   }
   const viewExercise = () => {
-    navigation.navigate('DetailExerciseScreen', {time: time})
+    navigation.push('DetailExerciseScreen', {time: time})
   }
   const viewMeal = (mealType) => {
-    navigation.navigate('DetailMealScreen', {time: time, mealType: mealType})
+    navigation.push('DetailMealScreen', {time: time, mealType: mealType})
   }
   
   useEffect(() => {
@@ -52,7 +53,7 @@ const HomeScreen = ({navigation}) => {
     getExercise(time=='Today'? moment(new Date()).format('DD/MM/YYYY'): time)
     getMeal(time=='Today'? moment(new Date()).format('DD/MM/YYYY'): time)
     getWater(time=='Today'? moment(new Date()).format('DD/MM/YYYY'): time)
-    
+    getBmi();
     //setRemaining(parseInt(baseGoal)+parseInt(exercise)-parseInt(breakfast)- parseInt(snacks)- parseInt(lunch)-parseInt(dinner));
    }, []);
   
@@ -137,7 +138,35 @@ const HomeScreen = ({navigation}) => {
       console.log(e);
     }
   }
-  
+  const getBmi = () => {
+    firestore()
+      .collection('bmi')
+      .doc(user.uid)
+      .get()
+      .then(documentSnapshot => {
+        if (documentSnapshot.exists) {
+          const data = documentSnapshot.data();
+          const bmi = (parseInt(data.weight * 10000) / (parseInt(data.height) * parseInt(data.height))).toFixed(1);
+          setBmi(bmi);
+          if(bmi < 18.5){
+            setEvaluate(language=='vn'?'Bạn bị nhẹ cân': 'You are underweight')
+          }
+          else{
+            if (bmi >= 18.5 && bmi <= 24.9){
+              setEvaluate(language=='vn'?'Bạn bình thường': 'You are normal')
+            }
+            else {
+              if (bmi >= 25 && bmi < 30){
+                setEvaluate(language=='vn'?'Bạn bị thừa cân': 'You are overweight')
+              }
+              else{
+                setEvaluate(language=='vn'?'Bạn bị béo phì': 'You are obese')
+              }
+            }
+          }
+        }
+      });
+  }
   //get base goal
   const getBaseGoal = (date) => {
     try{
@@ -195,9 +224,10 @@ const HomeScreen = ({navigation}) => {
  
   return (
     <View style={{backgroundColor: theme === 'light'? '#FFFFFF' : '#000000', flex: 1}}>
-    <ScrollView>
+    <ImageBackground source={theme==='light'?require('../assets/bh_home.png'): require('../assets/bh_home_dark.jpg')} resizeMode="cover" style={{flex: 1}}>
+
       
-        <View style={[styles.container, {backgroundColor: theme === 'light'? '#DBDBDB' : '#4E4E4E', borderColor: theme === 'light'? '#DBDBDB' : '#4E4E4E'}]}>
+        <View style={[styles.container, {backgroundColor: theme === 'light'? '#84D07D' : '#4E4E4E', borderColor: theme === 'light'? '#84D07D' : '#4E4E4E'}]}>
         {show && (
         <DateTimePicker
           value={date}
@@ -217,7 +247,7 @@ const HomeScreen = ({navigation}) => {
           </View>
           </TouchableOpacity>
         </View>
-        <View style={[styles.container, { alignItems: "center", justifyContent: "center", backgroundColor: theme === 'light'? '#DBDBDB' : '#4E4E4E', borderColor: theme === 'light'? '#DBDBDB' : '#4E4E4E'}]}>
+        <View style={[styles.container, { alignItems: "center", justifyContent: "center", backgroundColor: theme === 'light'? '#84D07D' : '#4E4E4E', borderColor: theme === 'light'? '#84D07D' : '#4E4E4E'}]}>
             <Text style={[styles.text, {color: '#FFFFFF'}]}>{language === 'vn' ? 'Còn lại = Mục tiêu - Thức ăn + Thể dục' : 'Remaining = Goal - Food + Exercire'}</Text>
             <View style={{flexDirection: 'row', alignItems: "center"}}>
                 <View style={{justifyContent: "center", alignItems: "center"}}>
@@ -245,9 +275,9 @@ const HomeScreen = ({navigation}) => {
                     percent={(parseInt(meal))/(parseInt(baseGoal)+parseInt(exercise)) * 100}
                     radius={70}
                     borderWidth={8}
-                    color={(parseInt(baseGoal) + parseInt(exercise) - parseInt(meal) >= 0)? '#12CE46' : '#E8142F'}
+                    color={(parseInt(baseGoal) + parseInt(exercise) - parseInt(meal) >= 0)? '#14A844' : '#E8142F'}
                     shadowColor="#FFFFFF" //phần trăm không chiếm
-                    bgColor={theme === 'light'? '#DBDBDB' : '#4E4E4E'} //ở trong vòng tròn
+                    bgColor={theme === 'light'? '#84D07D' : '#4E4E4E'} //ở trong vòng tròn
                   >
                  <Text style={{ fontSize: 16,  color: '#FFFFFF', fontWeight: 'bold'}}>{Math.abs(parseInt(baseGoal)+parseInt(exercise)-parseInt(meal))}</Text>
                  <Text style={{ fontSize: 16, color: '#FFFFFF'}}>{(parseInt(baseGoal) + parseInt(exercise) - parseInt(meal) >= 0)?(language==='vn'?'Còn lại':'Remaining'):(language==='vn'?'Quá':'Over')}</Text>
@@ -278,7 +308,7 @@ const HomeScreen = ({navigation}) => {
                 </View>
             </View>
           </View>
-          <View style={[styles.container, {backgroundColor: theme === 'light'? '#DBDBDB' : '#4E4E4E', borderColor: theme === 'light'? '#DBDBDB' : '#4E4E4E'}]}>
+          <View style={[styles.container, {backgroundColor: theme === 'light'? '#84D07D' : '#4E4E4E', borderColor: theme === 'light'? '#84D07D' : '#4E4E4E'}]}>
           <View style={{flexDirection: 'row', alignItems: "center"}}>
             <Image
                 source={require("../assets/microscope.png")}
@@ -302,7 +332,14 @@ const HomeScreen = ({navigation}) => {
           </View>
         </View>
        
-    </ScrollView>
+    <View style={{marginTop: 95, marginLeft: 75}}>
+      <View style={{flexDirection: 'row'}}>
+        <Text style={{fontWeight: 'bold', fontSize: 25, color: theme==='light'?'#37C142':'#050505'}}>{language==='vn'?'BMI index: ':'Chỉ số Bmi: '}</Text>
+        <Text style={{fontSize: 25, color: theme==='light'?'#58D77F':'#050505'}}>{bmi}</Text>
+      </View>
+      <Text style={{fontWeight: 'bold', fontSize: 25, color: theme==='light'?'#37C142':'#050505'}}>{evaluate}</Text>
+    </View>
+    </ImageBackground>
     </View>
   );
 };
@@ -315,7 +352,7 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 18,
-    color: '#84D07D',
+    color: '#fff',
   },
 
   tabIcon: {

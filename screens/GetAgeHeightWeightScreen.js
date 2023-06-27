@@ -19,7 +19,7 @@ const GetAgeHeightWeightScreen = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      <Image source={require('../assets/img1.png')} style={styles.img} />
+      <Image source={require('../assets/fox1.png')} style={styles.img} />
       <View style={styles.cont3}>
         <Text style={styles.title}>Enter Your Age</Text>
         <TextInput style={styles.textinput} onChangeText={setAge} value={age}/>

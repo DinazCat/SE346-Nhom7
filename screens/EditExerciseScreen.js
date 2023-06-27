@@ -35,15 +35,14 @@ const EditExerciseScreen = ({route}) => {
         })
     }
   }
-  const addExercise = () => {
+  const addExercise = async() => {
     
     if (textInput==""){
       //just space
       
     }
     else{
-      navigation.goBack();
-      firestore().collection('exercise').add({
+      await firestore().collection('exercise').add({
         userId: user.uid,
         time: time,
         image: route.params?.item.image,
@@ -53,8 +52,8 @@ const EditExerciseScreen = ({route}) => {
         baseCalories: route.params?.item.calories,
         calories: (parseFloat(textInput) * parseInt(route.params?.item.calories) / 60).toFixed(),
         
-        
       })
+      navigation.navigate('Home', { screen: 'DetailExerciseScreen', params: {time: time}})
   }
 }
   
