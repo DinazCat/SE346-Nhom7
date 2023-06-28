@@ -34,7 +34,7 @@ const EditFoodScreen = ({route}) => {
   const Edit = async() => {
     
       if (textInput==""){
-        //just space
+        Alert.alert('Input cannot be blank')
       }
       else{
       await firestore().collection('foodsDiary').doc(route.params?.item.id).update({
@@ -50,7 +50,7 @@ const EditFoodScreen = ({route}) => {
   }
   const Add = async() => {
     if (textInput==""){
-      //just space
+      Alert.alert('Input cannot be blank')
     }
     else{
     firestore().collection('foodsDiary').add({
@@ -84,6 +84,7 @@ const EditFoodScreen = ({route}) => {
         navigation.navigate('Home', { screen: 'DetailHomeScreen', params: {time: time}})
       }
     }
+  
   }
   }
 
@@ -109,12 +110,18 @@ const EditFoodScreen = ({route}) => {
         </View>
         <View>
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent:'center'}}>
-        <TextInput style={[styles.textInput, {width: 275, color: theme==='light'?"#000":"#fff", borderColor: theme==='light'?"#000":"#fff"}]} autoFocus={true} value={textInput} onChangeText={textInput  =>onChangeTextInput(textInput)}/>
+        <TextInput keyboardType = 'number-pad'
+                onChangeText={textInput=>{
+                    if (+textInput||textInput== "") {
+                      onChangeTextInput(textInput)
+                    }
+                    
+                    }} style={[styles.textInput, {width: 275, color: theme==='light'?"#000":"#fff", borderColor: theme==='light'?"#000":"#fff"}]} autoFocus={true} value={textInput}/>
         <Text style={[styles.text, {color: theme==='light'?"#000":"#fff"}]}>{route.params?.item.unit}</Text>
         </View>
         <View style={{flexDirection: 'row', marginTop: 15, marginLeft: 45}}>
         <Text style={{color: theme==='light'?"#000":"#fff", fontSize: 18, fontWeight: 'bold'}}>Calories: </Text>
-        <Text style={{color: theme==='light'?"#000":"#fff", fontSize: 18, width: 165}}>{(parseFloat(textInput==''?'0':textInput) * parseInt(route.params?.item.calories) / parseInt(route.params?.item.baseAmount)).toFixed()}</Text>
+        <Text style={{color: theme==='light'?"#000":"#fff", fontSize: 18, width: 165}}>{(parseFloat(textInput==''?'0':textInput) * parseInt(baseCalories) / parseInt(route.params?.item.baseAmount)).toFixed()}</Text>
         <Text style={{color: theme==='light'?"#000":"#fff", fontSize: 18}}> cals</Text>
         </View>
         <View style={{marginHorizontal: 15, marginTop: 7}}>

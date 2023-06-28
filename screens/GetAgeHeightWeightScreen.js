@@ -22,13 +22,17 @@ const GetAgeHeightWeightScreen = ({navigation}) => {
       <Image source={require('../assets/fox1.png')} style={styles.img} />
       <View style={styles.cont3}>
         <Text style={styles.title}>Enter Your Age</Text>
-        <TextInput style={styles.textinput} onChangeText={setAge} value={age}/>
+        <TextInput style={styles.textinput} keyboardType='number-pad'
+                onChangeText={age => {if(parseInt(age)>0||age=='') setAge(age.replace(/[^0-9]/g, ''))}} value={age}/>
         
         <Text style={styles.title}>Enter Your Weight</Text>
-        <TextInput style={styles.textinput} onChangeText={setWeight} value={weight}/>
+        <TextInput style={styles.textinput} keyboardType='number-pad' 
+        onChangeText={weight => {if(parseInt(weight)>0||weight=='') setWeight(weight.replace(/[^0-9]/g, ''))}} value={weight}/>
 
         <Text style={styles.title}>Enter Your Height</Text>
-        <TextInput style={styles.textinput} onChangeText={setHeight} value={height}/>
+        <TextInput keyboardType = 'number-pad' 
+        onChangeText={height => {if(parseInt(height)>0||height=='') setHeight(height.replace(/[^0-9]/g, ''))}} value={height}
+        style={styles.textinput} />
 
         <View style={styles.cont1}>
           <TouchableOpacity style={styles.btn} onPress={Navigate}>

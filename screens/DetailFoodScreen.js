@@ -1,4 +1,4 @@
-import {View, Text, StyleSheet, TextInput, Image, TouchableOpacity, FlatList, Alert} from "react-native";
+import {View, Text, StyleSheet, TextInput, Image, TouchableOpacity, ScrollView, Alert} from "react-native";
 import firestore from '@react-native-firebase/firestore';
 import React, {useState, useContext} from "react";
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -83,20 +83,20 @@ const DetailFoodScreen = ({route, navigation}) => {
       }
   }
   const checkInput = () => {
-    Alert.alert("Input cannot be blank");
+    Alert.alert('Input cannot be blank');
   }
   const saveCustomFood = async() => {
-    
+    console.log(baseAmount)
     try{
         const imageUrl = await uploadImage(image?.path);
         await firestore().collection('customFoods').add({
         userId:user.uid,
         name: name,
         image: imageUrl,
-        calories: calories,
-        carbs: carbs==''?'0':carbs,
-        protein: protein==''?'0':protein,
-        fat: fat==''?'0':fat,
+        calories: parseInt(calories).toString(),
+        carbs: carbs==''?'0':parseInt(carbs).toString(),
+        protein: protein==''?'0':parseInt(protein).toString(),
+        fat: fat==''?'0':parseInt(fat).toString(),
         baseAmount: baseAmount,
         unit: unit
         })
@@ -118,10 +118,10 @@ const DetailFoodScreen = ({route, navigation}) => {
         await firestore().collection('customFoods').doc(id).update({
         name: name,
         image: imageUrl,
-        calories: calories,
-        carbs: carbs==''?'0':carbs,
-        protein: protein==''?'0':protein,
-        fat: fat==''?'0':fat,
+        calories: parseInt(calories).toString(),
+        carbs: carbs==''?'0':parseInt(carbs).toString(),
+        protein: protein==''?'0':parseInt(protein).toString(),
+        fat: fat==''?'0':parseInt(fat).toString(),
         baseAmount: baseAmount,
         unit: unit
         })
@@ -139,6 +139,7 @@ const DetailFoodScreen = ({route, navigation}) => {
   
   return (
     <View style={{backgroundColor: theme==='light'?"#fff":"#000", borderColor: theme==='light'?"#000":"#fff", flex: 1}}>
+      <ScrollView>
       <View style={{flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', paddingVertical: 15, backgroundColor: theme === 'light' ?'#2AE371': '#747474'}}>
       <TouchableOpacity onPress={cancel}>
         <Text style={[styles.text, {color: theme === 'light' ?'#fff': '#2AE371'}]}>{language === 'vn' ? 'Hủy' : 'Cancel'}</Text>
@@ -157,13 +158,15 @@ const DetailFoodScreen = ({route, navigation}) => {
       placeholderTextColor={theme==='light'?'#C7C7CD':'#A3A3A3'}
       value={name} onChangeText={name=>setName(name)}/>
       <TextInput style={[styles.textInput, {color: theme==='light'?"#000":"#fff", borderColor: theme==='light'?"#000":"#fff"}]} 
+      keyboardType = 'number-pad'
       placeholder={language === 'vn' ? 'Nhập calories' : 'Enter calories'} 
       placeholderTextColor={theme==='light'?'#C7C7CD':'#A3A3A3'}
-      value={calories} onChangeText={calories=>setCalories(calories)}/>
+      value={calories} onChangeText={calories => setCalories(calories.replace(/[^0-9]/g, ''))}/>
       <TextInput style={[styles.textInput, {color: theme==='light'?"#000":"#fff", borderColor: theme==='light'?"#000":"#fff"}]} 
+      keyboardType = 'number-pad'
       placeholder={language === 'vn' ? 'Nhập khối lượng phần ăn' : 'Enter serving size'} 
       placeholderTextColor={theme==='light'?'#C7C7CD':'#A3A3A3'}
-      value={baseAmount} onChangeText={baseAmount=>setBaseAmount(baseAmount)}/>
+      value={baseAmount} onChangeText={baseAmount => {if(parseInt(baseAmount)>0||baseAmount=='') setBaseAmount(baseAmount.replace(/[^0-9]/g, ''))}}/>
       <View style={{alignItems: 'center', flexDirection: 'row', marginStart: 20, borderColor: theme==='light'?"#000":"#fff", borderWidth: 1, borderRadius: 13, width: "90%"}}>
         <Text style={{fontSize: 17, marginStart: 3, color: theme==='light'?'#000':'#fff'}}>{language === 'vn' ? 'Chọn đơn vị: ' : 'Choose unit:'}</Text>
       <Picker
@@ -180,25 +183,28 @@ const DetailFoodScreen = ({route, navigation}) => {
         <Picker.Item label="tablespoon" value="tablespoon" />
         <Picker.Item label="pieces" value="pieces" />
         <Picker.Item label="piece" value="piece" />
+        <Picker.Item label="bowl" value="bowl" />
+        <Picker.Item label="sheet" value="sheet" />
+        <Picker.Item label="roll" value="roll" />
       </Picker>
       </View>
 
       <View style={{alignItems: 'center', flexDirection: 'row', marginStart: 20, borderColor: theme==='light'?"#000":"#fff", borderWidth: 1, borderRadius: 13, width: "90%", marginTop:10}}>
         <Text style={{fontSize: 17, marginStart: 3, color: theme==='light'?'#000':'#fff'}}>Carbs: </Text>
-        <TextInput style={{color: theme==='light'?"#000":"#fff", borderColor: theme==='light'?"#000":"#fff", width: 180, height: 60}} 
-          value={carbs} onChangeText={carbs=>setCarbs(carbs)}/>
+        <TextInput keyboardType = 'number-pad' style={{color: theme==='light'?"#000":"#fff", borderColor: theme==='light'?"#000":"#fff", width: 180, height: 60}} 
+          value={carbs} onChangeText={carbs=>setCarbs(carbs.replace(/[^0-9]/g, ''))}/>
         <Text style={{fontSize: 17, marginStart: 3, color: theme==='light'?'#000':'#fff', marginLeft: 'auto', marginRight: 15}}>g</Text>
       </View>
       <View style={{alignItems: 'center', flexDirection: 'row', marginStart: 20, borderColor: theme==='light'?"#000":"#fff", borderWidth: 1, borderRadius: 13, width: "90%", marginTop:10}}>
         <Text style={{fontSize: 17, marginStart: 3, color: theme==='light'?'#000':'#fff'}}>{language === 'vn' ? 'Chất đạm: ' : 'Protein: '}</Text>
-        <TextInput style={{color: theme==='light'?"#000":"#fff", borderColor: theme==='light'?"#000":"#fff", width: 180, height: 60}} 
-          value={protein} onChangeText={protein=>setProtein(protein)}/>
+        <TextInput keyboardType = 'number-pad' style={{color: theme==='light'?"#000":"#fff", borderColor: theme==='light'?"#000":"#fff", width: 180, height: 60}} 
+          value={protein} onChangeText={protein => setProtein(protein.replace(/[^0-9]/g, ''))}/>
         <Text style={{fontSize: 17, marginStart: 3, color: theme==='light'?'#000':'#fff', marginLeft: 'auto', marginRight: 15}}>g</Text>
       </View>
       <View style={{alignItems: 'center', flexDirection: 'row', marginStart: 20, borderColor: theme==='light'?"#000":"#fff", borderWidth: 1, borderRadius: 13, width: "90%", marginTop:10}}>
         <Text style={{fontSize: 17, marginStart: 3, color: theme==='light'?'#000':'#fff'}}>{language === 'vn' ? 'Chất béo: ' : 'Fat: '}</Text>
-        <TextInput style={{color: theme==='light'?"#000":"#fff", borderColor: theme==='light'?"#000":"#fff", width: 180, height: 60, fontSize: 17}} 
-           value={fat} onChangeText={fat=>setFat(fat)}/>
+        <TextInput keyboardType = 'number-pad' style={{color: theme==='light'?"#000":"#fff", borderColor: theme==='light'?"#000":"#fff", width: 180, height: 60, fontSize: 17}} 
+           value={fat} onChangeText={fat => setFat(fat.replace(/[^0-9]/g, ''))}/>
         <Text style={{fontSize: 17, marginStart: 3, color: theme==='light'?'#000':'#fff', marginLeft: 'auto', marginRight: 15}}>g</Text>
       </View>
       <View style={{alignItems: 'center', marginStart: 20, borderColor: theme==='light'?"#000":"#fff", borderWidth: 1, borderRadius: 13, width: "90%", marginTop: 10}}>
@@ -230,6 +236,7 @@ const DetailFoodScreen = ({route, navigation}) => {
           
           </View>   
           </View>
+          </ScrollView>
       <Popover
             isVisible={isPopoverVisible}
             onRequestClose={() => setPopoverVisible(false)}

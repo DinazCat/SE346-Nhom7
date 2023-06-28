@@ -1,5 +1,5 @@
 import React, {useState, useContext} from "react";
-import {View, Text, StyleSheet, TextInput, Image,TouchableOpacity} from "react-native";
+import {View, Text, StyleSheet, TextInput, Image,TouchableOpacity, Alert} from "react-native";
 import firestore from '@react-native-firebase/firestore';
 import { useNavigation } from "@react-navigation/native";
 import { AuthContext } from '../navigation/AuthProvider';
@@ -17,7 +17,7 @@ const EditWaterScreen = ({route}) => {
       }
     const saveWater = async() => {
         if (water==""){
-            //just space
+            Alert.alert('Input cannot be blank')
         }
         else{
             navigation.goBack();
@@ -34,10 +34,13 @@ const EditWaterScreen = ({route}) => {
   <View style={[styles.container]}>
                 <Image style={styles.img} source={require( '../assets/water_.png')}/>
                 <View style={{flexDirection: 'row', marginStart: 46}}>
-                <TextInput 
+                <TextInput
+               keyboardType='number-pad'
+               onChangeText={water => {if(parseInt(water)>0||water=='') setWater(water.replace(/[^0-9]/g, ''))}}
                 placeholder={language === 'vn' ? 'Nhập lượng nước' : 'Enter amount of water'}
                 placeholderTextColor={theme==='light'?'#BABABA':'#A3A3A3'}
-                style = {[styles.textInput, {color: theme==='light'?"#000":"#fff", borderColor: theme==='light'?"#000":"#fff"}]} value={water} onChangeText={water=> setWater(water)}/>
+                value={water}
+                style = {[styles.textInput, {color: theme==='light'?"#000":"#fff", borderColor: theme==='light'?"#000":"#fff"}]} />
                 <Text style={[styles.text, {color: theme==='light'?"#000":"#fff"}]}>ml</Text>
                 </View>
             <TouchableOpacity style={styles.button}

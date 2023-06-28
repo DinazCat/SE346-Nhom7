@@ -317,6 +317,9 @@ export default AddPostScreen= function({navigation}) {
         { label: 'tablespoon', value: 'tbsp' },
         { label: 'piece', value: 'piece' },
         { label: 'pieces', value: 'pieces' },
+        { label: 'roll', value: 'roll' },
+        { label: 'bowl', value: 'bowl' },
+        { label: 'sheet', value: 'sheet' },
         // Add more options as needed
       ]);
     const [selectedValue, setSelectedValue] = useState();

@@ -15,8 +15,9 @@ const EditExerciseScreen = ({route}) => {
   const language = useContext(LanguageContext);
   const tempTime = useSelector((state)=>state.CaloriesDiary.time)
   const time = (tempTime=='Today'? moment(new Date()).format('DD/MM/YYYY'): tempTime)
-  const baseCalories = isEdit? route.params?.item.baseCalories:route.params?.item.calories
   const isEdit = route.params?.isEdit
+  const baseCalories = isEdit? route.params?.item.baseCalories:route.params?.item.calories
+ 
   const theme = useContext(ThemeContext);
   const back = () => {
     navigation.goBack();
@@ -24,8 +25,7 @@ const EditExerciseScreen = ({route}) => {
   const editExercise = () => {
     
       if (textInput==""){
-        //just space
-        
+        Alert.alert('Input cannot be blank')
       }
       else{
         navigation.goBack();
@@ -38,7 +38,7 @@ const EditExerciseScreen = ({route}) => {
   const addExercise = async() => {
     
     if (textInput==""){
-      //just space
+      Alert.alert('Input cannot be blank')
       
     }
     else{
@@ -75,7 +75,12 @@ const EditExerciseScreen = ({route}) => {
           </View>
         </View>
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent:'center'}}>
-        <TextInput style={[styles.textInput, {width: 270, color: theme==='light'?"#000":"#fff", borderColor: theme==='light'?"#000":"#fff"}]} autoFocus={true} value={textInput} onChangeText={textInput  =>onChangeTextInput(textInput)}/>
+        <TextInput keyboardType = 'number-pad' style={[styles.textInput, {width: 270, color: theme==='light'?"#000":"#fff", borderColor: theme==='light'?"#000":"#fff"}]} autoFocus={true} value={textInput} onChangeText={textInput=>{
+                    if (+textInput||textInput== "") {
+                      onChangeTextInput(textInput)
+                    }
+                    
+                    }} />
         <Text style={[styles.text, {color: theme==='light'?"#000":"#fff"}]}>min</Text>
         </View>
         <View style={{flexDirection: 'row', marginTop: 15, marginLeft: 45}}>

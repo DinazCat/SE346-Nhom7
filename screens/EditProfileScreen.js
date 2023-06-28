@@ -146,7 +146,9 @@ const updateBmr = async() => {
   
 
 }
-
+const checkInput = () => {
+  Alert.alert('Input cannot be blank')
+}
   const getUserData = async () => {
 
     firestore()
@@ -457,46 +459,46 @@ const updateBmr = async() => {
       </Picker>:null}
         </View>
         <View style={styles.action}>
-        <MaterialCommunityIcons name="scale-bathroom" color={theme==='light'?'#000':'#fff'} size={20} />
-          <TextInput
-            placeholder="Weight"
-            placeholderTextColor={theme==='light'?'#BABABA':'#A3A3A3'}
-            keyboardType="number-pad"
-            autoCorrect={false}
-            value={weight}
-            onChangeText={(weight) => setWeight(weight)}
-            style={[styles.textInput, {color: theme==='light'?'#000':'#fff'}]}
-          />
-        </View>
-        <View style={styles.action}>
-          <MaterialCommunityIcons name="human-male-height" color={theme==='light'?'#000':'#fff'} size={25} />
-          <TextInput
-            placeholder="Height"
-            placeholderTextColor={theme==='light'?'#BABABA':'#A3A3A3'}
-            autoCorrect={false}
-            value={height}
-            onChangeText={(height) => setHeight(height)}
-            style={[styles.textInput, {color: theme==='light'?'#000':'#fff'}]}
-          />
-        </View>
-
-        <View style={styles.action}>
           <Image
             source={{uri: 'https://cdn-icons-png.flaticon.com/512/5541/5541575.png'}}
             style={{width: 25, height: 25}}
           />
           <TextInput
             placeholder="Age"
+            keyboardType = 'number-pad'
             placeholderTextColor={theme==='light'?'#BABABA':'#A3A3A3'}
             autoCorrect={false}
             value={age}
-            onChangeText={(age) => setAge(age)}
+            onChangeText={age => {if(parseInt(age)>0||age=='') setAge(age.replace(/[^0-9]/g, ''))}} 
             style={[styles.textInput, {color: theme==='light'?'#000':'#fff'}]}
           />
         </View>
-        
 
-        <FormButton title={language === 'vn' ? 'Cập nhật' : 'Update'} onPress={handleUpdate}/>
+        <View style={styles.action}>
+        <MaterialCommunityIcons name="scale-bathroom" color={theme==='light'?'#000':'#fff'} size={20} />
+          <TextInput
+            placeholder="Weight"
+            placeholderTextColor={theme==='light'?'#BABABA':'#A3A3A3'}
+            keyboardType="number-pad"
+            autoCorrect={false}
+            onChangeText={weight => {if(parseInt(weight)>0||weight=='') setWeight(weight.replace(/[^0-9]/g, ''))}} value={weight}
+            style={[styles.textInput, {color: theme==='light'?'#000':'#fff'}]}
+          />
+        </View>
+
+        <View style={styles.action}>
+          <MaterialCommunityIcons name="human-male-height" color={theme==='light'?'#000':'#fff'} size={25} />
+          <TextInput
+            placeholder="Height"
+            keyboardType = 'number-pad'
+            placeholderTextColor={theme==='light'?'#BABABA':'#A3A3A3'}
+            autoCorrect={false}
+            onChangeText={height => {if(parseInt(height)>0||height=='') setHeight(height.replace(/[^0-9]/g, ''))}} value={height}
+            style={[styles.textInput, {color: theme==='light'?'#000':'#fff'}]}
+          />
+        </View>
+
+        {(height==''||weight==''||age=='')?<FormButton title={language === 'vn' ? 'Cập nhật' : 'Update'} onPress={checkInput}/>:<FormButton title={language === 'vn' ? 'Cập nhật' : 'Update'} onPress={handleUpdate}/>}
         </ScrollView>
 
       </Animated.View>

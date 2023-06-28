@@ -206,16 +206,28 @@ const AddCustomRecipe = ({route}) => {
                     <View style={styles.foodInfoWrapper}>
                         <View style={styles.foodInfoItem}>
                         <TextInput style={styles.foodInfoTitle} 
-                        placeholder={language === 'vn' ? 'thời gian' : 'time'}
+                        keyboardType = 'number-pad'
+                        placeholder={language === 'vn' ? 'giờ' : 'hour'}
                         placeholderTextColor={theme==='light'?'#C7C7CD':'#A3A3A3'} 
-                        value={prepTime} onChangeText={prepTime=>setPrepTime(prepTime)}></TextInput>
+                        value={prepTime} onChangeText={prepTime=>{
+                          if (+prepTime||prepTime== "") {
+                            setPrepTime(prepTime)
+                          }
+                          
+                          }}></TextInput>
                         <Text style={styles.foodInfoSubTitle}>{language === 'vn' ? 'Chuẩn bị' : 'Prep'}</Text>
                         </View>
                         <View style={styles.foodInfoItem}>
                         <TextInput style={styles.foodInfoTitle} 
-                        placeholder={language === 'vn' ? 'thời gian' : 'time'}
+                        keyboardType = 'number-pad'
+                        placeholder={language === 'vn' ? 'giờ' : 'hour'}
                         placeholderTextColor={theme==='light'?'#C7C7CD':'#A3A3A3'} 
-                        value={cookingTime} onChangeText={cookingTime=>setCookingtime(cookingTime)}></TextInput>
+                        value={cookingTime} onChangeText={cookingTime=>{
+                          if (+cookingTime||cookingTime== "") {
+                            setCookingtime(cookingTime)
+                          }
+                          
+                          }}></TextInput>
                         <Text style={styles.foodInfoSubTitle}>{language === 'vn' ? 'Nấu' : 'Cooking'}</Text>
                         </View>     
                         <View style={styles.foodInfoItem}>
@@ -252,7 +264,7 @@ const AddCustomRecipe = ({route}) => {
            resizeMode: 'stretch'}}/>
                          <Text style={{fontSize: 18, width: 200, marginStart: 3, color: theme==='light'?"#000":"#fff"}}>{item.name}</Text>
                          <View style={{marginLeft:'auto'}}>
-                         <Text style={{marginLeft:'auto', fontSize: 16, color: "#2684fc"}}>{item.resultCalories}cals</Text>
+                         <Text style={{marginLeft:'auto', fontSize: 16, color: "#2684fc"}}>{item.resultCalories} cals</Text>
                          <Text style={{marginLeft:'auto', fontSize: 16, color: "#2684fc"}}>{item.amount} {item.unit}</Text>
                          </View>
                          </View>
