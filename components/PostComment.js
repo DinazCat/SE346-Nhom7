@@ -11,9 +11,10 @@ const PostComment = ({item, onUserPress, onEdit, onDelete}) => {
   const language = useContext(LanguageContext);
 
   const handleLongPress = (event) => {
-    if(item.userId == auth().currentUser.uid)
-    setPopoverAnchor(event.nativeEvent.target);
-    setPopoverVisible(true);
+    if(item.userId == auth().currentUser.uid) {
+      setPopoverAnchor(event.nativeEvent.target);
+      setPopoverVisible(true);
+    }
   };
 
   const handleEditComment = () => {
