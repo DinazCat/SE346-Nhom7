@@ -358,7 +358,7 @@ const ProfileScreen = ({navigation, route}) => {
             </View>
           </TouchableOpacity>                
         </View>
-        {selectedTab == 0 ? (
+        {selectedTab == 0 && (
           <>
             {posts.map((item,key) => (
             <PostCard key={key} item={item} 
@@ -371,23 +371,25 @@ const ProfileScreen = ({navigation, route}) => {
                 postOwner: item.userId,
                 onCommentChanged: handleCommentChanged
               })}
-              onImagePress={()=>{navigation.navigate('detailScreen',{postId: item.postId})}}
+              onImagePress={()=>{navigation.navigate('detailScreen', {postId: item.postId})}}
               editright={false}/>
             ))}
           </>      
-        ) : selectedTab == 1 ? (
+        )} 
+        { selectedTab == 1 && (
           <>
             {followers.map((item, index) => (
             <AvatarComponent key={index} item={item}
-            onFollowsChange={(followers, following) => setProfileData({ ...profileData, followers: followers, following: following })}
+            //onFollowsChange={(followers, following) => setProfileData({ ...profileData, followers: followers, following: following })}
             onUserPress={() => navigation.push('profileScreen', {userId: item})}/>
             ))}
           </>      
-        ) : (
+        )} 
+        { selectedTab == 2 && (
           <>
             {following.map((item, index) => (
             <AvatarComponent key={index} item={item}
-            onFollowsChange={(followers, following) => setProfileData({ ...profileData, followers: followers, following: following })}
+            //onFollowsChange={(followers, following) => setProfileData({ ...profileData, followers: followers, following: following })}
             onUserPress={() => navigation.push('profileScreen', {userId: item})}
             />
             ))}
