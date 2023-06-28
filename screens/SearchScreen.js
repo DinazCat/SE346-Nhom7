@@ -252,9 +252,13 @@ const SearchScreen = ({navigation}) => {
               <View
                 style={[
                   styles.Item,
-                  {backgroundColor: selectedTab == 0 ? '#CD2C2C' : '#fff'},
+                  {backgroundColor: selectedTab == 0 ? '#B1ED97' : '#fff'},
                 ]}>
-                <Text style={[styles.Title, {color: '#000'}]}>Bài viết</Text>
+                <Text style={[styles.Title, {color: '#000'}]}>
+                  {language === 'vn'
+                  ? 'Bài viết'
+                  : 'Posts'}
+                </Text>
               </View>
             </TouchableOpacity>
             <TouchableOpacity
@@ -264,9 +268,13 @@ const SearchScreen = ({navigation}) => {
               <View
                 style={[
                   styles.Item,
-                  {backgroundColor: selectedTab == 1 ? '#CD2C2C' : '#fff'},
+                  {backgroundColor: selectedTab == 1 ? '#B1ED97' : '#fff'},
                 ]}>
-                <Text style={[styles.Title, {color: '#000'}]}>Mọi người</Text>
+                <Text style={[styles.Title, {color: '#000'}]}>
+                  {language === 'vn'
+                  ? 'Người dùng'
+                  : 'Users'}
+                </Text>
               </View>
             </TouchableOpacity>
           </View>
