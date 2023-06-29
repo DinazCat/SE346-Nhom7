@@ -51,7 +51,15 @@ export default GotoPostScreen = ({navigation,route}) =>{
           <TouchableOpacity onPress={()=> navigation.goBack()}>
             <Icon name={'arrow-left'} style={{color: theme === 'light'? '#000' : '#fff', fontSize: 30, padding: 5}} />
           </TouchableOpacity>
-                {  (done)&&<PostCard  item={item}/>}
+                {  (done)&&<PostCard  item={item}
+                onCommentPress={() => navigation.navigate('commentScreen', {
+                  postId: item.postId,
+                  Foodname: item.postFoodName,
+                  postOwner: item.userId,
+                  onCommentChanged: handleCommentChanged
+                })}
+                onImagePress={()=>{navigation.navigate('detailScreen',{postId: item.postId})}}
+                />}
 
         </View>
         </View>

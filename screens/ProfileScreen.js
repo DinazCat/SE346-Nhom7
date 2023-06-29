@@ -1,14 +1,23 @@
-import { StyleSheet, Text, View, ScrollView, Image, TouchableOpacity, Alert } from 'react-native'
-import React, { useContext, useEffect,useState } from 'react'
-import { AuthContext } from '../navigation/AuthProvider'
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  Image,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
+import React, {useContext, useEffect, useState} from 'react';
+import {AuthContext} from '../navigation/AuthProvider';
 import firestore from '@react-native-firebase/firestore';
 import PostCard from '../components/PostCard';
 import AvatarComponent from '../components/AvatarComponent';
 import storage from '@react-native-firebase/storage';
 import auth from '@react-native-firebase/auth';
 import SendNoti from '../components/SendNoti';
-import LanguageContext from "../context/LanguageContext";
+import LanguageContext from '../context/LanguageContext';
 import ThemeContext from '../context/ThemeContext';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 const ProfileScreen = ({navigation, route}) => {
   const {user} = useContext(AuthContext);
   const {userId} = route.params;
@@ -19,183 +28,287 @@ const ProfileScreen = ({navigation, route}) => {
   const [profileData, setProfileData] = useState(null);
   const [selectedTab, setSelectedTab] = useState(0);
   const language = useContext(LanguageContext);
-  const theme = useContext(ThemeContext)
-  const fetchPosts = async()=>{
-    try{
+  const theme = useContext(ThemeContext);
+  const [savedPlist, setSavedPlist] = useState([]);
+  const [maxRating, setmaxRating] = useState([1, 2, 3, 4, 5]);
+  const starImgFilled =
+    'https://github.com/tranhonghan/images/blob/main/star_filled.png?raw=true';
+  const starImgCorner =
+    'https://raw.githubusercontent.com/tranhonghan/images/main/star_corner.png';
+  const CustomRatingBar = ({defaultRating}) => {
+    //console.log("df" + defaultRating)
+    return (
+      <View style={styles.customRatingBarStyle}>
+        {maxRating.map((item, key) => {
+          return (
+            <Image
+              key={key}
+              style={styles.starImgStyle}
+              source={
+                item <= defaultRating
+                  ? {uri: starImgFilled}
+                  : {uri: starImgCorner}
+              }
+            />
+          );
+        })}
+      </View>
+    );
+  };
+  const getsavedPostId = async () => {
+    await firestore()
+      .collection('SavedPosts')
+      .doc(userId)
+      .get()
+      .then(doc => {
+        getsavedPost(doc.data().postIds);
+      });
+  };
+  const getsavedPost = async List => {
+    const list = [];
+    for (let i = 0; i < List.length; i++) {
+      await firestore()
+        .collection('posts')
+        .where('postId', '==', List[i])
+        .get()
+        .then(querySnapshot => {
+          querySnapshot.forEach(doc => {
+            const {
+              userId,
+              postFoodName,
+              postFoodRating,
+              postFoodMaking,
+              postFoodIngredient,
+              postFoodSummary,
+              postImg,
+              postTime,
+              comments,
+              likes,
+              name,
+              userImg,
+              total,
+              Calories,
+              Prep,
+              Cooking,
+              hashtags,
+            } = doc.data();
+            var Time =
+              new Date(postTime._seconds * 1000).toDateString() +
+              ' at ' +
+              new Date(postTime._seconds * 1000).toLocaleTimeString();
+            list.push({
+              postId: doc.id,
+              userId: userId,
+              userName: name,
+              userImg: userImg,
+              postTime: Time,
+              postFoodName: postFoodName,
+              postFoodRating: postFoodRating,
+              postFoodIngredient: postFoodIngredient,
+              postFoodMaking: postFoodMaking,
+              postFoodSummary: postFoodSummary,
+              total: total,
+              Calories: Calories,
+              Prep: Prep,
+              Cooking: Cooking,
+              hashtags: hashtags,
+              postImg: postImg,
+              likes: likes,
+              comments: comments,
+              liked: false,
+            });
+          });
+        });
+    }
+    // await new Promise((resolve) => {
+    //   setTimeout(resolve, 1000);
+    // });
+    setSavedPlist(list);
+  };
+  const fetchPosts = async () => {
+    try {
       const list = [];
       await firestore()
-      .collection('posts')
-      .where('userId', '==', userId)
-      .orderBy('postTime', 'desc')
-      .get()
-      .then((querySnapshot)=>{
-        querySnapshot.forEach(doc =>{
-        const {userId,postFoodName, postFoodRating, postFoodMaking, postFoodIngredient, postFoodSummary, postImg, postTime, comments,likes,name,userImg,total, Calories, Prep, Cooking, hashtags} = doc.data();
-        var Time = new Date(postTime._seconds * 1000).toDateString() + ' at ' + new Date(postTime._seconds * 1000).toLocaleTimeString()
-        list.push({          
-          postId: doc.id,
-          userId: userId,
-          userName: name,
-          userImg: userImg,
-          postTime: Time,
-          postFoodName: postFoodName,
-          postFoodRating: postFoodRating,
-          postFoodIngredient:postFoodIngredient,
-          postFoodMaking: postFoodMaking,
-          total:total, Calories:Calories, Prep:Prep, Cooking:Cooking, hashtags:hashtags,
-          postFoodSummary: postFoodSummary,
-          postImg: postImg,
-          likes: likes,
-          comments: comments,
+        .collection('posts')
+        .where('userId', '==', userId)
+        .orderBy('postTime', 'desc')
+        .get()
+        .then(querySnapshot => {
+          querySnapshot.forEach(doc => {
+            const {
+              userId,
+              postFoodName,
+              postFoodRating,
+              postFoodMaking,
+              postFoodIngredient,
+              postFoodSummary,
+              postImg,
+              postTime,
+              comments,
+              likes,
+              name,
+              userImg,
+              total,
+              Calories,
+              Prep,
+              Cooking,
+              hashtags,
+            } = doc.data();
+            var Time =
+              new Date(postTime._seconds * 1000).toDateString() +
+              ' at ' +
+              new Date(postTime._seconds * 1000).toLocaleTimeString();
+            list.push({
+              postId: doc.id,
+              userId: userId,
+              userName: name,
+              userImg: userImg,
+              postTime: Time,
+              postFoodName: postFoodName,
+              postFoodRating: postFoodRating,
+              postFoodIngredient: postFoodIngredient,
+              postFoodMaking: postFoodMaking,
+              total: total,
+              Calories: Calories,
+              Prep: Prep,
+              Cooking: Cooking,
+              hashtags: hashtags,
+              postFoodSummary: postFoodSummary,
+              postImg: postImg,
+              likes: likes,
+              comments: comments,
+            });
+          });
         });
-      })
-      })
       setPosts(list);
-      if(loading){ setLoading(false) };
-    } catch(e){
+      if (loading) {
+        setLoading(false);
+      }
+    } catch (e) {
       console.log(e);
     }
-  }
+  };
 
-  const getProfile = async() => {
+  const getProfile = async () => {
     firestore()
-    .collection('users')
-    .doc(userId)
-    .onSnapshot((documentSnapshot) => {
-      if( documentSnapshot.exists ) {
-        setProfileData(documentSnapshot.data());
-        setFollowers(documentSnapshot.data().followers);
-        setFollowing(documentSnapshot.data().following);
-        console.log(followers);
-      }
-    })
-  }
+      .collection('users')
+      .doc(userId)
+      .onSnapshot(documentSnapshot => {
+        if (documentSnapshot.exists) {
+          setProfileData(documentSnapshot.data());
+          setFollowers(documentSnapshot.data().followers);
+          setFollowing(documentSnapshot.data().following);
+          console.log(followers);
+        }
+      });
+  };
 
   const getFollowStatus = followers => {
-    if(followers == null) return false;
+    if (followers == null) return false;
     let status = false;
     if (Array.isArray(followers)) {
       for (let i = 0; i < followers.length; i++) {
-          if (followers[i] === user.uid) {
-              status = true;
-              break;
-          }
+        if (followers[i] === user.uid) {
+          status = true;
+          break;
+        }
       }
-  }
-    return(status);
+    }
+    return status;
   };
-  const ReloadPosts = async()=>{
-    try{
+  const ReloadPosts = async () => {
+    try {
       const list = [];
       await firestore()
-      .collection('posts')
-      .orderBy('postTime', 'desc')
-      .get()
-      .then((querySnapshot)=>{
-        querySnapshot.forEach(doc =>{
-          const {userId,postFoodName, postFoodRating, postFoodMaking, postFoodIngredient, postFoodSummary, postImg, postTime, comments,likes,name,userImg,} = doc.data();
-          var Time = new Date(postTime._seconds * 1000).toDateString() + ' at ' + new Date(postTime._seconds * 1000).toLocaleTimeString()
-          list.push({          
-            postId: doc.id,
-            userId: userId,
-            userName: name,
-            userImg: userImg,
-            postTime: Time,
-            postFoodName: postFoodName,
-            postFoodRating: postFoodRating,
-            postFoodIngredient:postFoodIngredient,
-            postFoodMaking: postFoodMaking,
-            postFoodSummary: postFoodSummary,
-            postImg: postImg,
-            likes: likes,
-            comments: comments,
-            liked: false,
+        .collection('posts')
+        .orderBy('postTime', 'desc')
+        .get()
+        .then(querySnapshot => {
+          querySnapshot.forEach(doc => {
+            const {
+              userId,
+              postFoodName,
+              postFoodRating,
+              postFoodMaking,
+              postFoodIngredient,
+              postFoodSummary,
+              postImg,
+              postTime,
+              comments,
+              likes,
+              name,
+              userImg,
+            } = doc.data();
+            var Time =
+              new Date(postTime._seconds * 1000).toDateString() +
+              ' at ' +
+              new Date(postTime._seconds * 1000).toLocaleTimeString();
+            list.push({
+              postId: doc.id,
+              userId: userId,
+              userName: name,
+              userImg: userImg,
+              postTime: Time,
+              postFoodName: postFoodName,
+              postFoodRating: postFoodRating,
+              postFoodIngredient: postFoodIngredient,
+              postFoodMaking: postFoodMaking,
+              postFoodSummary: postFoodSummary,
+              postImg: postImg,
+              likes: likes,
+              comments: comments,
+              liked: false,
+            });
           });
-        })
-
-      })
+        });
       route.params.onGoback(list);
-    } catch(e){
+    } catch (e) {
       console.log(e);
     }
-  }
-  
+  };
+
   useEffect(() => {
     getProfile();
     fetchPosts();
-   // ReloadPosts();
-    navigation.addListener("focus", () => setLoading(!loading));
+    // ReloadPosts();
+    getsavedPostId();
+    navigation.addListener('focus', () => setLoading(!loading));
   }, [navigation, loading, route.params?.userId]);
 
-  const onFollow = async (item) => {
-
+  const onFollow = async item => {
     //update followers in userprofile
 
     let tempFollowers = item.followers ? item.followers : [];
     if (tempFollowers.length > 0) {
-        let flag = false;
-        for (let i = 0; i < item.followers.length; i++) {                          
-            if (item.followers[i] === user.uid) {
-                tempFollowers.splice(i, 1); 
-                flag = true;
-                break;
-            }
-        } 
-        if (!flag) {tempFollowers.push(user.uid);
+      let flag = false;
+      for (let i = 0; i < item.followers.length; i++) {
+        if (item.followers[i] === user.uid) {
+          tempFollowers.splice(i, 1);
+          flag = true;
+          break;
+        }
+      }
+      if (!flag) {
+        tempFollowers.push(user.uid);
         //add notification
-        firestore().collection('Notification').add({
-          PostownerId: userId,
-          guestId: auth().currentUser.uid,
-          guestName: auth().currentUser.displayName,
-          guestImg:auth().currentUser.photoURL,
-          classify:'Follow',
-          time:firestore.Timestamp.fromDate(new Date()),
-          text: auth().currentUser.displayName+' are following you.',
-          postid: '',
-          Read:'no',
-
-        });
+        firestore()
+          .collection('Notification')
+          .add({
+            PostownerId: userId,
+            guestId: auth().currentUser.uid,
+            guestName: auth().currentUser.displayName,
+            guestImg: auth().currentUser.photoURL,
+            classify: 'Follow',
+            time: firestore.Timestamp.fromDate(new Date()),
+            text: auth().currentUser.displayName + ' are following you.',
+            postid: '',
+            Read: 'no',
+          });
         firestore()
           .collection('NotificationSetting')
           .doc(userId)
           .get()
-          .then((doc)=>
-          {
-            if (doc.exists) {
-              const data = doc.data();
-              try {
-                const gt = data.follow;
-                if (gt === true) {
-                  SendNoti(
-                    auth().currentUser.displayName + ' are following you.',
-                    userId,
-                  );
-                }
-              } catch {}
-            }
-          });                
-        }                    
-    } 
-    else {
-      tempFollowers.push(user.uid);
-      firestore().collection('Notification').add({
-        PostownerId: userId,
-        guestId: auth().currentUser.uid,
-        guestName: auth().currentUser.displayName,
-        guestImg:auth().currentUser.photoURL,
-        classify:'Follow',
-        time:firestore.Timestamp.fromDate(new Date()),
-        text: auth().currentUser.displayName+' are following you.',
-        postid: '',
-        Read:'no',
-
-      });
-      firestore()
-          .collection('NotificationSetting')
-          .doc(userId)
-          .get()
-          .then((doc)=>
-          {
+          .then(doc => {
             if (doc.exists) {
               const data = doc.data();
               try {
@@ -209,39 +322,77 @@ const ProfileScreen = ({navigation, route}) => {
               } catch {}
             }
           });
+      }
+    } else {
+      tempFollowers.push(user.uid);
+      firestore()
+        .collection('Notification')
+        .add({
+          PostownerId: userId,
+          guestId: auth().currentUser.uid,
+          guestName: auth().currentUser.displayName,
+          guestImg: auth().currentUser.photoURL,
+          classify: 'Follow',
+          time: firestore.Timestamp.fromDate(new Date()),
+          text: auth().currentUser.displayName + ' are following you.',
+          postid: '',
+          Read: 'no',
+        });
+      firestore()
+        .collection('NotificationSetting')
+        .doc(userId)
+        .get()
+        .then(doc => {
+          if (doc.exists) {
+            const data = doc.data();
+            try {
+              const gt = data.follow;
+              if (gt === true) {
+                SendNoti(
+                  auth().currentUser.displayName + ' are following you.',
+                  userId,
+                );
+              }
+            } catch {}
+          }
+        });
     }
 
     firestore()
-    .collection('users')
-    .doc(userId)
-    .update({
-      followers: tempFollowers,
-    })
-    .then(() => {
-      console.log('user updated followers!');
-    })
-    .catch(error => {
-      console.log(error);
-    });
+      .collection('users')
+      .doc(userId)
+      .update({
+        followers: tempFollowers,
+      })
+      .then(() => {
+        console.log('user updated followers!');
+      })
+      .catch(error => {
+        console.log(error);
+      });
 
-    //update following of current user   
+    //update following of current user
 
     let following = [];
     try {
-      const snapshot = await firestore().collection('users').doc(user.uid).get();
+      const snapshot = await firestore()
+        .collection('users')
+        .doc(user.uid)
+        .get();
       following = snapshot.data().following ? snapshot.data().following : [];
-      if(following.length > 0){
+      if (following.length > 0) {
         let flag = false;
-        for (let i = 0; i < following.length; i++) {                          
+        for (let i = 0; i < following.length; i++) {
           if (following[i] === userId) {
-              following.splice(i, 1); 
-              flag = true;
-              break;
+            following.splice(i, 1);
+            flag = true;
+            break;
           }
-        } 
-        if (!flag) {following.push(userId)}    
-      }
-      else {
+        }
+        if (!flag) {
+          following.push(userId);
+        }
+      } else {
         following.push(userId);
       }
     } catch (error) {
@@ -249,80 +400,108 @@ const ProfileScreen = ({navigation, route}) => {
     }
 
     firestore()
-    .collection('users')
-    .doc(user.uid)
-    .update({
-      following: following,
-    })
-    .then(() => {
-      console.log('curUser updated following!');
-      getProfile();
-    })
-    .catch(error => {
-      console.log(error);
-    });
-  }
+      .collection('users')
+      .doc(user.uid)
+      .update({
+        following: following,
+      })
+      .then(() => {
+        console.log('curUser updated following!');
+        getProfile();
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  };
   deleteP = id => {
     firestore()
-    .collection('posts')
-    .doc(id)
-    .delete()
-    .then(()=>{Alert.alert('Post deleted','This post has been permanently deleted')})
-    .catch(e=>console.log("error when delete: "+e))
-  }
+      .collection('posts')
+      .doc(id)
+      .delete()
+      .then(() => {
+        Alert.alert('Post deleted', 'This post has been permanently deleted');
+      })
+      .catch(e => console.log('error when delete: ' + e));
+  };
   deletepost = id => {
     const filteredData = posts.filter(item => item.postId !== id);
     setPosts(filteredData);
-    firestore().collection('posts')
-    .doc(id)
-    .get()
-    .then(documentSnapshot => {
-      if(documentSnapshot.exists)
-      {
-        const {postImg} = documentSnapshot.data();
-        if(postImg != null)
-        {
-          if(postImg.length == 0) deleteP(id);
-          else
-          for(let i = 0; i<postImg.length; i++)
-          {
-            const storageRef = storage().refFromURL(postImg[i]);
-            const imageRef = storage().ref(storageRef.fullPath);
-            imageRef
-            .delete()
-            .then(()=>{ if(i == postImg.length-1) deleteP(id)})
-            .catch((e)=>{console.log('error when delete image '+e)})
+    firestore()
+      .collection('posts')
+      .doc(id)
+      .get()
+      .then(documentSnapshot => {
+        if (documentSnapshot.exists) {
+          const {postImg} = documentSnapshot.data();
+          if (postImg != null) {
+            if (postImg.length == 0) deleteP(id);
+            else
+              for (let i = 0; i < postImg.length; i++) {
+                const storageRef = storage().refFromURL(postImg[i]);
+                const imageRef = storage().ref(storageRef.fullPath);
+                imageRef
+                  .delete()
+                  .then(() => {
+                    if (i == postImg.length - 1) deleteP(id);
+                  })
+                  .catch(e => {
+                    console.log('error when delete image ' + e);
+                  });
+              }
           }
-          
         }
-      
-      }
-    })
-  }
+      });
+  };
   const handleCommentChanged = () => {
     fetchPosts();
   };
   return (
-    <View style={{backgroundColor: theme === 'light'? '#fff' : '#000', flex: 1}}>
+    <View
+      style={{backgroundColor: theme === 'light' ? '#fff' : '#000', flex: 1}}>
       <ScrollView
         style={styles.container}
         contentContainerStyle={{justifyContent: 'center', alignItems: 'center'}}
         showsVerticalScrollIndicator={false}>
         <Image
           style={styles.userImg}
-          source={{uri: profileData ? profileData.userImg ? profileData.userImg : 'https://cdn-icons-png.flaticon.com/512/1946/1946429.png' : 'https://cdn-icons-png.flaticon.com/512/1946/1946429.png'}}
+          source={{
+            uri: profileData
+              ? profileData.userImg
+                ? profileData.userImg
+                : 'https://cdn-icons-png.flaticon.com/512/1946/1946429.png'
+              : 'https://cdn-icons-png.flaticon.com/512/1946/1946429.png',
+          }}
         />
-        <Text style={[styles.userName, {color: theme === 'light'? '#000' : '#fff'}]}>{profileData ? profileData.name : ''}</Text>
+        <Text
+          style={[
+            styles.userName,
+            {color: theme === 'light' ? '#000' : '#fff'},
+          ]}>
+          {profileData ? profileData.name : ''}
+        </Text>
         <Text multiline style={styles.aboutUser}>
-        {profileData ? profileData.about || (language === 'vn' ? 'Không có thông tin khác.' : 'No details added.') : ''}
+          {profileData
+            ? profileData.about ||
+              (language === 'vn'
+                ? 'Không có thông tin khác.'
+                : 'No details added.')
+            : ''}
         </Text>
         <View style={styles.userBtnWrapper}>
-          {(userId != user.uid) ? (
+          {userId != user.uid ? (
             <>
-              <TouchableOpacity style={styles.userBtn} onPress={() => onFollow(profileData)}>
-                <Text style={styles.userBtnTxt}>{getFollowStatus(profileData ? profileData.followers : null) ? 
-                  (language === 'vn' ? 'Bỏ theo dõi' : 'Unfollow') :
-                  (language === 'vn' ? 'Theo dõi' : 'Follow')}</Text>
+              <TouchableOpacity
+                style={styles.userBtn}
+                onPress={() => onFollow(profileData)}>
+                <Text style={styles.userBtnTxt}>
+                  {getFollowStatus(profileData ? profileData.followers : null)
+                    ? language === 'vn'
+                      ? 'Bỏ theo dõi'
+                      : 'Unfollow'
+                    : language === 'vn'
+                    ? 'Theo dõi'
+                    : 'Follow'}
+                </Text>
               </TouchableOpacity>
             </>
           ) : (
@@ -332,82 +511,255 @@ const ProfileScreen = ({navigation, route}) => {
                 onPress={() => {
                   navigation.navigate('editProfileScreen');
                 }}>
-                <Text style={styles.userBtnTxt}>{language === 'vn' ? 'Chỉnh sửa hồ sơ' : 'Edit Profile'}</Text>
+                <Text style={styles.userBtnTxt}>
+                  {language === 'vn' ? 'Chỉnh sửa hồ sơ' : 'Edit Profile'}
+                </Text>
               </TouchableOpacity>
             </>
           )}
         </View>
 
         <View style={styles.userInfoWrapper}>
-          <TouchableOpacity onPress={() => {setSelectedTab(0)}}>
-            <View style={[styles.userInfoItem, {backgroundColor: selectedTab == 0 ? '#D3FBB8' : (theme==='light'?'#fff': '#000')}]}>
+          <TouchableOpacity
+            onPress={() => {
+              setSelectedTab(0);
+            }}>
+            <View
+              style={[
+                styles.userInfoItem,
+                {
+                  backgroundColor:
+                    selectedTab == 0
+                      ? '#D3FBB8'
+                      : theme === 'light'
+                      ? '#fff'
+                      : '#000',
+                },
+              ]}>
               <Text style={styles.userInfoTitle}>{posts.length}</Text>
-              <Text style={styles.userInfoSubTitle}>{language === 'vn' ? 'Bài viết' : 'Posts'}</Text>
+              <Text style={styles.userInfoSubTitle}>
+                {language === 'vn' ? 'Bài viết' : 'Posts'}
+              </Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => {setSelectedTab(1)}}>
-            <View style={[styles.userInfoItem, {backgroundColor: selectedTab == 1 ? '#FAF7A8' : (theme==='light'?'#fff': '#000')}]}>
-              <Text style={styles.userInfoTitle}>{profileData ? profileData.followers.length : 0}</Text>
-              <Text style={styles.userInfoSubTitle}>{language === 'vn' ? 'Người theo dõi' : 'Followers'}</Text>
+          <TouchableOpacity
+            onPress={() => {
+              setSelectedTab(1);
+            }}>
+            <View
+              style={[
+                styles.userInfoItem,
+                {
+                  backgroundColor:
+                    selectedTab == 1
+                      ? '#FAF7A8'
+                      : theme === 'light'
+                      ? '#fff'
+                      : '#000',
+                },
+              ]}>
+              <Text style={styles.userInfoTitle}>
+                {profileData ? profileData.followers.length : 0}
+              </Text>
+              <Text style={styles.userInfoSubTitle}>
+                {language === 'vn' ? 'Người theo dõi' : 'Followers'}
+              </Text>
             </View>
-          </TouchableOpacity>  
-          <TouchableOpacity onPress={() => {setSelectedTab(2)}}>
-            <View style={[styles.userInfoItem, {backgroundColor: selectedTab == 2 ? '#e05c5c' : (theme==='light'?'#fff': '#000')}]}>
-              <Text style={styles.userInfoTitle}>{profileData ? profileData.following.length : 0}</Text>
-              <Text style={styles.userInfoSubTitle}>{language === 'vn' ? 'Đang theo dõi' : 'Following'}</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              setSelectedTab(2);
+            }}>
+            <View
+              style={[
+                styles.userInfoItem,
+                {
+                  backgroundColor:
+                    selectedTab == 2
+                      ? '#e05c5c'
+                      : theme === 'light'
+                      ? '#fff'
+                      : '#000',
+                },
+              ]}>
+              <Text style={styles.userInfoTitle}>
+                {profileData ? profileData.following.length : 0}
+              </Text>
+              <Text style={styles.userInfoSubTitle}>
+                {language === 'vn' ? 'Đang theo dõi' : 'Following'}
+              </Text>
             </View>
-          </TouchableOpacity>                
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              setSelectedTab(3);
+            }}>
+            <View
+              style={[
+                styles.userInfoItem,
+                {
+                  backgroundColor:
+                    selectedTab == 3
+                      ? '#8B658B'
+                      : theme === 'light'
+                      ? '#fff'
+                      : '#000',
+                },
+              ]}>
+              <Text style={styles.userInfoTitle}>
+                {savedPlist ? savedPlist.length : 0}
+              </Text>
+              <Text style={styles.userInfoSubTitle}>
+                {language === 'vn' ? 'Đã lưu' : 'Saved'}
+              </Text>
+            </View>
+          </TouchableOpacity>
         </View>
         {selectedTab == 0 && (
           <>
-            {posts.map((item,key) => (
-            <PostCard key={key} item={item} 
-            editPost={()=>navigation.push('editPostScreen',{item})}
-            deletePost={()=>deletepost(item.postId)}
-            onUserPress={() => {navigation.navigate('profileScreen', {userId: item.userId})}}
-              onCommentPress={() => navigation.navigate('commentScreen', {
-                postId: item.postId,
-                Foodname: item.postFoodName,
-                postOwner: item.userId,
-                onCommentChanged: handleCommentChanged
-              })}
-              onImagePress={()=>{navigation.navigate('detailScreen', {postId: item.postId})}}
-              editright={false}/>
+            {posts.map((item, key) => (
+              <PostCard
+                key={key}
+                item={item}
+                editPost={() => navigation.push('editPostScreen', {item})}
+                deletePost={() => deletepost(item.postId)}
+                onUserPress={() => {
+                  navigation.navigate('profileScreen', {userId: item.userId});
+                }}
+                onCommentPress={() =>
+                  navigation.navigate('commentScreen', {
+                    postId: item.postId,
+                    Foodname: item.postFoodName,
+                    postOwner: item.userId,
+                    onCommentChanged: handleCommentChanged,
+                  })
+                }
+                onImagePress={() => {
+                  navigation.navigate('detailScreen', {postId: item.postId});
+                }}
+                editright={true}
+              />
             ))}
-          </>      
-        )} 
-        { selectedTab == 1 && (
+          </>
+        )}
+        {selectedTab == 1 && (
           <>
             {followers.map((item, index) => (
-            <AvatarComponent key={index} item={item}
-            //onFollowsChange={(followers, following) => setProfileData({ ...profileData, followers: followers, following: following })}
-            onUserPress={() => navigation.push('profileScreen', {userId: item})}/>
+              <AvatarComponent
+                key={index}
+                item={item}
+                //onFollowsChange={(followers, following) => setProfileData({ ...profileData, followers: followers, following: following })}
+                onUserPress={() =>
+                  navigation.push('profileScreen', {userId: item})
+                }
+              />
             ))}
-          </>      
-        )} 
-        { selectedTab == 2 && (
+          </>
+        )}
+        {selectedTab == 2 && (
           <>
             {following.map((item, index) => (
-            <AvatarComponent key={index} item={item}
-            //onFollowsChange={(followers, following) => setProfileData({ ...profileData, followers: followers, following: following })}
-            onUserPress={() => navigation.push('profileScreen', {userId: item})}
-            />
+              <AvatarComponent
+                key={index}
+                item={item}
+                //onFollowsChange={(followers, following) => setProfileData({ ...profileData, followers: followers, following: following })}
+                onUserPress={() =>
+                  navigation.push('profileScreen', {userId: item})
+                }
+              />
             ))}
-          </>  
-        )}       
+          </>
+        )}
+        {selectedTab == 3 && (
+          <>
+            <ScrollView style={{flexDirection: 'column'}}>
+              {savedPlist.map((item, key) => {
+                return (
+                  <TouchableOpacity
+                    key={key}
+                    style={{
+                      backgroundColor:
+                        theme === 'light' ? '#FFFAF0' : '#4F4F4F',
+                      width: '100%',
+                      height: 100,
+                      alignItems: 'center',
+                      flexDirection: 'row',
+                      marginTop: 3,
+                    }}
+                    onPress={() =>
+                      navigation.push('gotoPost', {postid: item.postId})
+                    }>
+                    <Image
+                      style={styles.UserImage}
+                      source={{
+                        uri:
+                          item.postImg.length > 0
+                            ? item.postImg[0]
+                            : 'http://getwallpapers.com/wallpaper/full/2/3/6/153929.jpg',
+                      }}
+                    />
+                    <View
+                      style={{
+                        flexDirection: 'column',
+                        marginLeft: 20,
+                        width: '60%',
+                      }}>
+                      <Text style={styles.userName}>{item.postFoodName}</Text>
+                      <Text style={styles.calories}>
+                        {item.Calories + ' cals/serving'}
+                      </Text>
+                      <CustomRatingBar defaultRating={item.postFoodRating} />
+                    </View>
+                    {userId == auth().currentUser.uid && (
+                      <TouchableOpacity
+                        style={styles.DeleteButton}
+                        onPress={() => {
+                          const filteredData = savedPlist.filter(
+                            i => i.postId !== item.postId,
+                          );
+                          setSavedPlist(filteredData);
+                          const list = [];
+                          for (let i = 0; i < filteredData.length; i++) {
+                            list.push(filteredData[i].postId);
+                          }
+                          const collectionRef =
+                            firestore().collection('SavedPosts');
+                          const documentRef = collectionRef.doc(
+                            auth().currentUser.uid,
+                          );
+                          documentRef.set({postIds: list});
+                          Alert.alert(
+                            'Success',
+                            'You have successfully removed the post from the list',
+                          );
+                        }}>
+                        <Icon
+                          name={'times-circle'}
+                          size={28}
+                          backgroundColor="transparent"
+                          color={theme === 'light' ? '#000' : '#EEE9E9'}
+                        />
+                      </TouchableOpacity>
+                    )}
+                  </TouchableOpacity>
+                );
+              })}
+            </ScrollView>
+          </>
+        )}
       </ScrollView>
     </View>
-  )
-}
+  );
+};
 
-export default ProfileScreen
+export default ProfileScreen;
 
 const styles = StyleSheet.create({
-  container:{
+  container: {
     flex: 1,
     paddingHorizontal: 10,
     paddingVertical: 20,
-    marginBottom: 60
+    marginBottom: 60,
   },
   userImg: {
     height: 130,
@@ -418,6 +770,10 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginTop: 10,
+    marginBottom: 10,
+  },
+  calories: {
+    fontSize: 14,
     marginBottom: 10,
   },
   aboutUser: {
@@ -441,12 +797,12 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     paddingHorizontal: 12,
     marginHorizontal: 5,
-    alignItems: 'center'
+    alignItems: 'center',
   },
   userBtnTxt: {
     color: '#66cc00',
     fontSize: 16,
-    fontWeight: '500'
+    fontWeight: '500',
   },
   userInfoWrapper: {
     flexDirection: 'row',
@@ -456,9 +812,9 @@ const styles = StyleSheet.create({
   },
   userInfoItem: {
     justifyContent: 'center',
-    width: 110,
+    width: 90,
     borderRadius: 5,
-    paddingVertical: 2
+    paddingVertical: 2,
   },
   userInfoTitle: {
     fontSize: 20,
@@ -472,4 +828,22 @@ const styles = StyleSheet.create({
     color: '#666',
     textAlign: 'center',
   },
-})
+  customRatingBarStyle: {
+    flexDirection: 'row',
+    marginBottom: 10,
+  },
+  starImgStyle: {
+    width: 20,
+    height: 20,
+    resizeMode: 'cover',
+  },
+  DeleteButton: {
+    marginLeft: '5%',
+  },
+  UserImage: {
+    width: 60,
+    height: 60,
+    borderRadius: 20,
+    marginLeft: 10,
+  },
+});

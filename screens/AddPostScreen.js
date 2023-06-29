@@ -11,6 +11,7 @@ import Popover from 'react-native-popover-view';
 import LanguageContext from "../context/LanguageContext";
 import { useRoute } from '@react-navigation/native';
 import ThemeContext from '../context/ThemeContext';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 export default AddPostScreen= function({navigation}) {
     const route = useRoute();
@@ -364,6 +365,7 @@ export default AddPostScreen= function({navigation}) {
    
       
     return (
+      <KeyboardAwareScrollView>
       <View style={[styles.container, {backgroundColor: theme === 'light'? '#fff' : '#000'}]}>
         <View
           style={{
@@ -735,6 +737,7 @@ export default AddPostScreen= function({navigation}) {
             </View>
       </Popover>
       </View>
+      </KeyboardAwareScrollView>
     )
 }
 const styles = StyleSheet.create({

@@ -278,14 +278,14 @@ const PostCard = ({item, onUserPress, onCommentPress,onImagePress,deletePost,edi
         const[visible,setvisible] = useState(false);
         const options = [
           {
-            title:'Xóa',
+            title:language === 'vn' ?'Xóa':"Delete",
             action:()=>{
               deletePost(item.id)
             },
 
           },
           {
-            title:'Sửa',
+            title:language === 'vn' ?'Sửa':'Edit',
             action:()=>{
               editPost();
             },
@@ -512,7 +512,7 @@ const styles = StyleSheet.create({
       borderColor:'#333',
       borderWidth:1,
       backgroundColor:'#fff',
-      width:50,
+      width:60,
       height:65,
       textAlign:'center',
     },
@@ -520,7 +520,7 @@ const styles = StyleSheet.create({
     {
       borderBottomColor:'black', 
       alignItems:'center', 
-      width:35, 
+      width:45, 
       alignSelf:'center',
       paddingVertical:5
     }

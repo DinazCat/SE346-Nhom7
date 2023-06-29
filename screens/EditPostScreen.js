@@ -23,6 +23,7 @@ import {Picker} from '@react-native-picker/picker';
 import Popover from 'react-native-popover-view';
 import LanguageContext from '../context/LanguageContext';
 import ThemeContext from '../context/ThemeContext';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 export default EditPostScreen = function ({navigation, route}) {
   const [image, setimage] = useState(route.params.item.postImg);
   const [imageUrl, setimageUrl] = useState([]);
@@ -457,6 +458,7 @@ export default EditPostScreen = function ({navigation, route}) {
   );
 
   return (
+    <KeyboardAwareScrollView>
     <View
       style={[
         styles.container,
@@ -1052,6 +1054,7 @@ export default EditPostScreen = function ({navigation, route}) {
         </View>
       </Popover>
     </View>
+    </KeyboardAwareScrollView>
   );
 };
 const styles = StyleSheet.create({

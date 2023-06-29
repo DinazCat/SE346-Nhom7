@@ -1,11 +1,12 @@
 import React, {useEffect, useState, useContext} from 'react';
-import {View, ScrollView, Text, StyleSheet, FlatList,Button,TouchableOpacity,Image, alert} from 'react-native';
+import {View, ScrollView, Text, StyleSheet, FlatList,Button,TouchableOpacity,Image, Alert} from 'react-native';
 import FormButton from '../components/FormButton';
 import { AuthContext } from '../navigation/AuthProvider';
 import PostCard from '../components/PostCard';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import firestore from '@react-native-firebase/firestore';
 import LanguageContext from "../context/LanguageContext";
+import auth from '@react-native-firebase/auth';
 import ThemeContext from '../context/ThemeContext';
 
 export default function DetailPostScreen({navigation,route}) {
@@ -61,101 +62,231 @@ export default function DetailPostScreen({navigation,route}) {
             console.log(postId);
         });
     }
+    const save = async () => {
+        const collectionRef = firestore().collection('SavedPosts');
+        const documentRef = collectionRef.doc(auth().currentUser.uid);
+    
+        const documentSnapshot = await documentRef.get();
+        if (documentSnapshot.exists) {
+          const userData = documentSnapshot.data();
+          const postIds = userData.postIds || [];
+    
+          if (!postIds.includes(postId)) {
+            postIds.push(postId);
+            await documentRef.update({postIds});
+            console.log(
+              `Post có ID ${postId} đã được thêm vào danh sách postIds của người dùng có ID .`,
+            );
+            Alert.alert('Success', 'Post is saved successfully in your wall');
+          } else {
+            console.log(
+              `Post có ID ${postId} đã tồn tại trong danh sách postIds của người dùng có ID .`,
+            );
+            Alert.alert('Note', 'Post already exist in your wall');
+          }
+        } else {
+            console.log("bbbb")
+            await documentRef.set({ postIds: [postId] });
+          Alert.alert('Success', 'Post is saved successfully in your wall');
+        }
+      };
     useEffect(()=>{
         getPost();
       },[postId])
     return (
-        <View style={[styles.Container, {backgroundColor: theme === 'light'? '#FFFFFF' : '#000000'}]}>
-            <View style={styles.headerContainer}>
-            <View style={styles.UserInfoContainer}>
-                        <TouchableOpacity onPress={onUserPress}>
-                            <Image style={styles.UserImage} source={{uri: postData?  postData.userImg ? postData.userImg : 'https://cdn-icons-png.flaticon.com/512/1946/1946429.png' : 'https://cdn-icons-png.flaticon.com/512/1946/1946429.png'}}/>
-                        </TouchableOpacity>            
-                        <View style={styles.UserInfoTextContainer}>
-                            <TouchableOpacity onPress={onUserPress}>
-                                <Text style={[styles.UsernameText, {color: theme === 'light'? '#000000' : '#FFFFFF'}]}>{postData?  postData.name : ''}</Text>
-                            </TouchableOpacity>                
-                            <Text style={styles.PostTime}>{postData?  posttime: ''}</Text>
-                        </View>
-                    </View>
-                <Text style={[styles.foodname, {color: theme === 'light'? '#000000' : '#FFFFFF'}]}>{postData? postData.postFoodName:""}</Text> 
+      <View
+        style={[
+          styles.Container,
+          {backgroundColor: theme === 'light' ? '#FFFFFF' : '#000000'},
+        ]}>
+        <View style={styles.headerContainer}>
+          <View style={styles.UserInfoContainer}>
+            <TouchableOpacity onPress={onUserPress}>
+              <Image
+                style={styles.UserImage}
+                source={{
+                  uri: postData
+                    ? postData.userImg
+                      ? postData.userImg
+                      : 'https://cdn-icons-png.flaticon.com/512/1946/1946429.png'
+                    : 'https://cdn-icons-png.flaticon.com/512/1946/1946429.png',
+                }}
+              />
+            </TouchableOpacity>
+            <View style={styles.UserInfoTextContainer}>
+              <TouchableOpacity onPress={onUserPress}>
+                <Text
+                  style={[
+                    styles.UsernameText,
+                    {color: theme === 'light' ? '#000000' : '#FFFFFF'},
+                  ]}>
+                  {postData ? postData.name : ''}
+                </Text>
+              </TouchableOpacity>
+              <Text style={styles.PostTime}>{postData ? posttime : ''}</Text>
             </View>
-            
-            
-        <View style={[styles.Container,{height:650, backgroundColor: theme === 'light'? '#FFFFFF' : '#000000'}]}>
-            <ScrollView style={{flexDirection:'column'}}>               
-                    <>
-                    <View style={styles.userInfoWrapper}>
-                        <View style={styles.userInfoItem}>
-                        <Text style={styles.userInfoTitle}>{postData?postData.total:""}</Text>
-                        <Text style={styles.userInfoSubTitle}>Servings</Text>
-                        </View>
-                        <View style={styles.userInfoItem}>
-                        <Text style={styles.userInfoTitle}>{postData?postData.Prep:""}</Text>
-                        <Text style={styles.userInfoSubTitle}>Prep</Text>
-                        </View>
-                        <View style={styles.userInfoItem}>
-                        <Text style={styles.userInfoTitle}>{postData?postData.Cooking:""}</Text>
-                        <Text style={styles.userInfoSubTitle}>Cooking</Text>
-                        </View>                                   
-                    </View>     
-                    <View style={styles.userInfoWrapper}>
-                        <View style={styles.userInfoItem}>
-                        <Text style={styles.userInfoTitle}>{postData?postData.Calories:""}</Text>
-                        <Text style={styles.userInfoSubTitle}>Cal/serving</Text>
-                        </View>
-                        <View style={styles.userInfoItem}>
-                        <CustomRatingBar/>
-                        <Text style={styles.userInfoSubTitle}>Difficulty</Text>
-                        </View>                              
-                    </View>              
-                     <View style={styles.split}/>
-                     <View style={{backgroundColor: theme === 'light'? '#FFFFFF' : '#000000'}}>
-                     <Text style={[styles.PostTitle, {color: '#5AC30D'}]}>{language === 'vn' ? 'Nguyên liệu' : 'Ingredients'}</Text>
-                     {/* <Text style={styles.PostText}>{postData?postData.postFoodIngredient:""}</Text> */}
-                     {
-                        postData?.postFoodIngredient.map((each,key)=>{
-                            return(
-                                    <Text style={[styles.PostText, {color: theme === 'light'? '#000000' : '#FFFFFF'}]} key={key}>{"- "+each.name + " ("+ each.wty+" "+ each.dv+")"}</Text>
-                            )
-                        })
-                     }
-                     </View>
-                     <View style={styles.split}/>
-                     <View style={{backgroundColor: theme === 'light'? '#FFFFFF' : '#000000'}}>
-                     <Text style={[styles.PostTitle, {color: '#CE3E3E'}]}>{language === 'vn' ? 'Cách làm' : 'Steps'}</Text>
-                     <Text style={[styles.PostText, {color: theme === 'light'? '#000000' : '#FFFFFF'}]}>{postData?postData.postFoodMaking:""}</Text>
-                     </View>
-                     <View style={styles.split}/>
-                     <View style={{backgroundColor: theme === 'light'? '#FFFFFF' : '#000000'}}>
-                     <Text style={[styles.PostTitle, {color: '#546ED5'}]}>{language === 'vn' ? 'Tổng kết' : 'Summary'}</Text>
-                     <Text style={[styles.PostText, {color: theme === 'light'? '#000000' : '#FFFFFF'}]}>{postData?postData.postFoodSummary:""}</Text>
-                     </View>
-                     <View style={styles.split}/>
-                     <View style={{backgroundColor: theme === 'light'? '#FFFFFF' : '#000000'}}>
-                     <Text style={[styles.PostTitle, {color: '#23D8A3'}]}>Tag</Text>
-                     {
-                        postData?.hashtags.map((each,key)=>{
-                            return(
-                                <Text style={[styles.PostText, {color: theme === 'light'? '#000000' : '#FFFFFF'}]} key={key}>{"#"+each}</Text>
-                            )
-                        })
-                     }
-                     </View>
-                     
-               { postData?.postImg.map((each,key)=>{
-                    return(  
-                        <View key={key}>
-                        <Image source={{uri:each}} style={{height:270, width:400, marginTop:5, borderRadius: 7}} resizeMode='cover'/>
-                        </View>     
-                    );
+            <TouchableOpacity
+              style={{
+                marginLeft: 80,
+                borderColor: theme === 'light' ? '#000000' : '#FFFFFF',
+                borderRadius: 5,
+                borderWidth: 1,
+                height: 30,
+                width: 50,
+                alignItems: 'center',
+              }}
+              onPress={() => save()}>
+              <Text style={{color: theme === 'light' ? '#000000' : '#FFFFFF'}}>
+                {language === 'vn' ? 'Lưu' : 'Save'}
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <Text
+            style={[
+              styles.foodname,
+              {color: theme === 'light' ? '#000000' : '#FFFFFF'},
+            ]}>
+            {postData ? postData.postFoodName : ''}
+          </Text>
+        </View>
+
+        <View
+          style={[
+            styles.Container,
+            {
+              height: 650,
+              backgroundColor: theme === 'light' ? '#FFFFFF' : '#000000',
+            },
+          ]}>
+          <ScrollView style={{flexDirection: 'column'}}>
+            <>
+              <View style={styles.userInfoWrapper}>
+                <View style={styles.userInfoItem}>
+                  <Text style={styles.userInfoTitle}>
+                    {postData ? postData.total : ''}
+                  </Text>
+                  <Text style={styles.userInfoSubTitle}>Servings</Text>
+                </View>
+                <View style={styles.userInfoItem}>
+                  <Text style={styles.userInfoTitle}>
+                    {postData ? postData.Prep : ''}
+                  </Text>
+                  <Text style={styles.userInfoSubTitle}>Prep</Text>
+                </View>
+                <View style={styles.userInfoItem}>
+                  <Text style={styles.userInfoTitle}>
+                    {postData ? postData.Cooking : ''}
+                  </Text>
+                  <Text style={styles.userInfoSubTitle}>Cooking</Text>
+                </View>
+              </View>
+              <View style={styles.userInfoWrapper}>
+                <View style={styles.userInfoItem}>
+                  <Text style={styles.userInfoTitle}>
+                    {postData ? postData.Calories : ''}
+                  </Text>
+                  <Text style={styles.userInfoSubTitle}>Cal/serving</Text>
+                </View>
+                <View style={styles.userInfoItem}>
+                  <CustomRatingBar />
+                  <Text style={styles.userInfoSubTitle}>Difficulty</Text>
+                </View>
+              </View>
+              <View style={styles.split} />
+              <View
+                style={{
+                  backgroundColor: theme === 'light' ? '#FFFFFF' : '#000000',
+                }}>
+                <Text style={[styles.PostTitle, {color: '#5AC30D'}]}>
+                  {language === 'vn' ? 'Nguyên liệu' : 'Ingredients'}
+                </Text>
+                {/* <Text style={styles.PostText}>{postData?postData.postFoodIngredient:""}</Text> */}
+                {postData?.postFoodIngredient.map((each, key) => {
+                  return (
+                    <Text
+                      style={[
+                        styles.PostText,
+                        {color: theme === 'light' ? '#000000' : '#FFFFFF'},
+                      ]}
+                      key={key}>
+                      {'- ' + each.name + ' (' + each.wty + ' ' + each.dv + ')'}
+                    </Text>
+                  );
                 })}
-                </>
-                              
-            </ScrollView>
-        </View>      
-    </View>
-    )
+              </View>
+              <View style={styles.split} />
+              <View
+                style={{
+                  backgroundColor: theme === 'light' ? '#FFFFFF' : '#000000',
+                }}>
+                <Text style={[styles.PostTitle, {color: '#CE3E3E'}]}>
+                  {language === 'vn' ? 'Cách làm' : 'Steps'}
+                </Text>
+                <Text
+                  style={[
+                    styles.PostText,
+                    {color: theme === 'light' ? '#000000' : '#FFFFFF'},
+                  ]}>
+                  {postData ? postData.postFoodMaking : ''}
+                </Text>
+              </View>
+              <View style={styles.split} />
+              <View
+                style={{
+                  backgroundColor: theme === 'light' ? '#FFFFFF' : '#000000',
+                }}>
+                <Text style={[styles.PostTitle, {color: '#546ED5'}]}>
+                  {language === 'vn' ? 'Tổng kết' : 'Summary'}
+                </Text>
+                <Text
+                  style={[
+                    styles.PostText,
+                    {color: theme === 'light' ? '#000000' : '#FFFFFF'},
+                  ]}>
+                  {postData ? postData.postFoodSummary : ''}
+                </Text>
+              </View>
+              <View style={styles.split} />
+              <View
+                style={{
+                  backgroundColor: theme === 'light' ? '#FFFFFF' : '#000000',
+                }}>
+                <Text style={[styles.PostTitle, {color: '#23D8A3'}]}>Tag</Text>
+                {postData?.hashtags.map((each, key) => {
+                  return (
+                    <Text
+                      style={[
+                        styles.PostText,
+                        {color: theme === 'light' ? '#000000' : '#FFFFFF'},
+                      ]}
+                      key={key}>
+                      {'#' + each}
+                    </Text>
+                  );
+                })}
+              </View>
+
+              {postData?.postImg.map((each, key) => {
+                return (
+                  <View key={key}>
+                    <Image
+                      source={{uri: each}}
+                      style={{
+                        height: 270,
+                        width: 400,
+                        marginTop: 5,
+                        borderRadius: 7,
+                      }}
+                      resizeMode="cover"
+                    />
+                  </View>
+                );
+              })}
+            </>
+          </ScrollView>
+        </View>
+      </View>
+    );
 }
     
   
