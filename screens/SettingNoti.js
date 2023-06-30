@@ -122,16 +122,16 @@ const SettingNoti = ({navigation}) => {
       },[])
     return (
       <View style={[styles.container, {backgroundColor: theme === 'light'? '#FFFFFF' : '#000000'}]}>
-        <View style={{height: 50, flexDirection: 'row', alignItems: 'center'}}>
-          <TouchableOpacity
-            onPress={() => { navigation.goBack();
-            }}>
-            <Icon
-              name={'arrow-left'}
-              style={{color: theme === 'light'? '#000' : '#fff', fontSize: 30, padding: 5}}
-            />
-          </TouchableOpacity>
-          <Text style={[styles.textfont, {color: theme === 'light'? '#000' : '#fff'}]}>
+        <View style={{height: 50, flexDirection: 'row', alignItems: 'center', borderBottomColor: '#DDD', borderBottomWidth: 1}}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Ionicons 
+                name="arrow-back"
+                size={28}
+                backgroundColor='transparent'
+                color={theme === 'light'? '#000' : '#fff'}                          
+                />
+        </TouchableOpacity>
+          <Text style={{fontSize: 20 , marginStart: 5 ,color: theme === 'light'? '#000' : '#fff'}}>
           {language === 'vn' ?"Cài đặt thông báo":"Notification Setting"}
           </Text>
         </View>
@@ -165,8 +165,8 @@ const SettingNoti = ({navigation}) => {
       />     
         </View>
         {/* <View style={{flex:1, justifyContent:'flex-end'}}/> */}
-        <View style={{ marginVertical:250}}>
-          <Text style={{marginLeft:5}}>
+        <View style={{ marginVertical:200}}>
+          <Text style={{marginLeft:5, backgroundColor: '#F6F6F6', padding:5}}>
           {language !== 'vn' ? "Turning push notifications off will prevent you from seeing theses update on your look screen. Howerver, you will still receive these notifications in app. "
           :"Tắt thông báo sẽ ngăn bạn nhìn thấy thông báo trên màn hình khóa của mình. Tuy nhiên, bạn vẫn sẽ nhận được những thông báo này trong ứng dụng."}
           </Text>
@@ -181,10 +181,11 @@ const styles = StyleSheet.create({
     container: {
       flex: 1,
       flexDirection:'column',
-      backgroundColor:'#fff'
+      backgroundColor:'#fff',
+      padding: 5
     },
     textfont:{
-      fontSize: 20,
+      fontSize: 17,
       marginLeft: 5, 
       color: 'black'
     },

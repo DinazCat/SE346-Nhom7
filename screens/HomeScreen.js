@@ -332,9 +332,9 @@ const HomeScreen = ({navigation}) => {
           </View>
         </View>
        
-    <View style={{marginTop: 95, marginLeft: 75}}>
+    <View style={{marginTop: 110, marginLeft: 75}}>
       <View style={{flexDirection: 'row'}}>
-        <Text style={{fontWeight: 'bold', fontSize: 25, color: theme==='light'?'#37C142':'#050505'}}>{language==='vn'?'BMI index: ':'Chỉ số Bmi: '}</Text>
+        <Text style={{fontWeight: 'bold', fontSize: 25, color: theme==='light'?'#37C142':'#050505'}}>{language==='vn'?'Chỉ số BMI: ':'BMI: '}</Text>
         <Text style={{fontSize: 25, color: theme==='light'?'#58D77F':'#050505'}}>{bmi}</Text>
       </View>
       <Text style={{fontWeight: 'bold', fontSize: 25, color: theme==='light'?'#37C142':'#050505'}}>{evaluate}</Text>

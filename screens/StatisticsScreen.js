@@ -68,12 +68,16 @@ const styles = StyleSheet.create({
     topTab: {
       flexDirection: 'row',
       alignContent: 'center',
-      justifyContent: 'center'
+      justifyContent: 'center',
+      borderTopColor: '#DDD',
+      borderTopWidth: 1,
+      paddingTop: 15
     },
     header: {
       fontSize: 40,
       color: '#000',
-      alignSelf: 'center'
+      alignSelf: 'center',
+      marginBottom: 5
     },
     textBtn:{
       color: '#000',
