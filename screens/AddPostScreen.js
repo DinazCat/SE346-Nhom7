@@ -344,6 +344,7 @@ export default AddPostScreen= function({navigation}) {
                 defaultValue={itemI.name}/>
             <Text>Wty:</Text>
             <TextInput style={{ width:"10%", height:50, borderBottomColor:'black', borderBottomWidth:1,textAlign:'center'}}onChangeText={(val)=>n = val}
+            keyboardType="numeric"
                 onEndEditing={()=>itemI.wty = n}
                 defaultValue={itemI.wty}/>
             <Picker
@@ -365,7 +366,8 @@ export default AddPostScreen= function({navigation}) {
    
       
     return (
-      <KeyboardAwareScrollView>
+      <KeyboardAvoidingView  style={{}} behavior='padding' enabled>
+        <ScrollView>
       <View style={[styles.container, {backgroundColor: theme === 'light'? '#fff' : '#000'}]}>
         <View
           style={{
@@ -398,8 +400,8 @@ export default AddPostScreen= function({navigation}) {
        
         {selectedTab == 0 && (
           <>
-          <KeyboardAvoidingView style={{}} behavior='height'>
-              <ScrollView >
+          {/* <KeyboardAvoidingView style={{}} behavior='height'> */}
+              {/* <ScrollView > */}
            <View
           style={{
             height: 70,
@@ -418,6 +420,7 @@ export default AddPostScreen= function({navigation}) {
         </View>
            <View style={[styles.TextBox, {borderColor:theme === 'light'? '#000' : '#fff'}]}>
            <Icon name={"pencil-alt"} style={{ color: "#FFCC00", fontSize: 30, marginLeft:340,position:"absolute" }} />
+           <KeyboardAvoidingView style={{}} behavior='padding' enabled>
            <ScrollView>
              <Text style={[styles.TextStyle,{marginTop:20, color: theme === 'light'? '#000' : '#fff'}]}>{language === 'vn' ? 'Tên món ăn: * ' : 'Food name: * '}</Text>
            <TextInput
@@ -438,6 +441,7 @@ export default AddPostScreen= function({navigation}) {
             <TextInput
              style={[styles.InputStyle,{color: theme === 'light'? '#000' : '#fff', borderBottomColor:theme === 'light'? '#000' : '#fff'}]}
              value={Total}
+             keyboardType="numeric"
              onChangeText={TextChangetotal}
            />
             <Text style={{fontSize: 16, color: theme === 'light'? '#000' : '#fff'}}>servings</Text>
@@ -447,6 +451,7 @@ export default AddPostScreen= function({navigation}) {
             <Text style={[styles.TextStyle,{width: 120, color: theme === 'light'? '#000' : '#fff'}]}>Calories: *</Text>
            <TextInput
              style={[styles.InputStyle,{color: theme === 'light'? '#000' : '#fff',borderBottomColor:theme === 'light'? '#000' : '#fff'}]}
+             keyboardType="numeric"
              value={Cal}
              onChangeText={TextChangecal}
            />
@@ -460,7 +465,7 @@ export default AddPostScreen= function({navigation}) {
              onChangeText={TextChangeprep}
            />
             </View>
-            <View style={styles.InputBox}>
+            <View style={[styles.InputBox, {marginBottom:80}]}>
             <Text style={[styles.TextStyle,{width: 120, color: theme === 'light'? '#000' : '#fff'}]}>{language === 'vn' ? 'Thời gian nấu: *' : 'Cooking time: *'}</Text>
            <TextInput
              style={[styles.InputStyle,{color: theme === 'light'? '#000' : '#fff', borderBottomColor:theme === 'light'? '#000' : '#fff'}]}
@@ -468,17 +473,17 @@ export default AddPostScreen= function({navigation}) {
              onChangeText={TextChangecooking}
            />
             </View>
-           </ScrollView>
- 
-           </View>  
+            {/* <View style={{height:50}}/> */}
            </ScrollView>
            </KeyboardAvoidingView>
+           </View>  
+           {/* <View style={{height:200}}/> */}
+           {/* </ScrollView>
+           </KeyboardAvoidingView> */}
            </>  
         ) }
         {(selectedTab==1)&& (
             <>
-            <KeyboardAvoidingView style={{}} behavior='height'>
-              <ScrollView>
           <View
           style={{
             height: 70,
@@ -495,7 +500,9 @@ export default AddPostScreen= function({navigation}) {
            {language === 'vn' ? '2. Cách làm' : 'Step 2. How to make food?'}
           </Text>
         </View>
+        <KeyboardAvoidingView behavior='padding' enabled>
            <View style={[styles.TextBox, {borderColor:theme === 'light'? '#000' : '#fff'}]}>
+           {/* <KeyboardAvoidingView behavior='padding' enabled> */}
             <ScrollView>
             <View style={{flexDirection:'row'}}>
             <Text style={[styles.TextStyle,{marginTop:20, color:theme === 'light'? '#000' : '#fff'}]}>{language === 'vn' ? 'Các nguyên liệu cần có? *' : 'What ingredients are there? *'}</Text>
@@ -549,11 +556,15 @@ export default AddPostScreen= function({navigation}) {
                 value={Summary}
              onChangeText={TextChangeSummary}
            />
+           <View style={{height:60}}/>
         </ScrollView>
+        {/* </KeyboardAvoidingView> */}
 
            </View>
-           </ScrollView>
-           </KeyboardAvoidingView>
+
+        </KeyboardAvoidingView>
+
+
            </>
         )}
         {(selectedTab==2)&&(
@@ -674,6 +685,7 @@ export default AddPostScreen= function({navigation}) {
           </TouchableOpacity>
         </View>
         )} 
+        
        
         <View style={styles.Wrapper}>
           <TouchableOpacity
@@ -737,7 +749,9 @@ export default AddPostScreen= function({navigation}) {
             </View>
       </Popover>
       </View>
-      </KeyboardAwareScrollView>
+      
+        </ScrollView>
+       </KeyboardAvoidingView> 
     )
 }
 const styles = StyleSheet.create({

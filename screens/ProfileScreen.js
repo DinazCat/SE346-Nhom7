@@ -29,102 +29,7 @@ const ProfileScreen = ({navigation, route}) => {
   const [selectedTab, setSelectedTab] = useState(0);
   const language = useContext(LanguageContext);
   const theme = useContext(ThemeContext);
-  const [savedPlist, setSavedPlist] = useState([]);
-  const [maxRating, setmaxRating] = useState([1, 2, 3, 4, 5]);
-  const starImgFilled =
-    'https://github.com/tranhonghan/images/blob/main/star_filled.png?raw=true';
-  const starImgCorner =
-    'https://raw.githubusercontent.com/tranhonghan/images/main/star_corner.png';
-  const CustomRatingBar = ({defaultRating}) => {
-    //console.log("df" + defaultRating)
-    return (
-      <View style={styles.customRatingBarStyle}>
-        {maxRating.map((item, key) => {
-          return (
-            <Image
-              key={key}
-              style={styles.starImgStyle}
-              source={
-                item <= defaultRating
-                  ? {uri: starImgFilled}
-                  : {uri: starImgCorner}
-              }
-            />
-          );
-        })}
-      </View>
-    );
-  };
-  const getsavedPostId = async () => {
-    await firestore()
-      .collection('SavedPosts')
-      .doc(userId)
-      .get()
-      .then(doc => {
-        getsavedPost(doc.data().postIds);
-      });
-  };
-  const getsavedPost = async List => {
-    const list = [];
-    for (let i = 0; i < List.length; i++) {
-      await firestore()
-        .collection('posts')
-        .where('postId', '==', List[i])
-        .get()
-        .then(querySnapshot => {
-          querySnapshot.forEach(doc => {
-            const {
-              userId,
-              postFoodName,
-              postFoodRating,
-              postFoodMaking,
-              postFoodIngredient,
-              postFoodSummary,
-              postImg,
-              postTime,
-              comments,
-              likes,
-              name,
-              userImg,
-              total,
-              Calories,
-              Prep,
-              Cooking,
-              hashtags,
-            } = doc.data();
-            var Time =
-              new Date(postTime._seconds * 1000).toDateString() +
-              ' at ' +
-              new Date(postTime._seconds * 1000).toLocaleTimeString();
-            list.push({
-              postId: doc.id,
-              userId: userId,
-              userName: name,
-              userImg: userImg,
-              postTime: Time,
-              postFoodName: postFoodName,
-              postFoodRating: postFoodRating,
-              postFoodIngredient: postFoodIngredient,
-              postFoodMaking: postFoodMaking,
-              postFoodSummary: postFoodSummary,
-              total: total,
-              Calories: Calories,
-              Prep: Prep,
-              Cooking: Cooking,
-              hashtags: hashtags,
-              postImg: postImg,
-              likes: likes,
-              comments: comments,
-              liked: false,
-            });
-          });
-        });
-    }
-    // await new Promise((resolve) => {
-    //   setTimeout(resolve, 1000);
-    // });
-    setSavedPlist(list);
-  };
+  
   const fetchPosts = async () => {
     try {
       const list = [];
@@ -271,7 +176,6 @@ const ProfileScreen = ({navigation, route}) => {
     getProfile();
     fetchPosts();
     // ReloadPosts();
-    getsavedPostId();
     navigation.addListener('focus', () => setLoading(!loading));
   }, [navigation, loading, route.params?.userId]);
 
@@ -455,6 +359,36 @@ const ProfileScreen = ({navigation, route}) => {
   const handleCommentChanged = () => {
     fetchPosts();
   };
+
+  const PopupMenu = () =>{
+    const[visible,setvisible] = useState(false);
+    const options = [
+      {
+        title:language === 'vn' ?'Đã lưu':"Saved",
+        action:()=>{
+          navigation.push('savedScreen')
+        },
+
+      },
+    ];
+
+    return(
+      <View style={{flexDirection:'row'}}>
+       {visible&& <View style = {styles.popup}>
+            {
+              options.map((op,i)=>(
+                <TouchableOpacity  style={[styles.popupitem,{borderBottomWidth:i===options.length-1?0:1}]} key={i} onPress={op.action}>
+                  <Text>{op.title}</Text>
+                </TouchableOpacity>
+              ))
+            }
+          </View>}
+       <TouchableOpacity style={styles.MenuButton} onPress={()=>setvisible(!visible)}>
+            <Icon name={'bars'} style={{fontSize:20}}  color={theme === 'light'? '#000' : '#fff'}/>
+        </TouchableOpacity>
+      </View>
+    )
+  }
   return (
     <View
       style={{backgroundColor: theme === 'light' ? '#fff' : '#000', flex: 1}}>
@@ -462,6 +396,10 @@ const ProfileScreen = ({navigation, route}) => {
         style={styles.container}
         contentContainerStyle={{justifyContent: 'center', alignItems: 'center'}}
         showsVerticalScrollIndicator={false}>
+          <View style={{flexDirection:'row',}}>
+            <View style={{flex:1}}/>
+          {(auth().currentUser.uid ===  userId ) && <PopupMenu/>}
+          </View>
         <Image
           style={styles.userImg}
           source={{
@@ -590,30 +528,7 @@ const ProfileScreen = ({navigation, route}) => {
               </Text>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              setSelectedTab(3);
-            }}>
-            <View
-              style={[
-                styles.userInfoItem,
-                {
-                  backgroundColor:
-                    selectedTab == 3
-                      ? '#8B658B'
-                      : theme === 'light'
-                      ? '#fff'
-                      : '#000',
-                },
-              ]}>
-              <Text style={styles.userInfoTitle}>
-                {savedPlist ? savedPlist.length : 0}
-              </Text>
-              <Text style={styles.userInfoSubTitle}>
-                {language === 'vn' ? 'Đã lưu' : 'Saved'}
-              </Text>
-            </View>
-          </TouchableOpacity>
+        
         </View>
         {selectedTab == 0 && (
           <>
@@ -670,83 +585,7 @@ const ProfileScreen = ({navigation, route}) => {
             ))}
           </>
         )}
-        {selectedTab == 3 && (
-          <>
-            <ScrollView style={{flexDirection: 'column'}}>
-              {savedPlist.map((item, key) => {
-                return (
-                  <TouchableOpacity
-                    key={key}
-                    style={{
-                      backgroundColor:
-                        theme === 'light' ? '#FFFAF0' : '#4F4F4F',
-                      width: '100%',
-                      height: 100,
-                      alignItems: 'center',
-                      flexDirection: 'row',
-                      marginTop: 3,
-                    }}
-                    onPress={() =>
-                      navigation.push('gotoPost', {postid: item.postId})
-                    }>
-                    <Image
-                      style={styles.UserImage}
-                      source={{
-                        uri:
-                          item.postImg.length > 0
-                            ? item.postImg[0]
-                            : 'http://getwallpapers.com/wallpaper/full/2/3/6/153929.jpg',
-                      }}
-                    />
-                    <View
-                      style={{
-                        flexDirection: 'column',
-                        marginLeft: 20,
-                        width: '60%',
-                      }}>
-                      <Text style={styles.userName}>{item.postFoodName}</Text>
-                      <Text style={styles.calories}>
-                        {item.Calories + ' cals/serving'}
-                      </Text>
-                      <CustomRatingBar defaultRating={item.postFoodRating} />
-                    </View>
-                    {userId == auth().currentUser.uid && (
-                      <TouchableOpacity
-                        style={styles.DeleteButton}
-                        onPress={() => {
-                          const filteredData = savedPlist.filter(
-                            i => i.postId !== item.postId,
-                          );
-                          setSavedPlist(filteredData);
-                          const list = [];
-                          for (let i = 0; i < filteredData.length; i++) {
-                            list.push(filteredData[i].postId);
-                          }
-                          const collectionRef =
-                            firestore().collection('SavedPosts');
-                          const documentRef = collectionRef.doc(
-                            auth().currentUser.uid,
-                          );
-                          documentRef.set({postIds: list});
-                          Alert.alert(
-                            'Success',
-                            'You have successfully removed the post from the list',
-                          );
-                        }}>
-                        <Icon
-                          name={'times-circle'}
-                          size={28}
-                          backgroundColor="transparent"
-                          color={theme === 'light' ? '#000' : '#EEE9E9'}
-                        />
-                      </TouchableOpacity>
-                    )}
-                  </TouchableOpacity>
-                );
-              })}
-            </ScrollView>
-          </>
-        )}
+
       </ScrollView>
     </View>
   );
@@ -812,7 +651,7 @@ const styles = StyleSheet.create({
   },
   userInfoItem: {
     justifyContent: 'center',
-    width: 90,
+    width: 110,
     borderRadius: 5,
     paddingVertical: 2,
   },
@@ -846,4 +685,27 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginLeft: 10,
   },
+  MenuButton:{
+    color: 'black', 
+    fontSize: 40, 
+    padding: 10,
+    alignSelf:"center",
+  },
+  popup:{
+    borderRadius:8,
+    borderColor:'#333',
+    borderWidth:1,
+    backgroundColor:'#fff',
+    width:60,
+    height:35,
+    textAlign:'center',
+  },
+  popupitem:
+  {
+    borderBottomColor:'black', 
+    alignItems:'center', 
+    width:45, 
+    alignSelf:'center',
+    paddingVertical:5
+  }
 });

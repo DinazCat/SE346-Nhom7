@@ -11,6 +11,7 @@ import EditComment from '../screens/EditComment';
 import EditPostScreen from'../screens/EditPostScreen';
 import NotificationScreen from '../screens/NotificationScreen';
 import GotoPostScreen from '../screens/GotoPostScreen';
+import savedPostScreen from '../screens/savedPostScreen';
 const Stack = createNativeStackNavigator();
 
 export default function AppStack() {
@@ -49,6 +50,11 @@ export default function AppStack() {
             elevation: 0,
           },
          }}
+      />
+       <Stack.Screen 
+        name='savedScreen' 
+        component={savedPostScreen} 
+        options={{ header: () => null }}
       />
       <Stack.Screen 
         name='commentScreen' 

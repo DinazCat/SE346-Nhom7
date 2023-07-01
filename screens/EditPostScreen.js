@@ -431,6 +431,7 @@ export default EditPostScreen = function ({navigation, route}) {
             borderBottomWidth: 1,
             textAlign: 'center',
           }}
+          keyboardType="numeric"
           onChangeText={val => {
             n = val;
             const index = Ingredient.findIndex(item => item.id === itemI.id);
@@ -458,7 +459,8 @@ export default EditPostScreen = function ({navigation, route}) {
   );
 
   return (
-    <KeyboardAwareScrollView>
+    <KeyboardAvoidingView  style={{}} behavior='padding' enabled>
+        <ScrollView>
     <View
       style={[
         styles.container,
@@ -597,6 +599,7 @@ export default EditPostScreen = function ({navigation, route}) {
                             theme === 'light' ? '#000' : '#fff',
                         },
                       ]}
+                      keyboardType="numeric"
                       value={Total}
                       onChangeText={TextChangetotal}
                     />
@@ -630,6 +633,7 @@ export default EditPostScreen = function ({navigation, route}) {
                             theme === 'light' ? '#000' : '#fff',
                         },
                       ]}
+                      keyboardType="numeric"
                       value={Cal}
                       onChangeText={TextChangecal}
                     />
@@ -816,6 +820,7 @@ export default EditPostScreen = function ({navigation, route}) {
                     value={Summary}
                     onChangeText={TextChangeSummary}
                   />
+                  <View style={{height:60}}/>
                 </ScrollView>
               </View>
             </ScrollView>
@@ -1054,7 +1059,8 @@ export default EditPostScreen = function ({navigation, route}) {
         </View>
       </Popover>
     </View>
-    </KeyboardAwareScrollView>
+    </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 const styles = StyleSheet.create({
