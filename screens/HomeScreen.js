@@ -227,7 +227,7 @@ const HomeScreen = ({navigation}) => {
     <ImageBackground source={theme==='light'?require('../assets/bh_home.png'): require('../assets/bh_home_dark.jpg')} resizeMode="cover" style={{flex: 1}}>
 
       
-        <View style={[styles.container, {backgroundColor: theme === 'light'? '#84D07D' : '#4E4E4E', borderColor: theme === 'light'? '#84D07D' : '#4E4E4E'}]}>
+        <View style={[styles.container, {backgroundColor: theme === 'light'? '#6cab67' : '#4E4E4E', borderColor: theme === 'light'? '#6cab67' : '#4E4E4E'}]}>
         {show && (
         <DateTimePicker
           value={date}
@@ -247,7 +247,7 @@ const HomeScreen = ({navigation}) => {
           </View>
           </TouchableOpacity>
         </View>
-        <View style={[styles.container, { alignItems: "center", justifyContent: "center", backgroundColor: theme === 'light'? '#84D07D' : '#4E4E4E', borderColor: theme === 'light'? '#84D07D' : '#4E4E4E'}]}>
+        <View style={[styles.container, { alignItems: "center", justifyContent: "center", backgroundColor: theme === 'light'? '#6cab67' : '#4E4E4E', borderColor: theme === 'light'? '#6cab67' : '#4E4E4E'}]}>
             <Text style={[styles.text, {color: '#FFFFFF'}]}>{language === 'vn' ? 'Còn lại = Mục tiêu - Thức ăn + Thể dục' : 'Remaining = Goal - Food + Exercire'}</Text>
             <View style={{flexDirection: 'row', alignItems: "center"}}>
                 <View style={{justifyContent: "center", alignItems: "center"}}>
@@ -275,9 +275,9 @@ const HomeScreen = ({navigation}) => {
                     percent={(parseInt(meal))/(parseInt(baseGoal)+parseInt(exercise)) * 100}
                     radius={70}
                     borderWidth={8}
-                    color={(parseInt(baseGoal) + parseInt(exercise) - parseInt(meal) >= 0)? '#14A844' : '#E8142F'}
+                    color={(parseInt(baseGoal) + parseInt(exercise) - parseInt(meal) >= 0)? '#279333' : '#E8142F'}
                     shadowColor="#FFFFFF" //phần trăm không chiếm
-                    bgColor={theme === 'light'? '#84D07D' : '#4E4E4E'} //ở trong vòng tròn
+                    bgColor={theme === 'light'? '#6cab67' : '#4E4E4E'} //ở trong vòng tròn
                   >
                  <Text style={{ fontSize: 16,  color: '#FFFFFF', fontWeight: 'bold'}}>{Math.abs(parseInt(baseGoal)+parseInt(exercise)-parseInt(meal))}</Text>
                  <Text style={{ fontSize: 16, color: '#FFFFFF'}}>{(parseInt(baseGoal) + parseInt(exercise) - parseInt(meal) >= 0)?(language==='vn'?'Còn lại':'Remaining'):(language==='vn'?'Quá':'Over')}</Text>
@@ -308,7 +308,7 @@ const HomeScreen = ({navigation}) => {
                 </View>
             </View>
           </View>
-          <View style={[styles.container, {backgroundColor: theme === 'light'? '#84D07D' : '#4E4E4E', borderColor: theme === 'light'? '#84D07D' : '#4E4E4E'}]}>
+          <View style={[styles.container, {backgroundColor: theme === 'light'? '#6cab67' : '#4E4E4E', borderColor: theme === 'light'? '#6cab67' : '#4E4E4E'}]}>
           <View style={{flexDirection: 'row', alignItems: "center"}}>
             <Image
                 source={require("../assets/microscope.png")}
@@ -332,12 +332,12 @@ const HomeScreen = ({navigation}) => {
           </View>
         </View>
        
-    <View style={{marginTop: 110, marginLeft: 75}}>
+    <View style={{marginTop: 115, marginLeft: 97}}>
       <View style={{flexDirection: 'row'}}>
-        <Text style={{fontWeight: 'bold', fontSize: 25, color: theme==='light'?'#37C142':'#050505'}}>{language==='vn'?'Chỉ số BMI: ':'BMI: '}</Text>
-        <Text style={{fontSize: 25, color: theme==='light'?'#58D77F':'#050505'}}>{bmi}</Text>
+        <Text style={{fontWeight: 'bold', fontSize: 20, color: theme==='light'?'#3D7238':'#050505'}}>{language==='vn'?'Bmi của bạn: ':'Your Bmi: '}</Text>
+        <Text style={{fontSize: 20, color: theme==='light'?'#3D7238':'#050505'}}>{bmi}</Text>
       </View>
-      <Text style={{fontWeight: 'bold', fontSize: 25, color: theme==='light'?'#37C142':'#050505'}}>{evaluate}</Text>
+      <Text style={{fontWeight: 'bold', fontSize: 20, color: theme==='light'?'#3D7238':'#050505'}}>{evaluate}</Text>
     </View>
     </ImageBackground>
     </View>

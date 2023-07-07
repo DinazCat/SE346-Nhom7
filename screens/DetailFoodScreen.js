@@ -83,10 +83,9 @@ const DetailFoodScreen = ({route, navigation}) => {
       }
   }
   const checkInput = () => {
-    Alert.alert('Input cannot be blank');
+    Alert.alert(language==='vn'?'Giá trị cần nhập không thể để trống':'Input cannot be blank')
   }
   const saveCustomFood = async() => {
-    console.log(baseAmount)
     try{
         const imageUrl = await uploadImage(image?.path);
         await firestore().collection('customFoods').add({
@@ -103,7 +102,7 @@ const DetailFoodScreen = ({route, navigation}) => {
         
         console.log('custom food added');
         Alert.alert(
-          'Add custom food succesfully!'
+          language==='vn'?'Thêm thành công':'Successfully added'
         );
         navigation.goBack();
       } 
@@ -128,7 +127,7 @@ const DetailFoodScreen = ({route, navigation}) => {
         
         console.log('custom food updated');
         Alert.alert(
-          'Update custom food succesfully!'
+          language==='vn'?'Cập nhật thành công':'Successfully updated'
         );
         navigation.goBack();
       } 
@@ -190,14 +189,14 @@ const DetailFoodScreen = ({route, navigation}) => {
       </View>
 
       <View style={{alignItems: 'center', flexDirection: 'row', marginStart: 20, borderColor: theme==='light'?"#000":"#fff", borderWidth: 1, borderRadius: 13, width: "90%", marginTop:10}}>
-        <Text style={{fontSize: 17, marginStart: 3, color: theme==='light'?'#000':'#fff'}}>Carbs: </Text>
-        <TextInput keyboardType = 'number-pad' style={{color: theme==='light'?"#000":"#fff", borderColor: theme==='light'?"#000":"#fff", width: 180, height: 60}} 
+        <Text style={{fontSize: 17, marginStart: 3, color: theme==='light'?'#000':'#fff'}}>{language === 'vn' ? 'Đường: ' : 'Carbs: '}</Text>
+        <TextInput keyboardType = 'number-pad' style={{color: theme==='light'?"#000":"#fff", borderColor: theme==='light'?"#000":"#fff", width: 180, height: 60, fontSize: 17}} 
           value={carbs} onChangeText={carbs=>setCarbs(carbs.replace(/[^0-9]/g, ''))}/>
         <Text style={{fontSize: 17, marginStart: 3, color: theme==='light'?'#000':'#fff', marginLeft: 'auto', marginRight: 15}}>g</Text>
       </View>
       <View style={{alignItems: 'center', flexDirection: 'row', marginStart: 20, borderColor: theme==='light'?"#000":"#fff", borderWidth: 1, borderRadius: 13, width: "90%", marginTop:10}}>
         <Text style={{fontSize: 17, marginStart: 3, color: theme==='light'?'#000':'#fff'}}>{language === 'vn' ? 'Chất đạm: ' : 'Protein: '}</Text>
-        <TextInput keyboardType = 'number-pad' style={{color: theme==='light'?"#000":"#fff", borderColor: theme==='light'?"#000":"#fff", width: 180, height: 60}} 
+        <TextInput keyboardType = 'number-pad' style={{color: theme==='light'?"#000":"#fff", borderColor: theme==='light'?"#000":"#fff", width: 180, height: 60, fontSize: 17}} 
           value={protein} onChangeText={protein => setProtein(protein.replace(/[^0-9]/g, ''))}/>
         <Text style={{fontSize: 17, marginStart: 3, color: theme==='light'?'#000':'#fff', marginLeft: 'auto', marginRight: 15}}>g</Text>
       </View>
@@ -268,7 +267,7 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     marginTop: 15,
-    
+    resizeMode: 'stretch'
   },
   icon: {
     width: 25,

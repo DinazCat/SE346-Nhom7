@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from "react";
-import {View, Text, StyleSheet, TextInput, Image, TouchableOpacity, FlatList, Dimensions} from "react-native";
+import {View, Text, StyleSheet, TextInput, Image, TouchableOpacity, Alert} from "react-native";
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch } from "react-redux";
@@ -46,7 +46,16 @@ const CustomRecipeScreen = () => {
   const Delete = (selectedItem, rowMap) => {
     let index = datas.findIndex(item=>item.id === selectedItem.id)
     rowMap[`${index}`].closeRow();
-    firestore().collection('customRecipe').doc(selectedItem.id).delete().then(() => {});
+    Alert.alert(language==='vn'?'Xóa':'Delete', language==='vn'?'Bạn có chắc chắc muốn xóa?':'Do you want to remove', [
+      {
+        text: language==='vn'?'Hủy':'Cancel',
+        
+        style: 'cancel',
+      },
+      {text: language==='vn'?'Đồng ý':'OK', onPress: () => {
+        firestore().collection('customRecipe').doc(selectedItem.id).delete().then(() => {});
+      }},
+    ]);
     
   }
   const is_edit = (selectedItem, rowMap) =>{

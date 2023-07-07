@@ -366,7 +366,11 @@ export default AddPostScreen= function({navigation}) {
    
       
     return (
-      <KeyboardAvoidingView  style={{}} behavior='padding' enabled>
+      <View style={[
+        styles.container,
+        {backgroundColor: theme === 'light' ? '#fff' : '#000'},
+      ]}>
+      <KeyboardAvoidingView behavior='padding' enabled>
         <ScrollView>
       <View style={[styles.container, {backgroundColor: theme === 'light'? '#fff' : '#000'}]}>
         <View
@@ -587,6 +591,7 @@ export default AddPostScreen= function({navigation}) {
               </Text>
             </View>
               <View style={[styles.TextBox, {borderColor:theme === 'light'? '#000' : '#fff'}]}>
+              <ScrollView horizontal={true}>
                 <ScrollView>
                 <Text style={[styles.TextStyle,{marginTop:20, color:theme === 'light'? '#000' : '#fff'}]}>Meal Type</Text>
                 <FlatList
@@ -624,6 +629,7 @@ export default AddPostScreen= function({navigation}) {
                   numColumns={3}
                 />
                 <View style={{height:50, width:"100%"}}/>
+                </ScrollView>
                 </ScrollView>
               </View>
             </>
@@ -752,6 +758,7 @@ export default AddPostScreen= function({navigation}) {
       
         </ScrollView>
        </KeyboardAvoidingView> 
+       </View>
     )
 }
 const styles = StyleSheet.create({

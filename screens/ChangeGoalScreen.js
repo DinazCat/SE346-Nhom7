@@ -164,11 +164,11 @@ const updateBmr = async() => {
         style={{ height: 50, width: 210, alignSelf: 'center', color: theme === 'light'? '#000' : '#fff'}}
         onValueChange={(itemValue, itemIndex) => setActivityLevel(itemValue)}
       >
-        <Picker.Item label="Not very active" value="Not very active" />
-        <Picker.Item label="Lightly active" value="Lightly active" />
-        <Picker.Item label="Moderate" value="Moderate" />
-        <Picker.Item label="Active" value="Active" />
-        <Picker.Item label="Very active" value="Very active" />
+        <Picker.Item label={language==='vn'?'Không năng động':'Not very active'} value="Not very active" />
+        <Picker.Item label={language==='vn'?'Khá năng động':'Lightly active'} value="Lightly active" />
+        <Picker.Item label={language==='vn'?'Bình thường':'Moderate'} value="Moderate" />
+        <Picker.Item label={language==='vn'?'Năng động':'Active'} value="Active" />
+        <Picker.Item label={language==='vn'?'Cực năng động':'Very active'} value="Very active" />
       </Picker>: null}
       
       </View>
@@ -180,9 +180,9 @@ const updateBmr = async() => {
         style={{ height: 50, width: 220, alignSelf: 'center', color: theme === 'light'? '#000' : '#fff'}}
         onValueChange={(itemValue, itemIndex) => setGoal(itemValue)}
       >
-        <Picker.Item label="Lose weight" value="Lose weight" />
-        <Picker.Item label="Maintain weight" value="Maintain weight" />
-        <Picker.Item label="Gain weight" value="Gain weight" />
+        <Picker.Item label={language==='vn'?'Giảm cân':'Lose weight'} value="Lose weight" />
+        <Picker.Item label={language==='vn'?'Giữ cân':'Maintain weight'} value="Maintain weight" />
+        <Picker.Item label={language==='vn'?'Tăng cân':'Gain weight'} value="Gain weight" />
         
       </Picker>:null}
       
@@ -192,12 +192,12 @@ const updateBmr = async() => {
       {(goal!='Maintain weight' && goal)?<Picker
         selectedValue={weeklyGoal}
         dropdownIconColor = {theme === 'light'? '#000':'#fff'}
-        style={{width: 350, alignSelf: 'center', color: theme === 'light'? '#000' : '#fff'}}
+        style={{width: 300, alignSelf: 'center', color: theme === 'light'? '#000' : '#fff'}}
         onValueChange={(itemValue, itemIndex) => setWeeklyGoal(itemValue)}
       >
-        <Picker.Item label={goal+" 0,25 kg per week"} value="0.25" />
-        <Picker.Item label={goal+" 0,5 kg per week"} value="0.5" />
-        <Picker.Item label={goal+" 1 kg per week"} value="1" />
+        <Picker.Item label={(language==='vn'? (goal=='Lose weight'? 'Giảm':'Tăng'):(goal=='Lose weight'? 'Lose':'Gain')) + " 0.25 kg per week"} value="0.25" />
+        <Picker.Item label={(language==='vn'? (goal=='Lose weight'? 'Giảm':'Tăng'):(goal=='Lose weight'? 'Lose':'Gain')) + " 0.5 kg per week"} value="0.5" />
+        <Picker.Item label={(language==='vn'? (goal=='Lose weight'? 'Giảm':'Tăng'):(goal=='Lose weight'? 'Lose':'Gain')) + " 1 kg per week"} value="1" />
         
       </Picker>: null}
       

@@ -14,15 +14,81 @@ import ThemeContext from "../context/ThemeContext";
 import PopFoodAmount from "./PopFoodAmount";
 const stapleFood = [
   {
+    image: 'https://media.istockphoto.com/id/685772628/photo/raw-organic-fresh-green-fava-beans.jpg?s=612x612&w=0&k=20&c=Mf8j77IE_KjFxkl84J-UheJmokrzfrP4gptyC6mQ7J8=', 
+    name: 'Lentils raw', 
+    calories: '176', unit:'g', baseAmount:'50', fat: '1', carbs: '32', protein: '12'
+    },
+    {
+      image: 'https://www.pngkit.com/png/full/46-466335_yellow-split-peas-png.png', 
+      name: 'Yellow split peas raw', 
+      calories: '524', unit:'g', baseAmount:'144', fat: '6', carbs: '89', protein: '33'
+      },
+      {
+        image: 'https://cdn-icons-png.flaticon.com/512/723/723523.png', 
+        name: 'Water', 
+        calories: '0', unit:'cup', baseAmount:'1', fat: '0', carbs: '0', protein: '0'
+        },
+      {
+        image: 'https://daylambanh.edu.vn/wp-content/uploads/2019/06/cottage-cheese-la-gi.jpg', 
+        name: 'Cottage cheese low fat 1% milkfat', 
+        calories: '163', unit:'cup', baseAmount:'1', fat: '2', carbs: '6', protein: '28'
+        },
+      {
+        image: 'https://cdn-icons-png.flaticon.com/512/1625/1625122.png',
+        name: 'Tofu', 
+        calories: '144', unit:'g', baseAmount:'100', fat: '9', carbs: '3', protein: '17'
+        },
+        {
+          image: 'https://file.hstatic.net/1000282430/article/ph_n_bi_t_8_lo_i_ph__mai_ph__bi_n_nh_t_9b7f3bda12d54ac28719e1262b5ef782_1024x1024.jpg',
+          name: 'Goat cheese hard', 
+          calories: '90', unit:'g', baseAmount:'20', fat: '7', carbs: '0', protein: '6'
+          },
+        {
+          image: 'https://vinmec-prod.s3.amazonaws.com/images/20210613_080410_028442_cach-tri-mun-dau-de.max-1800x1800.jpg',
+          name: 'Egg white raw', 
+          calories: '34', unit:'large', baseAmount:'2', fat: '0', carbs: '0', protein: '7'
+          },
+  {
     image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Bowl-of-rice_icon.svg/948px-Bowl-of-rice_icon.svg.png', 
     name: 'Rice', 
     calories:'130', unit:'bowl', baseAmount:'1', fat: '0', carbs: '28', protein: '2' 
   },
   {
-    image: 'https://img.freepik.com/premium-photo/bitter-gourd-stir-fried-with-eggs_71919-1126.jpg', 
-    name: 'Stir-fried gourd with eggs', 
-    calories: '109', unit:'plate', baseAmount:'1', fat: '19', carbs: '4', protein: '6'
+    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Turkish_strained_yogurt.jpg/640px-Turkish_strained_yogurt.jpg', 
+    name: 'Yogurt plain whole milk', 
+    calories:'149', unit:'cup', baseAmount:'1', fat: '8', carbs: '11', protein: '9' 
+  },
+  
+  {
+    image: 'https://file.medinet.gov.vn//UploadImages/tytphuong9qgv/an-trung-bi-ngo-doc-8-1637513372840917017780.jpg?w=900',
+    name: 'Egg yolk raw', 
+    calories: '55', unit:'large', baseAmount:'1', fat: '5', carbs: '1', protein: '3'
     },
+  {
+    image: 'https://cdn-icons-png.flaticon.com/512/684/684631.png', 
+    name: 'Milk whole 3.25% milkfat', 
+    calories:'149', unit:'cup', baseAmount:'1', fat: '8', carbs: '12', protein: '8' 
+  },
+  {
+    image: 'https://img.freepik.com/premium-vector/raw-chicken-breast-fillet-wooden-cutting-board_694196-151.jpg', 
+    name: 'Chicken breast raw', 
+    calories:'216', unit:'g', baseAmount:'200', fat: '6', carbs: '0', protein: '41' 
+  },
+  {
+    image: 'https://www.thepurposefulpantry.com/wp-content/uploads/2021/05/boil-hamburger-feat-1.jpg', 
+    name: 'Beef ground', 
+    calories:'168', unit:'g', baseAmount:'85', fat: '11', carbs: '0', protein: '17' 
+  },
+  {
+    image: 'https://www.ayumi.co.uk/wp-content/uploads/2020/06/Ayumi_Products_900x900_OliveOil1_v5.jpg', 
+    name: 'Olive oil', 
+    calories:'40', unit:'tsp', baseAmount:'1', fat: '5', carbs: '0', protein: '0' 
+  },
+  {
+    image: 'https://cdn.tgdd.vn/2021/07/CookProductThumb/100gr-thit-heo-bao-nhieu-calo-an-thit-heo-co-tot-khong-va-luu-y-khi-an-1b-620x620.jpg', 
+    name: 'Pork raw', 
+    calories:'242', unit:'g', baseAmount:'100', fat: '14', carbs: '0', protein: '27' 
+  },
     {
       image: 'https://www.freepnglogos.com/uploads/blueberries-png/blueberries-png-image-purepng-transparent-png-image-library-27.png', 
       name: 'Blueberries raw', 
@@ -38,16 +104,17 @@ const stapleFood = [
     name: 'Seaweed Nori dried', 
     calories: '5', unit:'sheet', baseAmount:'1', fat: '0', carbs: '1', protein: '1'
     },
-  {
-    image: 'https://target.scene7.com/is/image/Target/GUEST_0194a7b1-abe7-4df9-b655-2d08529e0206?wid=488&hei=488&fmt=pjpeg', 
-    name: 'Carbonated ginger ale', 
-    calories: '124', unit:'fl oz', baseAmount:'12', fat: '0', carbs: '32', protein: '0'
-    },
+  
   {
     image: 'https://assets.mynetdiary.com/SystemPictures/web/14201.webp?1553628', 
     name: 'Coffee black no sugar', 
     calories: '2', unit:'cup', baseAmount:'1', fat: '1', carbs: '0', protein: '0'
     },
+    {
+      image: 'https://www.richs.com.vn/images/Blog/Trends/cream-cheese-pho-mai-con-bo-cuoi-cach-lam/cream_cheese_pho_mai_con_bo_cuoi%20-%20Copy%201.jpg', 
+      name: 'Cream cheese', 
+      calories: '51', unit:'tbsp', baseAmount:'1', fat: '5', carbs: '1', protein: '1'
+      },
   {
     image: 'https://cdn-icons-png.flaticon.com/512/5501/5501076.png', 
     name: 'Almond meal', 
@@ -73,26 +140,13 @@ const stapleFood = [
     name: 'Rolls dinner', 
     calories: '87', unit:'roll', baseAmount:'1', fat: '2', carbs: '15', protein: '3'
     },
-  {
-    image: 'https://png.pngtree.com/png-clipart/20221218/original/pngtree-naan-bread-png-image_8772779.png', 
-    name: 'Naan bread', 
-    calories: '262', unit:'piece', baseAmount:'1', fat: '5', carbs: '45', protein: '9'
-    },
-  {
-    image: 'https://cdn-icons-png.flaticon.com/512/3075/3075977.png', 
-    name: 'Hamburger bun', 
-    calories: '120', unit:'roll', baseAmount:'1', fat: '2', carbs: '22', protein: '4'
-    },
+  
   {
     image: 'https://media.istockphoto.com/id/1251655603/vector/illustration-of-canned-tuna.jpg?s=612x612&w=0&k=20&c=YPEuE1upoqnC5DXXABpZc9ZaPOpgOEJcUuskI4COEsY=', 
     name: 'Tuna light canned in oil', 
     calories: '339', unit:'can', baseAmount:'1', fat: '2', carbs: '0', protein: '32'
     },
-  {
-    image: 'https://cdn.shopify.com/s/files/1/0598/8329/0804/products/2033143101_1024x1024.jpg?v=1633522497', 
-    name: 'Whitefish smoked', 
-    calories: '147', unit:'cup', baseAmount:'1', fat: '1', carbs: '0', protein: '32'
-    },
+  
     {
       image: 'https://img.freepik.com/free-photo/fresh-squid_1339-6216.jpg?w=2000', 
       name: 'Squid raw', 
@@ -103,26 +157,17 @@ const stapleFood = [
         name: 'Snails raw', 
         calories: '90', unit:'g', baseAmount:'100', fat: '1', carbs: '2', protein: '16'
         },
-  {
-  image: 'https://cdn.media.amplience.net/i/japancentre/recipe-1434-unagi-don-grilled-eel-rice-bowl/Unagi-don-grilled-eel-rice-bowl?$poi$&w=1200&h=630&sm=c&fmt=auto', 
-  name: 'Eel cooked dry heat', 
-  calories: '118', unit:'g', baseAmount:'50', fat: '7', carbs: '0', protein: '12'
-  },
-  {
-  image: 'https://www.deliaonline.com/sites/default/files/quick_media/fish-smoked-haddock-with-creme-fraiche-chive-and-butter-sauce.jpg', 
-  name: 'Haddock smoked', 
-  calories: '116', unit:'g', baseAmount:'100', fat: '1', carbs: '0', protein: '25'
-  },
-  {
-    image: 'https://whiteangusranch.com/wp-content/uploads/2019/04/AllBeefHotDogs.jpg', 
-    name: 'Hot dog all beef', 
-    calories: '167', unit:'serving', baseAmount:'1', fat: '15', carbs: '1', protein: '6'
-    },
+  
   {
     image: 'https://www.mashed.com/img/gallery/the-side-effect-that-will-make-you-want-to-eat-more-liver/intro-1611519051.jpg', 
     name: 'Beef liver raw', 
     calories: '135', unit:'g', baseAmount:'100', fat: '4', carbs: '4', protein: '20'
     },
+    {
+      image: 'https://media.istockphoto.com/id/685772628/photo/raw-organic-fresh-green-fava-beans.jpg?s=612x612&w=0&k=20&c=Mf8j77IE_KjFxkl84J-UheJmokrzfrP4gptyC6mQ7J8=', 
+      name: 'Fava beans raw', 
+      calories: '341', unit:'g', baseAmount:'100', fat: '2', carbs: '58', protein: '26'
+      },
   {
     image: 'https://png.pngtree.com/png-vector/20221123/ourmid/pngtree-lemon-icon-png-image_6477461.png', 
     name: 'Lemon raw', 
@@ -217,13 +262,13 @@ const IngredientScreen = ({route}) => {
         <View style={{alignItems: 'center', justifyContent:'center', flexDirection: 'row'}}>
           <Image
             source={{uri:image}}
-            style={{height: 120, width: 120, marginVertical: 10}}
+            style={{height: 120, width: 120, marginVertical: 10, resizeMode: 'stretch'}}
           />
         <View style={{marginStart: 15, marginVertical: 5}}>
             <Text style={{fontSize: 15, width: 150}}>{name}</Text>
             <Text style={{fontSize: 15}}>{calories} cals/{(baseAmount!='1')?baseAmount+" ":''}{unit}</Text>
             <View style={{flexDirection: 'row'}}>
-            <Text style={{fontSize: 13, color: '#5ADFC8'}}>Carbs: </Text>
+            <Text style={{fontSize: 13, color: '#5ADFC8'}}>{language==='vn'?'Đường: ':'Carbs: '} </Text>
             <Text style={{fontSize: 13}}>{carbs} g</Text>
             </View>
             <View style={{flexDirection: 'row'}}>

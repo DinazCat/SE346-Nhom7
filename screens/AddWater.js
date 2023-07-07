@@ -16,25 +16,26 @@ const AddWater = (props) => {
     const theme = useContext(ThemeContext)
     const saveWater = async() => {
         if (water==""){
-            Alert.alert('Input cannot be blank')
+            Alert.alert(language==='vn'?'Giá trị cần nhập không thể để trống':'Input cannot be blank')
         }
         
         else{
-            if(props.isNavigation){
-                navigation.goBack();
-            }
-            else{
-                navigation.navigate('Home', { screen: 'DetailWaterScreen', params: {time: time}})
-            }
+            
             await firestore().collection('water').add({
                 userId: user.uid,
                 time: props.date,
                 amount: water,
                 isChecked: false
             })
-            
-            
-
+            Alert.alert(
+                language==='vn'?'Thêm thành công':'Successfully added'
+            )
+            if(props.isNavigation){
+                navigation.goBack();
+            }
+            else{
+                navigation.navigate('Home', { screen: 'DetailWaterScreen', params: {time: time}})
+            }
     }
     }
     return (

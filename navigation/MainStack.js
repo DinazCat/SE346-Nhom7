@@ -5,14 +5,13 @@ import firestore from '@react-native-firebase/firestore';
 import QuestionStack from './QuestionStack';
 import { AuthContext } from '../navigation/AuthProvider';
 import TabsNavigator from './TabsNavigator';
-
+import {View, Image} from "react-native";
 
 const MainStack = () => {
 
   const [initialScreen, setInitialScreen] = useState('');
   const [isLoading, setLoading] = useState(true);
   const {user} = useContext(AuthContext);
-
   const isQuestionNull = async () => {
 
     await firestore()
@@ -51,7 +50,20 @@ const MainStack = () => {
   }, []);
 
   if(isLoading){
-    return <ActivityIndicator size="large" color="#0BC25D" style={{marginTop: 15}}/>
+    return <View style={{position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center'}}>
+      <Image 
+                source={require('../assets/waitingFox.jpg')} style={{height: 250,
+                  width: 200,
+                  resizeMode: 'cover'}}
+            />
+      <ActivityIndicator size="large" color="#B29641" style={{marginTop: 10}}/>
+      </View>
   }
   else{
     if (initialScreen == 'TabsNavigator'){

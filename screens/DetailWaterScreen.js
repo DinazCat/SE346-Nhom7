@@ -40,13 +40,13 @@ const DetailWaterScreen = ({route, navigation}) => {
   
     const deleteWater = (item) => {
       
-        Alert.alert('Delete', 'Do you want to remove water?', [
+        Alert.alert(language==='vn'?'Xóa':'Delete', language==='vn'?'Bạn có chắc chắc muốn xóa?':'Do you want to remove', [
               {
-                text: 'Cancel',
+                text: language==='vn'?'Hủy':'Cancel',
                 
                 style: 'cancel',
               },
-              {text: 'OK', onPress: () => {
+              {text: language==='vn'?'Đồng ý':'OK', onPress: () => {
                 firestore().collection('water').doc(item.id).delete().then(() => {});
               }},
         ]);

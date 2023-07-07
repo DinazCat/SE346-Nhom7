@@ -168,13 +168,13 @@ const DetailHomeScreen = ({route, navigation}) => {
     navigation.navigate("EditFood", {item:item, isEdit: true, mealType: item.mealType})
   }
     const deleteFoodsDiary = (item) => {
-        Alert.alert('Delete', 'Do you want to remove ingredient?', [
-              {
-                text: 'Cancel',
-                
-                style: 'cancel',
-              },
-              {text: 'OK', onPress: () => {
+      Alert.alert(language==='vn'?'Xóa':'Delete', language==='vn'?'Bạn có chắc chắc muốn xóa?':'Do you want to remove', [
+        {
+          text: language==='vn'?'Hủy':'Cancel',
+          
+          style: 'cancel',
+        },
+        {text: language==='vn'?'Đồng ý':'OK', onPress: () => {
                 firestore().collection('foodsDiary').doc(item.id).delete().then(() => {});
               }},
         ]);
@@ -503,7 +503,7 @@ const DetailHomeScreen = ({route, navigation}) => {
     <Text style={{color: theme==='light'?"#000":"#fff", fontWeight: 'bold', fontSize: 17}}>{language==='vn'?'Hàm lượng dinh dưỡng trong ngày':'Day macros'}</Text>
     <View style={{marginVertical:3}}>
           <View style={{flexDirection: 'row', marginVertical:10}}> 
-          <Text style={{color: '#5ADFC8', marginRight: 5}}>Carbs</Text>
+          <Text style={{color: '#5ADFC8', marginRight: 5}}>{language==='vn'?'Đường':'Carbs'}</Text>
         <Text style={{color: theme==='light'?"#000":"#fff"}}>{totalCarbs}g, {(parseInt(totalCarbs)*40000/(caloriesBudget*45)).toFixed()}% {language=='vn'?'của ':'of '}{(caloriesBudget*45/400).toFixed()}g</Text>
         </View>
         <Progress.Bar progress={parseInt(totalCarbs)*400/(caloriesBudget*45)} width={380} color="#5ADFC8"/>
@@ -550,7 +550,7 @@ const DetailHomeScreen = ({route, navigation}) => {
     source={{uri: 'https://files.softicons.com/download/toolbar-icons/mono-general-icons-2-by-custom-icon-design/png/512x512/copy.png'}}
     style={{height: 25, width: 25}}
   />
-  <Text style={styles.text}>Copy</Text>
+  <Text style={styles.text}>{language==='vn'?'Sao chép': 'Copy'}</Text>
   </View>
 </TouchableOpacity>
 <TouchableOpacity onPress={move}>
@@ -559,7 +559,7 @@ const DetailHomeScreen = ({route, navigation}) => {
     source={{uri: 'https://cdn-icons-png.flaticon.com/512/6469/6469436.png'}}
     style={{height: 25, width: 25}}
   />
-  <Text style={styles.text}>Move</Text>
+  <Text style={styles.text}>{language==='vn'?'Chuyển': 'Move'}</Text>
   </View>
 </TouchableOpacity>
 <TouchableOpacity onPress={deleteSelectedItems}>
@@ -568,7 +568,7 @@ const DetailHomeScreen = ({route, navigation}) => {
     source={{uri: 'https://cdn-icons-png.flaticon.com/512/3405/3405244.png'}}
     style={{height: 25, width: 25}}
   />
-  <Text style={styles.text}>Delete</Text>
+  <Text style={styles.text}>{language==='vn'?'Xóa': 'Delete'}</Text>
   </View>
 </TouchableOpacity>
 <TouchableOpacity onPress={close}>

@@ -127,7 +127,7 @@ const StatisticsWeightScreen = () => {
         if (listWeightsOneMonth.length == 0 || listWeightsOneWeek.length == 0 || listWeightsOneYear.length == 0) {
     return (
       <View style={{marginTop: 130, flex: 1, alignItems: 'center'}}>
-        <Text style={[styles.text, {color: theme === 'light'? '#000000' : '#FFFFFF'}]}>Loading!</Text>
+        <Text style={[styles.text, {color: theme === 'light'? '#000000' : '#FFFFFF'}]}>{language==='vn'?'Đang tải!':'Loading!'}</Text>
       </View>
     );
   }

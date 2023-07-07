@@ -34,7 +34,7 @@ const EditFoodScreen = ({route}) => {
   const Edit = async() => {
     
       if (textInput==""){
-        Alert.alert('Input cannot be blank')
+        Alert.alert(language==='vn'?'Giá trị cần nhập không thể để trống':'Input cannot be blank')
       }
       else{
       await firestore().collection('foodsDiary').doc(route.params?.item.id).update({
@@ -45,15 +45,18 @@ const EditFoodScreen = ({route}) => {
         protein: (parseFloat(textInput) * parseInt(route.params?.item.baseProtein) / parseInt(route.params?.item.baseAmount)).toFixed(),
         calories: (parseFloat(textInput) * parseInt(route.params?.item.baseCalories) / parseInt(route.params?.item.baseAmount)).toFixed(),
       })
+      Alert.alert(
+        language==='vn'?'Cập nhật thành công':'Successfully updated'
+    )
       navigation.goBack();
     }
   }
   const Add = async() => {
     if (textInput==""){
-      Alert.alert('Input cannot be blank')
+      Alert.alert(language==='vn'?'Giá trị cần nhập không thể để trống':'Input cannot be blank')
     }
     else{
-    firestore().collection('foodsDiary').add({
+    await firestore().collection('foodsDiary').add({
       userId: user.uid,
       time: time,
       name: route.params?.item.name,
@@ -73,6 +76,9 @@ const EditFoodScreen = ({route}) => {
       isCustom: false,
       isChecked: false
     })
+    Alert.alert(
+      language==='vn'?'Thêm thành công':'Successfully added'
+  )
     if(route.params?.nameScreen == 'DetailMealScreen'){
       navigation.navigate('Home', { screen: 'DetailMealScreen', params: {time: time, mealType: route.params?.mealType}})
     }
@@ -101,7 +107,7 @@ const EditFoodScreen = ({route}) => {
         <View style={{alignItems: 'center', justifyContent:'center', flexDirection: 'row'}}>
           <Image
             source={{uri:route.params?.item.image}}
-            style={{height: 110, width: 110, marginVertical: 10}}
+            style={{height: 110, width: 110, marginVertical: 10, resizeMode: 'stretch'}}
           />
           <View style={{marginStart: 15}}>
             <Text style={{fontSize: 16, width: 150, color: theme==='light'?"#000":"#fff"}}>{route.params?.item.name}</Text>

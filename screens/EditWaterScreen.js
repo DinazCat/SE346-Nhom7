@@ -17,13 +17,15 @@ const EditWaterScreen = ({route}) => {
       }
     const saveWater = async() => {
         if (water==""){
-            Alert.alert('Input cannot be blank')
+            Alert.alert(language==='vn'?'Giá trị cần nhập không thể để trống':'Input cannot be blank')
         }
         else{
-            navigation.goBack();
+            
             firestore().collection('water').doc(route.params?.item.id).update({
                 amount: water
             })
+            Alert.alert(language==='vn'?'Cập nhật thành công':'Successfully updated')
+            navigation.goBack();
         }
     }
     return (

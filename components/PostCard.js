@@ -145,7 +145,16 @@ const PostCard = ({item, onUserPress, onCommentPress,onImagePress,deletePost,edi
 
       const onSharePost = () => {
         const postLink = 'https://foodblog?postId=' + item.postId;
-        const shareMessage = `Tên món ăn: ${item.postFoodName}\nĐộ khó: ${item.postFoodRating}\nNguyên liệu: ${item.postFoodIngredient}\nCách làm: ${item.postFoodMaking}\nTổng kết: ${item.postFoodSummary}\n\nXem thêm tại: ${postLink}`;
+        
+        let Ingredient=  item.postFoodIngredient[0].name + ' (' + item.postFoodIngredient[0].wty + ' ' + item.postFoodIngredient[0].dv + ')';
+        for(let i = 1; i < item.postFoodIngredient.length; i++)
+        {
+          Ingredient += ", "+  item.postFoodIngredient[i].name + ' (' + item.postFoodIngredient[i].wty + ' ' + item.postFoodIngredient[i].dv + ')';
+        }
+        const shareMessage = `Tên món ăn: ${item.postFoodName}\nĐộ khó: ${item.postFoodRating}\nNguyên liệu: ${
+        
+          
+          Ingredient}\nCách làm: ${item.postFoodMaking}\nTổng kết: ${item.postFoodSummary}\n\nXem thêm tại: ${postLink}`;
         const options = {
           title: 'Chia sẻ bài đăng',
           message: shareMessage,
@@ -512,7 +521,7 @@ const styles = StyleSheet.create({
       borderColor:'#333',
       borderWidth:1,
       backgroundColor:'#fff',
-      width:60,
+      width:62,
       height:65,
       textAlign:'center',
     },
@@ -520,7 +529,7 @@ const styles = StyleSheet.create({
     {
       borderBottomColor:'black', 
       alignItems:'center', 
-      width:45, 
+      width:60, 
       alignSelf:'center',
       paddingVertical:5
     }

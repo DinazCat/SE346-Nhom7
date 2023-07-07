@@ -231,7 +231,7 @@ const NotificationScreen = ({navigation}) => {
 export default NotificationScreen;
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 0.95,
     flexDirection: 'column',
     backgroundColor: '#fff',
   },

@@ -91,26 +91,10 @@ const SearchScreen = ({navigation}) => {
         .orderBy('postTime', 'desc')
         .get()
         .then(querySnapshot => {
-          querySnapshot.forEach(doc => {
-            const {
-              userId,
-              postFoodName,
-              postFoodRating,
-              postFoodMaking,
-              postFoodIngredient,
-              postFoodSummary,
-              postImg,
-              postTime,
-              comments,
-              likes,
-              name,
-              userImg,
-            } = doc.data();
-            var Time =
-              new Date(postTime._seconds * 1000).toDateString() +
-              ' at ' +
-              new Date(postTime._seconds * 1000).toLocaleTimeString();
-            list.push({
+          querySnapshot.forEach(doc =>{
+            const {userId,postFoodName, postFoodRating, postFoodMaking, postFoodIngredient, postFoodSummary, postImg, postTime, comments,likes,name,userImg,total, Calories, Prep, Cooking, hashtags} = doc.data();
+            var Time = new Date(postTime._seconds * 1000).toDateString() + ' at ' + new Date(postTime._seconds * 1000).toLocaleTimeString()
+            list.push({          
               postId: doc.id,
               userId: userId,
               userName: name,
@@ -118,17 +102,19 @@ const SearchScreen = ({navigation}) => {
               postTime: Time,
               postFoodName: postFoodName,
               postFoodRating: postFoodRating,
-              postFoodIngredient: postFoodIngredient,
+              postFoodIngredient:postFoodIngredient,
               postFoodMaking: postFoodMaking,
               postFoodSummary: postFoodSummary,
+              total:total, Calories:Calories, Prep:Prep, Cooking:Cooking, hashtags:hashtags,
               postImg: postImg,
-              liked: true,
+             // liked: true,
               likes: likes,
               comments: comments,
               liked: false,
             });
+          })
           });
-        });
+        
       setPosts(list);
     } catch (e) {
       console.log(e);
@@ -193,10 +179,14 @@ const SearchScreen = ({navigation}) => {
   };
 
   return (
+    <View style={[
+      styles.container,
+      {backgroundColor: theme === 'light' ? '#fff' : '#000'},
+    ]}>
     <View
       style={[
         styles.container,
-        {backgroundColor: theme === 'light' ? '#fff' : '#000'},
+        {backgroundColor: theme === 'light' ? '#fff' : '#000', marginBottom: 200},
       ]}>
       <View style={styles.part1}>
         <TextInput
@@ -370,6 +360,7 @@ const SearchScreen = ({navigation}) => {
           )}
         </View>
       )}
+    </View>
     </View>
   );
 };

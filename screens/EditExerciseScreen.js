@@ -25,21 +25,21 @@ const EditExerciseScreen = ({route}) => {
   const editExercise = () => {
     
       if (textInput==""){
-        Alert.alert('Input cannot be blank')
+        Alert.alert(language==='vn'?'Giá trị cần nhập không thể để trống':'Input cannot be blank')
       }
       else{
-        navigation.goBack();
         firestore().collection('exercise').doc(route.params?.item.id).update({
             amount: textInput,
             calories: (parseFloat(textInput) * parseInt(route.params?.item.baseCalories) / 60).toFixed(),
         })
+        Alert.alert(language==='vn'?'Cập nhật thành công':'Successfully updated')
+        navigation.goBack();
     }
   }
   const addExercise = async() => {
     
     if (textInput==""){
-      Alert.alert('Input cannot be blank')
-      
+      Alert.alert(language==='vn'?'Giá trị cần nhập không thể để trống':'Input cannot be blank')
     }
     else{
       await firestore().collection('exercise').add({
@@ -53,6 +53,9 @@ const EditExerciseScreen = ({route}) => {
         calories: (parseFloat(textInput) * parseInt(route.params?.item.calories) / 60).toFixed(),
         
       })
+      Alert.alert(
+        language==='vn'?'Thêm thành công':'Successfully added'
+    )
       navigation.navigate('Home', { screen: 'DetailExerciseScreen', params: {time: time}})
   }
 }
@@ -67,7 +70,7 @@ const EditExerciseScreen = ({route}) => {
         <View style={{alignItems: 'center', justifyContent:'center', flexDirection: 'row'}}>
           <Image
             source={{uri: route.params?.item.image}}
-            style={{height: 110, width: 110, marginVertical: 10}}
+            style={{height: 110, width: 110, marginVertical: 10, resizeMode: 'stretch'}}
           />
           <View style={{marginStart: 15}}>
             <Text style={{fontSize: 16, width: 150, color: theme==='light'?"#000":"#fff"}}>{route.params?.item.name}</Text>
@@ -91,7 +94,7 @@ const EditExerciseScreen = ({route}) => {
         {isEdit?<TouchableOpacity style={styles.button} onPress={()=>editExercise()}>
           <Text style={styles.text}>{language === 'vn' ? 'Lưu' : 'Save'}</Text>
         </TouchableOpacity>:<TouchableOpacity style={styles.button} onPress={()=>addExercise()}>
-          <Text style={styles.text}>{language === 'vn' ? 'Lưu' : 'Save'}</Text>
+          <Text style={styles.text}>{language === 'vn' ? 'Thêm' : 'Add'}</Text>
         </TouchableOpacity>}
           
           </View>

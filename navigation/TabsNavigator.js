@@ -15,7 +15,7 @@ const Tab = createBottomTabNavigator();
 const TabsNavigator = () => {
   const theme = useContext(ThemeContext);
   const getIconColor = focused => ({
-   tintColor: focused ? "#6360DC" : (theme==='light'?"#000": '#FFFFFF'),
+   tintColor: focused ? "#1DA81D" : (theme==='light'?"#000": '#FFFFFF'),
   });
   const {opened, toggleOpened} = useTabMenu();
   
@@ -32,8 +32,9 @@ const TabsNavigator = () => {
       <Tab.Screen
         name="Home"
         component={HomeStack}
+        
         options={{
-          unmountOnBlur: true,
+          
           tabBarItemStyle: {
             height: 0,
           },

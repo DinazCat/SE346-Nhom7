@@ -514,7 +514,7 @@ const ProfileScreen = ({navigation, route}) => {
                 {
                   backgroundColor:
                     selectedTab == 2
-                      ? '#e05c5c'
+                      ? '#A7C9FF'
                       : theme === 'light'
                       ? '#fff'
                       : '#000',
@@ -696,7 +696,7 @@ const styles = StyleSheet.create({
     borderColor:'#333',
     borderWidth:1,
     backgroundColor:'#fff',
-    width:60,
+    width:62,
     height:35,
     textAlign:'center',
   },
@@ -704,7 +704,7 @@ const styles = StyleSheet.create({
   {
     borderBottomColor:'black', 
     alignItems:'center', 
-    width:45, 
+    width:60, 
     alignSelf:'center',
     paddingVertical:5
   }

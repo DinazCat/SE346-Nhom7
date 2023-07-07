@@ -136,29 +136,29 @@ const SettingNoti = ({navigation}) => {
           </Text>
         </View>
         <Text style={[styles.textfont,{marginTop:20, color: theme === 'light'? '#000' : '#fff'}]}>{language === 'vn' ?"Gửi tôi thông báo khi: ":"Send me a push notification when:"}</Text>
-        <View style={styles.row}>
-            <Text style={[styles.textfont,{width:"90%"}]}> {language === 'vn' ?"Ai đó bắt đầu theo dõi tôi":"Someone starts following me"}</Text>    
+        <View style={[styles.row, {backgroundColor:theme==='light'?'#FFFAF0':'#4E4E4E'}]}>
+            <Text style={[styles.textfont,{width:"90%", color: theme === 'light'? '#000' : '#fff'}]}> {language === 'vn' ?"Ai đó bắt đầu theo dõi tôi":"Someone starts following me"}</Text>    
             <CheckBox 
         value={isChecked1} 
         onValueChange={toggleCheckBox1} 
       />     
         </View>
-        <View style={styles.row}>
-            <Text style={[styles.textfont,{width:"90%"}]}> {language === 'vn' ?"Ai đó thích bài viết của tôi":"Someone likes my post"}</Text>    
+        <View style={[styles.row, {backgroundColor:theme==='light'?'#FFFAF0':'#4E4E4E'}]}>
+            <Text style={[styles.textfont,{width:"90%", color: theme === 'light'? '#000' : '#fff'}]}> {language === 'vn' ?"Ai đó thích bài viết của tôi":"Someone likes my post"}</Text>    
             <CheckBox 
         value={isChecked2} 
         onValueChange={toggleCheckBox2}
       />     
         </View>
-        <View style={styles.row}>
-            <Text style={[styles.textfont,{width:"90%"}]}> {language === 'vn' ?"Ai đó bình luận bài viết của tôi":"Someone comments on my post"}</Text>    
+        <View style={[styles.row, {backgroundColor:theme==='light'?'#FFFAF0':'#4E4E4E'}]}>
+            <Text style={[styles.textfont,{width:"90%", color: theme === 'light'? '#000' : '#fff'}]}> {language === 'vn' ?"Ai đó bình luận bài viết của tôi":"Someone comments on my post"}</Text>    
             <CheckBox
         value={isChecked3} 
         onValueChange={toggleCheckBox3}
       />     
         </View>
-        <View style={styles.row}>
-            <Text style={[styles.textfont,{width:"90%"}]}> {language === 'vn' ?"Người mà tôi theo dõi đăng bài viết mới":"Someone I'm following posts a new post"}</Text>    
+        <View style={[styles.row, {backgroundColor:theme==='light'?'#FFFAF0':'#4E4E4E'}]}>
+            <Text style={[styles.textfont,{width:"90%", color: theme === 'light'? '#000' : '#fff'}]}> {language === 'vn' ?"Người mà tôi theo dõi đăng bài viết mới":"Someone I'm following posts a new post"}</Text>    
             <CheckBox
         value={isChecked4} 
         onValueChange={toggleCheckBox4}
@@ -187,12 +187,10 @@ const styles = StyleSheet.create({
     textfont:{
       fontSize: 17,
       marginLeft: 5, 
-      color: 'black'
     },
     row:
     {
-      height:50, 
-      backgroundColor:'#FFFAF0',
+      paddingVertical: 7, 
       flexDirection:'row',
       marginTop:10,
       alignItems:'center'

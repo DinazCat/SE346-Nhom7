@@ -37,7 +37,16 @@ const CustomFoodScreen = (props, {route}) => {
     const Delete = (selectedItem, rowMap) => {
       let index = datas.findIndex(item=>item.id === selectedItem.id)
       rowMap[`${index}`].closeRow();
-      firestore().collection('customFoods').doc(selectedItem.id).delete().then(() => {});
+      Alert.alert(language==='vn'?'Xóa':'Delete', language==='vn'?'Bạn có chắc chắc muốn xóa?':'Do you want to remove', [
+        {
+          text: language==='vn'?'Hủy':'Cancel',
+          
+          style: 'cancel',
+        },
+        {text: language==='vn'?'Đồng ý':'OK', onPress: () => {
+          firestore().collection('customFoods').doc(selectedItem.id).delete().then(() => {});
+        }},
+      ]);
       
     }
     const is_edit = (selectedItem, rowMap) =>{

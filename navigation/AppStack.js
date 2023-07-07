@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import FeedsScreen from '../screens/FeedsScreen';
 import AddPostScreen from '../screens/AddPostScreen';
@@ -12,9 +12,11 @@ import EditPostScreen from'../screens/EditPostScreen';
 import NotificationScreen from '../screens/NotificationScreen';
 import GotoPostScreen from '../screens/GotoPostScreen';
 import savedPostScreen from '../screens/savedPostScreen';
+import ThemeContext from '../context/ThemeContext';
 const Stack = createNativeStackNavigator();
 
 export default function AppStack() {
+  const theme = useContext(ThemeContext);
   return (
     <Stack.Navigator>
       <Stack.Screen 
@@ -45,10 +47,12 @@ export default function AppStack() {
           headerBackTitleVisible: false,
           headerTitleAlign: 'center',
           headerStyle: {
-            backgroundColor: '#fff',
-            shadowColor: '#fff',
+            backgroundColor: theme==='light'?'#fff':'#000',
+            
             elevation: 0,
           },
+          headerTintColor: theme==='light'?'#000':'#fff',
+          
          }}
       />
        <Stack.Screen 
@@ -79,10 +83,13 @@ export default function AppStack() {
           headerBackTitleVisible: false,
           headerTitleAlign: 'center',
           headerStyle: {
-            backgroundColor: '#fff',
-            shadowColor: '#fff',
+            backgroundColor: theme==='light'?'#fff':'#000',
+            
             elevation: 0,
           },
+          headerTintColor: theme==='light'?'#000':'#fff',
+          
+         
          }}
       />
       <Stack.Screen

@@ -451,8 +451,7 @@ const checkInput = () => {
         dropdownIconColor = {theme === 'light'? '#000':'#fff'}
         style={{width: 210, alignSelf: 'center', color: theme === 'light'? '#000' : '#fff'}}
         onValueChange={(itemValue, itemIndex) => setSex(itemValue)}
-        placeholder={language === 'vn' ? 'Chọn giới tính' : 'Choose sex'}
-        placeholderTextColor={theme==='light'?'#BABABA':'#A3A3A3'}
+        
       >
         <Picker.Item label="Female" value="Female" />
         <Picker.Item label="Male" value="Male" />
@@ -464,7 +463,7 @@ const checkInput = () => {
             style={{width: 25, height: 25}}
           />
           <TextInput
-            placeholder="Age"
+            placeholder={language==='vn'?'Tuổi':'Age'}
             keyboardType = 'number-pad'
             placeholderTextColor={theme==='light'?'#BABABA':'#A3A3A3'}
             autoCorrect={false}
@@ -477,7 +476,7 @@ const checkInput = () => {
         <View style={styles.action}>
         <MaterialCommunityIcons name="scale-bathroom" color={theme==='light'?'#000':'#fff'} size={20} />
           <TextInput
-            placeholder="Weight"
+            placeholder={language==='vn'?'Cân nặng':'Weight'}
             placeholderTextColor={theme==='light'?'#BABABA':'#A3A3A3'}
             keyboardType="number-pad"
             autoCorrect={false}
@@ -489,7 +488,7 @@ const checkInput = () => {
         <View style={styles.action}>
           <MaterialCommunityIcons name="human-male-height" color={theme==='light'?'#000':'#fff'} size={25} />
           <TextInput
-            placeholder="Height"
+            placeholder={language==='vn'?'Chiều cao':'Height'}
             keyboardType = 'number-pad'
             placeholderTextColor={theme==='light'?'#BABABA':'#A3A3A3'}
             autoCorrect={false}

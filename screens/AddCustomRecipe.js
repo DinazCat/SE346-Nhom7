@@ -25,17 +25,16 @@ const AddCustomRecipe = ({route}) => {
   const totalProtein = useSelector((state)=>state.IngredientList.totalProtein);
   const isEdit = useSelector((state) => state.IngredientList.isEdit);
   const imageTemp = (route.params)? route.params?.item.image :'https://cdn-icons-png.flaticon.com/512/2927/2927347.png'
-  
-  const navigation = useNavigation();
-  //thông tin textinput của customFood
-  const [name, setName] = useState(route.params?.item.name)
-  const [image,setImage] = useState(null);
-  const [prepTime, setPrepTime] = useState(route.params?.item.prepTime);
-  const [cookingTime, setCookingtime] = useState(route.params?.item.cookingTime)
-  const [receipt, setReceipt] = useState(route.params?.item.receipt)
-  const [id, setId] = useState(route.params?.item.id)//set route.params...vô trong const trước
   const [uploading, setUploading] = useState(false);
   const [transferred, setTransferred] = useState(0);
+  const navigation = useNavigation();
+  //thông tin textinput của customFood
+  const [name, setName] = useState(route.params?.item.name||'')
+  const [image,setImage] = useState(null);
+  const [prepTime, setPrepTime] = useState(route.params?.item.prepTime||'');
+  const [cookingTime, setCookingtime] = useState(route.params?.item.cookingTime||'')
+  const [receipt, setReceipt] = useState(route.params?.item.receipt||'')
+  const [id, setId] = useState(route.params?.item.id)//set route.params...vô trong const trước
   const language = useContext(LanguageContext);
 
   const cancel = () => {
@@ -99,18 +98,15 @@ const AddCustomRecipe = ({route}) => {
    
     navigation.navigate('IngredientScreen')
   }
-  const deleteAll = () => {
-    dispatch(DeleteAll());
-  }
 
   const DeleteIngredient = (index) => {
-    Alert.alert('Delete', 'Do you want to remove ingredient?', [
+    Alert.alert(language==='vn'?'Xóa':'Delete', language==='vn'?'Bạn có chắc chắc muốn xóa?':'Do you want to remove', [
       {
-        text: 'Cancel',
+        text: language==='vn'?'Hủy':'Cancel',
         
         style: 'cancel',
       },
-      {text: 'OK', onPress: () => {
+      {text: language==='vn'?'Đồng ý':'OK', onPress: () => {
         
         dispatch(Delete(index))
       }},
@@ -121,21 +117,21 @@ const AddCustomRecipe = ({route}) => {
       const imageUrl = await uploadImage(image?.path);
       firestore().collection('customRecipe').add({
       userId: user.uid,
-      name: name || '',
+      name: name,
       image: imageUrl,
-      calories: totalCalories || '',
-      carbs: totalCarbs || '',
-      protein: totalProtein || '',
-      fat: totalFat || '',
-      prepTime: prepTime || '',
-      cookingTime: cookingTime || '',
-      receipt: receipt|| '',
-      ingredients: IngredientList || [],
+      calories: totalCalories,
+      carbs: totalCarbs,
+      protein: totalProtein,
+      fat: totalFat,
+      prepTime: prepTime,
+      cookingTime: cookingTime,
+      receipt: receipt,
+      ingredients: IngredientList,
       })
       
       console.log('recipe added');
       Alert.alert(
-        'Add Recipe successfully!'
+        language==='vn'?'Thêm thành công':'Successfully added'
       );
       navigation.goBack();
     } 
@@ -145,7 +141,8 @@ const AddCustomRecipe = ({route}) => {
   }
   const checkNameAndIngredient = () => {
     Alert.alert(
-      'Name and ingredient cannot be blank'
+      language==='vn'?'Chú ý':'Note'
+      ,language==='vn'?'Tên món ăn, nguyên liệu và bước tiến hành không thể để trống':'Name, ingredient and step cannot be blank'
     );
   }
   const updateRecipe = async() => {
@@ -158,15 +155,15 @@ const AddCustomRecipe = ({route}) => {
         fat: totalFat,
         carbs: totalCarbs,
         protein: totalProtein,
-        prepTime: prepTime,
-        cookingTime: cookingTime,
+        prepTime: prepTime==''?'':parseInt(prepTime).toString(),
+        cookingTime: cookingTime==''?'':parseInt(cookingTime).toString(),
         receipt: receipt,
         ingredients: IngredientList,
         })
         
         console.log('custom recipe updated');
         Alert.alert(
-          'Update custom recipe succesfully!'
+          language==='vn'?'Cập nhật thành công':'Successfully updated'
         );
         navigation.goBack();
       } 
@@ -184,10 +181,10 @@ const AddCustomRecipe = ({route}) => {
         <Text style={[styles.text, {color: theme === 'light' ?'#fff': '#2AE371'}]}>{language === 'vn' ? 'Hủy' : 'Cancel'}</Text>
       </TouchableOpacity>
       <Text style={{fontSize: 23, color: '#fff', fontWeight: 'bold', textAlign: 'center', width: 250}}>{language === 'vn' ? 'Chi tiết công thức' : 'Recipe detail'}</Text>
-     {isEdit?<TouchableOpacity onPress={(IngredientList.length == 0||name=='')?checkNameAndIngredient:updateRecipe}>
+     {isEdit?<TouchableOpacity onPress={(IngredientList.length == 0||name==''||receipt=='')?checkNameAndIngredient:updateRecipe}>
       <Text style={[styles.text, {color: theme === 'light' ?'#fff': '#2AE371'}]}>{language === 'vn' ? 'Cập nhật' : 'Update'}</Text>
      </TouchableOpacity> :
-     <TouchableOpacity onPress={(IngredientList.length == 0||name=='')?checkNameAndIngredient
+     <TouchableOpacity onPress={(IngredientList.length == 0||name==''||receipt=='')?checkNameAndIngredient
      :saveRecipe}>
         <Text style={[styles.text, {color: theme === 'light' ?'#fff': '#2AE371'}]}>{language === 'vn' ? 'Lưu' : 'Save'}</Text>
      </TouchableOpacity> }
@@ -205,29 +202,23 @@ const AddCustomRecipe = ({route}) => {
                     <>
                     <View style={styles.foodInfoWrapper}>
                         <View style={styles.foodInfoItem}>
-                        <TextInput style={styles.foodInfoTitle} 
+                          <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+                        <TextInput style={[styles.foodInfoTitle, {alignSelf: 'center', width: 50}]}
                         keyboardType = 'number-pad'
-                        placeholder={language === 'vn' ? 'giờ' : 'hour'}
                         placeholderTextColor={theme==='light'?'#C7C7CD':'#A3A3A3'} 
-                        value={prepTime} onChangeText={prepTime=>{
-                          if (+prepTime||prepTime== "") {
-                            setPrepTime(prepTime)
-                          }
-                          
-                          }}></TextInput>
+                        value={prepTime} onChangeText={prepTime => setPrepTime(prepTime.replace(/[^0-9]/g, ''))}></TextInput>
+                          <Text style={[styles.foodInfoTitle]}>{language === 'vn' ? 'phút' : 'min'}</Text>
+                          </View>
                         <Text style={styles.foodInfoSubTitle}>{language === 'vn' ? 'Chuẩn bị' : 'Prep'}</Text>
                         </View>
                         <View style={styles.foodInfoItem}>
-                        <TextInput style={styles.foodInfoTitle} 
+                        <View style={{flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
+                        <TextInput style={[styles.foodInfoTitle, {alignSelf: 'center', width: 50}]}
                         keyboardType = 'number-pad'
-                        placeholder={language === 'vn' ? 'giờ' : 'hour'}
                         placeholderTextColor={theme==='light'?'#C7C7CD':'#A3A3A3'} 
-                        value={cookingTime} onChangeText={cookingTime=>{
-                          if (+cookingTime||cookingTime== "") {
-                            setCookingtime(cookingTime)
-                          }
-                          
-                          }}></TextInput>
+                        value={cookingTime} onChangeText={cookingTime => setCookingtime(cookingTime.replace(/[^0-9]/g, ''))}></TextInput>
+                          <Text style={[styles.foodInfoTitle]}>{language === 'vn' ? 'phút' : 'min'}</Text>
+                        </View>
                         <Text style={styles.foodInfoSubTitle}>{language === 'vn' ? 'Nấu' : 'Cooking'}</Text>
                         </View>     
                         <View style={styles.foodInfoItem}>
@@ -277,15 +268,15 @@ const AddCustomRecipe = ({route}) => {
             <View >
                      <Text style={[styles.PostTitle, {color: '#5AC30D'}]}>{language === 'vn' ? 'Hàm lượng dinh dưỡng' : 'Macro'}</Text>
                      <View style={{flexDirection: 'row', marginHorizontal: 20, marginVertical: 2}}>
-                         <Text style={{fontSize: 16, color: theme==='light'?"#000":"#fff", fontWeight: 'bold'}}>Carbs</Text>
+                         <Text style={{fontSize: 16, color: theme==='light'?"#000":"#fff", fontWeight: 'bold'}}>{language==='vn'?'Đường':'Carbs'}</Text>
                          <Text style={{marginLeft:'auto', fontSize: 16, color: theme==='light'?"#000":"#fff"}}>{totalCarbs} g</Text>
                       </View>
                       <View style={{flexDirection: 'row', marginHorizontal: 20, marginVertical: 2}}>
-                         <Text style={{fontSize: 16, color: theme==='light'?"#000":"#fff", fontWeight: 'bold'}}>Fat</Text>
+                         <Text style={{fontSize: 16, color: theme==='light'?"#000":"#fff", fontWeight: 'bold'}}>{language==='vn'?'Chất béo':'Fat'}</Text>
                          <Text style={{marginLeft:'auto', fontSize: 16, color: theme==='light'?"#000":"#fff"}}>{totalFat} g</Text>
                       </View>
                       <View style={{flexDirection: 'row', marginHorizontal: 20, marginVertical: 2}}>
-                         <Text style={{fontSize: 16, color: theme==='light'?"#000":"#fff", fontWeight: 'bold'}}>Protein</Text>
+                         <Text style={{fontSize: 16, color: theme==='light'?"#000":"#fff", fontWeight: 'bold'}}>{language==='vn'?'Chất đạm':'Protein'}</Text>
                          <Text style={{marginLeft:'auto', fontSize: 16, color: theme==='light'?"#000":"#fff"}}>{totalProtein} g</Text>
                       </View>
                      </View>
@@ -442,6 +433,6 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     marginTop: 15,
-    
+    resizeMode: 'stretch' 
   },
 });

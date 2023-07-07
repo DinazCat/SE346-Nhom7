@@ -127,7 +127,7 @@ const StatisticsHeightScreen = () => {
         if (listHeightsOneMonth.length == 0 || listHeightsOneWeek.length == 0 || listHeightsOneYear.length == 0) {
     return (
       <View style={{marginTop: 130, flex: 1, alignItems: 'center'}}>
-        <Text style={[styles.text, {color: theme === 'light'? '#000000' : '#FFFFFF'}]}>Loading!</Text>
+        <Text style={[styles.text, {color: theme === 'light'? '#000000' : '#FFFFFF'}]}>{language==='vn'?'Đang tải!':'Loading!'}</Text>
       </View>
     );
   }

@@ -459,8 +459,12 @@ export default EditPostScreen = function ({navigation, route}) {
   );
 
   return (
-    <KeyboardAvoidingView  style={{}} behavior='padding' enabled>
-        <ScrollView>
+    <View style={[
+      styles.container,
+      {backgroundColor: theme === 'light' ? '#fff' : '#000'},
+    ]}>
+    <KeyboardAvoidingView   behavior='padding' enabled>
+        <ScrollView >
     <View
       style={[
         styles.container,
@@ -788,6 +792,7 @@ export default EditPostScreen = function ({navigation, route}) {
                       fontSize: 16,
                       marginLeft: 3,
                       borderBottomColor: theme === 'light' ? '#000' : '#fff',
+                      color: theme === 'light' ? '#000' : '#fff',
                       alignSelf: 'center',
                       borderBottomWidth: 1,
                       width: '90%',
@@ -813,6 +818,7 @@ export default EditPostScreen = function ({navigation, route}) {
                       fontSize: 16,
                       marginLeft: 3,
                       borderBottomColor: theme === 'light' ? '#000' : '#fff',
+                      color: theme === 'light' ? '#000' : '#fff',
                       alignSelf: 'center',
                       borderBottomWidth: 1,
                       width: '90%',
@@ -853,7 +859,8 @@ export default EditPostScreen = function ({navigation, route}) {
               {borderColor: theme === 'light' ? '#000' : '#fff'},
             ]}>
             {loading && (
-              <ScrollView>
+              <ScrollView horizontal={true}>
+              <ScrollView> 
                 <Text
                   style={[
                     styles.TextStyle,
@@ -920,6 +927,7 @@ export default EditPostScreen = function ({navigation, route}) {
                   numColumns={3}
                 />
                 <View style={{height: 50, width: '100%'}} />
+              </ScrollView>
               </ScrollView>
             )}
           </View>
@@ -1061,6 +1069,7 @@ export default EditPostScreen = function ({navigation, route}) {
     </View>
     </ScrollView>
     </KeyboardAvoidingView>
+    </View>
   );
 };
 const styles = StyleSheet.create({
